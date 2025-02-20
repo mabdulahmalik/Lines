@@ -1,7 +1,7 @@
 name: Database CI/CD
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:  
 
 env:
   DOCKER_IMAGE: sol-database-tenant
@@ -18,15 +18,13 @@ jobs:
       - name: Prepare build context
         working-directory: Platform/dbo/SOL.Database.Tenant
         run: |
-          # Create symbolic links to include parent directories in Docker context
-          ln -s ../../../../src src
+          # Ensure necessary directories are included in Docker build context
           ln -s ../../../../LinesApp LinesApp
-          ln -s ../../../../tst tst
+          ln -s ../../../../Platform Platform
 
       - name: Build Docker image
-        working-directory: Platform/dbo/SOL.Database.Tenant
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} .
+          docker build -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} -f Platform/dbo/Dockerfile Platform/dbo
 
       - name: Deploy to Azure SQL
         run: |
