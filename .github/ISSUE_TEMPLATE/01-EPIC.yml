@@ -1,0 +1,27 @@
+name: EPIC - end-to-end capability, cross-functional business value
+description: Used for defining large-scale business value.
+projects: "SalubrityOnline/1"
+type: epic
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the business purpose, why is this being done and what value does it bring?
+    validations:
+      required: true
+  - type: textarea
+    id: businessValue
+    attributes:
+      label: Business Value
+      description: >-
+        Determine the business value through various methods, considering user volume, feature usage frequency, release timing, and development effort.
+    validations:
+      required: true
+  - type: textarea
+    id: desiredOutcomes
+    attributes:
+      label: Desired Outcomes
+      description: Describe key expectations for what the product will look like once this Epic is completed.
+    validations:
+      required: true

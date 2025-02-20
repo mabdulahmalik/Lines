@@ -1,0 +1,102 @@
+mutation ApplyProcedureToEncounter($command: ApplyProcedureToEncounterCmd!) {
+  applyProcedureToEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation AssignMeToEncounter($command: AssignMeToEncounterCmd!) {
+  assignMeToEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation AttachPhotosToEncounter($command: AttachPhotosToEncounterCmd!) {
+  attachPhotosToEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation EscalateEncounter($command: EscalateEncounterCmd!) {
+  escalateEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeescalateEncounter($command: DeescalateEncounterCmd!) {
+  deescalateEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyProcedureForEncounter($command: ModifyProcedureForEncounterCmd!) {
+  modifyProcedureForEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation PlaceEncounterOnHold($command: PlaceEncounterOnHoldCmd!) {
+  placeEncounterOnHold(command: $command) {
+    correlationId
+  }
+}
+
+mutation RemoveHoldFromEncounter($command: RemoveHoldFromEncounterCmd!) {
+  removeHoldFromEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation RemovePhotoFromEncounter($command: RemovePhotoFromEncounterCmd!) {
+  removePhotoFromEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation RemoveProcedureFromEncounter($command: RemoveProcedureFromEncounterCmd!) {
+  removeProcedureFromEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation WithdrawMeFromEncounter($command: WithdrawMeFromEncounterCmd!) {
+  withdrawMeFromEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation EnactEncounterRevision($command: EnactEncounterRevisionPrc!) {
+  enactEncounterRevision(command: $command) {
+    correlationId
+  }
+}
+
+
+mutation AttendToPatient($command: AttendToPatientCmd!) {
+  attendToPatient(command: $command) {
+    correlationId
+  }
+}
+
+mutation SubmitProcedures($command: SubmitProceduresCmd!) {
+  submitProcedures(command: $command) {
+    correlationId
+  }
+}
+
+mutation CompleteEncounter($command: CompleteEncounterCmd!) {
+  completeEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation RequestAssistanceForEncounter($command: RequestAssistanceForEncounterCmd!) {
+  requestAssistanceForEncounter(command: $command) {
+    correlationId
+  }
+}
+
+mutation CancelAssistanceRequestForEncounter($command: CancelAssistanceRequestForEncounterCmd!) {
+  cancelAssistanceRequestForEncounter(command: $command) { 
+    correlationId
+  }
+}

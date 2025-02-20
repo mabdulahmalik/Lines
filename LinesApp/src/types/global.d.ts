@@ -1,0 +1,1 @@
+export type OnlineStatusType = null | 'Available' | 'Unavailable' | 'Lunch' | 'Offline';

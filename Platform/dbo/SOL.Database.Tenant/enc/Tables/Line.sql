@@ -1,0 +1,20 @@
+CREATE TABLE [enc].[Line] (
+    [Id]                 UNIQUEIDENTIFIER NOT NULL,
+    [CreatedAt]          DATETIME2 (7)    NOT NULL,
+    [ModifiedAt]         DATETIME2 (7)    NULL,
+    [MedicalRecordId]    UNIQUEIDENTIFIER NULL,
+    [Name]               NVARCHAR (80)    NULL,
+    [Type]               NVARCHAR (50)    NULL,
+    [FollowUpId]         UNIQUEIDENTIFIER NULL,
+    [InsertedOn]         DATETIME2 (7)    NULL,
+    [InsertedWith]       UNIQUEIDENTIFIER NULL,
+    [RemovedOn]          DATETIME2 (7)    NULL,
+    [RemovedWith]        UNIQUEIDENTIFIER NULL,
+    [InfectedOn]         DATE             NULL,
+    [ExternallyPlaced]   BIT              NOT NULL,
+    [ExternallyPlacedBy] NVARCHAR (255)   NULL,
+    CONSTRAINT [PK_Line] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Line_EncounterProcedureInserted] FOREIGN KEY ([InsertedWith]) REFERENCES [enc].[EncounterProcedure] ([Id]),
+    CONSTRAINT [FK_Line_EncounterProcedureRemoved] FOREIGN KEY ([RemovedWith]) REFERENCES [enc].[EncounterProcedure] ([Id]),
+    CONSTRAINT [FK_Line_Job] FOREIGN KEY ([FollowUpId]) REFERENCES [enc].[Job] ([Id])
+);

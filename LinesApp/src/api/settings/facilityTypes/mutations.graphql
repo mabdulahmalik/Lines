@@ -1,0 +1,50 @@
+mutation CreateFacilityType($command: CreateFacilityTypeCmd!) {
+  createFacilityType(command: $command) {
+    correlationId
+  }
+}
+
+mutation RenameFacilityType($command: RenameFacilityTypeCmd!) {
+  renameFacilityType(command: $command) {
+    correlationId
+  }
+}
+
+
+mutation ActivateFacilityType($command: ActivateFacilityTypeCmd!) {
+  activateFacilityType(command: $command) {
+    correlationId
+  }
+}
+
+
+mutation DeactivateFacilityType($command: DeactivateFacilityTypeCmd!) {
+  deactivateFacilityType(command: $command) {
+    correlationId
+  }
+}
+
+
+mutation AddFacilityRoomProperty($command: CreateFacilityRoomPropertyCmd!) {
+  addFacilityRoomProperty(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyFacilityRoomProperty($command: ModifyFacilityRoomPropertyCmd!) {
+  modifyFacilityRoomProperty(command: $command) {
+    correlationId
+  }
+}
+
+mutation sortFacilityRoomProperty($command: SortFacilityRoomPropertyCmd!) {
+  sortFacilityRoomProperty(command: $command) {
+    correlationId
+  }
+}
+
+mutation SortFacilityType($command: SortFacilityTypeCmd!) {
+  sortFacilityType(command: $command) {
+    correlationId
+  }
+}

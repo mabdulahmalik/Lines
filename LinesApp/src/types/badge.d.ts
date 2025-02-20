@@ -1,0 +1,1 @@
+export type StatusBadgeType = null | 'STAT' | 'NORMAL' | 'ROUTINE' | 'ON HOLD'| 'SOS';

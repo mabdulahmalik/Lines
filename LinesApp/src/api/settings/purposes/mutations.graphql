@@ -1,0 +1,35 @@
+mutation CreatePurpose($command: CreatePurposeCmd!) {
+  createPurpose(command: $command) {
+    correlationId
+  }
+}
+
+mutation RenamePurpose($command: RenamePurposeCmd!) {
+  renamePurpose(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeletePurpose($command: DeletePurposeCmd!) {
+  deletePurpose(command: $command) {
+    correlationId
+  }
+}
+
+mutation ArchivePurpose($command: ArchivePurposeCmd!) {
+  archivePurpose(command: $command) {
+    correlationId
+  }
+}
+
+mutation UnarchivePurpose($command: UnarchivePurposeCmd!) {
+  unarchivePurpose(command: $command) {
+    correlationId
+  }
+}
+
+mutation SortPurpose($command: SortPurposeCmd!) {
+  sortPurpose(command: $command) {
+    correlationId
+  }
+}

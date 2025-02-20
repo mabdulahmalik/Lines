@@ -1,0 +1,514 @@
+query GetStates {
+  states {
+    code
+    name
+  }
+}
+
+query GetTimeZones {
+  timeZones
+}
+
+query GetEncounters($skip: Int, $take: Int, $where: EncountersFilter, $order: [EncountersSorter!]) {
+  encounters(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      id
+      jobId
+      lines
+      medicalRecordId
+      modifiedAt
+      priority
+      purposeId
+      stage
+      alerts {
+        alertedAt
+        alertedBy
+        text
+        type
+      }
+      assignments {
+        assignedAt
+        clinicianId
+        position
+      }
+      location {
+        facilityId
+        roomId
+      }
+      photos {
+        contentType
+        createdAt
+        fileName
+        id
+        length
+        url
+      }
+      procedures {
+        id
+        performAt
+        performedBy
+        procedureId
+        values {
+          fieldId
+          value
+        }
+      }
+      progress {
+        duration
+        enteredAt
+        stage
+      }
+      alerts {
+        alertedAt
+        alertedBy
+        text
+        type
+      }
+    }
+    totalCount
+  }
+}
+
+query GetFacilities($skip: Int, $take: Int, $where: FacilitiesFilter) {
+  facilities(skip: $skip, take: $take, where: $where) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      id
+      modifiedAt
+      name
+      procedureIds
+      purposeIds
+      requiredData
+      timeZone
+      typeId
+      archived
+      referenceCount
+      routineAssignments {
+        id
+        name
+        routineId
+        specs {
+          propertyId
+          propertyValue
+          __typename
+        }
+        __typename
+      }
+      address {
+        city
+        state
+        street
+        zipCode
+        __typename
+      }
+      __typename
+    }
+    totalCount
+  }
+}
+
+query GetFacilityTypes($skip: Int, $take: Int, $where: FacilityTypesFilter) {
+  facilityTypes(skip: $skip, take: $take, where: $where) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      id
+      isActive
+      modifiedAt
+      name
+      __typename
+      properties {
+        id
+        name
+        __typename
+        options {
+          id
+          text
+          __typename
+        }
+      }
+    }
+    totalCount
+  }
+}
+
+query GetJobs($skip: Int, $take: Int, $where: JobsFilter, $order: [JobsSorter!]) {
+  jobs(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      statusChangedAt
+      contact
+      createdAt
+      id
+      lineId
+      medicalRecordId
+      modifiedAt
+      orderingProvider
+      purposeId
+      status
+      location {
+        facilityId
+        roomId
+      }
+      notes {
+        createdAt
+        createdBy
+        id
+        text
+        treatment
+      }
+      origin {
+        encounterId
+        encounterProcedureId
+      }
+      schedule {
+        date
+        time
+      }
+    }
+    totalCount
+  }
+}
+
+query GetLines($skip: Int, $take: Int, $where: LinesFilter, $order: [LinesSorter!]) {
+  lines(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      dwelling
+      dwellTime
+      externallyPlaced
+      externallyPlacedBy
+      followUp {
+        date
+        jobId
+        purposeId
+      }
+      id
+      infectedOn
+      insertedOn
+      medicalRecordId
+      modifiedAt
+      name
+      removedOn
+      type
+      insertedWith {
+        encounterId
+        encounterProcedureId
+      }
+      location {
+        facilityId
+        roomId
+      }
+      removedWith {
+        encounterId
+        encounterProcedureId
+      }
+    }
+    totalCount
+  }
+}
+
+query GetMedicalRecords(
+  $skip: Int
+  $take: Int
+  $where: MedicalRecordsFilter
+  $order: [MedicalRecordsSorter!]
+) {
+  medicalRecords(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      active
+      birthday
+      createdAt
+      facilityId
+      firstName
+      firstSeenOn
+      id
+      lastName
+      lastSeenOn
+      linesIn
+      linesTotal
+      modifiedAt
+      number
+      observations {
+        data
+        objectId
+        timestamp
+        type
+      }
+    }
+    totalCount
+  }
+}
+
+query GetProcedures($skip: Int, $take: Int, $where: ProceduresFilter) {
+  procedures(skip: $skip, take: $take, where: $where) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      archived
+      createdAt
+      id
+      modifiedAt
+      name
+      references
+      requiredData
+      settings
+      fields {
+        archived
+        id
+        instruction
+        name
+        references
+        settings
+        type
+        __typename
+        options {
+          archived
+          id
+          references
+          text
+          __typename
+        }
+      }
+      __typename
+    }
+    totalCount
+  }
+}
+
+query GetPurposes($skip: Int, $take: Int, $where: PurposesFilter) {
+  purposes(skip: $skip, take: $take, where: $where) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      archived
+      createdAt
+      id
+      modifiedAt
+      name
+      references
+      __typename
+    }
+    totalCount
+  }
+}
+
+query GetFacilityRooms($skip: Int, $take: Int, $where: FacilityRoomsFilter, $order: [FacilityRoomsSorter!]) {
+  facilityRooms(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      facilityId
+      id
+      modifiedAt
+      name
+      properties {
+        propertyId
+        value
+        __typename
+      }
+      __typename
+    }
+    totalCount
+  }
+}
+
+query GetRoutines($skip: Int, $take: Int, $where: RoutinesFilter, $order: [RoutinesSorter!]) {
+  routines(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      assignmentCount
+      createdAt
+      description
+      id
+      isActive
+      modifiedAt
+      name
+      purposeId
+      settings
+      termini {
+        procedureId
+        propertyId
+        propertyValue
+        __typename
+      }
+      rolling {
+        interval {
+          unit
+          value
+        }
+        delay {
+          unit
+          value
+        }
+      }
+      recurrence {
+        days
+        time
+      }
+      origin {
+        procedureId
+        propertyId
+        propertyValue
+      }
+    }
+    totalCount
+  }
+}
+
+query GetUsers($skip: Int, $take: Int, $where: UsersFilter) {
+  users(skip: $skip, take: $take, where: $where) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      active
+      avatar
+      email
+      firstName
+      id
+      identity
+      inTraining
+      lastName
+      loggedInAt
+      passwordChangedAt
+      phone
+      preferences
+      registeredAt
+      status {
+        changedAt
+        message
+        status
+      }
+      roles {
+        id
+        name
+      }
+    }
+    totalCount
+  }
+}
+
+query GetInvitation($skip: Int, $take: Int, $where: InvitationFilter, $order: [InvitationSorter!]) {
+  invitations(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      createdAt
+      email
+      id
+      invitedBy
+      roles
+    }
+    totalCount
+  }
+}
+
+query GetRoles($skip: Int, $take: Int) {
+  roles(skip: $skip, take: $take) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+      id
+      name
+    }
+    totalCount
+  }
+}
+
+query GetMe {
+  me {
+    active
+    avatar
+    email
+    firstName
+    id
+    identity
+    inTraining
+    lastName
+    loggedInAt
+    passwordChangedAt
+    phone
+    preferences
+    registeredAt
+    status {
+      changedAt
+      message
+      status
+    }
+    roles {
+      id
+      name
+    }
+  }
+}
+
+query GetActivities($skip: Int, $take: Int, $where: ActivitiesFilter, $order: [ActivitiesSorter!]) {
+  activities(skip: $skip, take: $take, where: $where, order: $order) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+    items {
+        activityId
+        activityType
+        aggregateId
+        aggregateType
+        metadata
+        timestamp
+        userId      
+    }
+    totalCount
+  }
+}
+
+# query Get__($skip: Int, $take: Int, $where: __Filter, $order: [__Sort!]) {
+#   __(skip: $skip, take: $take, where: $where, order: $order) {
+#     pageInfo {
+#       hasNextPage
+#       hasPreviousPage
+#     }
+#     items {
+
+#     }
+#     totalCount
+#   }
+# }

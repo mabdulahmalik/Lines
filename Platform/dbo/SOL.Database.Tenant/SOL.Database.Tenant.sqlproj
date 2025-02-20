@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build">
+  <Sdk Name="Microsoft.Build.Sql" Version="0.1.12-preview" />
+  <PropertyGroup>
+    <Name>SOL.Database.Tenant</Name>
+    <ProjectGuid>{26464E83-DBB5-46C4-8AD3-8147E8AC7593}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootNamespace>SOL.Database.Tenant</RootNamespace>
+    <AssemblyName>SOL.Database.Tenant</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="dbo" />
+    <Folder Include="dbo\StoredProcedures" />
+    <Folder Include="dbo\Views" />
+    <Folder Include="enc\Tables" />
+    <Folder Include="enc\Views" />
+    <Folder Include="org" />
+    <Folder Include="org\Tables" />
+    <Folder Include="org\Views" />
+    <Folder Include="usr" />
+    <Folder Include="usr\Tables" />
+    <Folder Include="usr\Views" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\SeedData" />
+    <Folder Include="Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\SeedData\Organization.sql" />
+    <None Include="Scripts\SeedData\PatientEncounter.sql" />
+    <None Include="Scripts\SeedData\User.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <Delete Files="$(BaseIntermediateOutputPath)\project.assets.json" />
+  </Target>
+</Project>

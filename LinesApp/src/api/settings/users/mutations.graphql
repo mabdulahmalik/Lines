@@ -1,0 +1,59 @@
+mutation ModifyUser($command: ModifyUserCmd!) {
+  modifyUser(command: $command) {
+    correlationId
+  }
+}
+
+mutation InviteUsers($command: InviteUsersCmd!) {
+  inviteUsers(command: $command) {
+    correlationId
+  }
+}
+
+mutation CancelUserInvite($command: CancelUserInviteCmd!) {
+  cancelUserInvite(command: $command) {
+    correlationId
+  }
+}
+
+mutation ResendUserInvite($command: ResendUserInviteCmd!) {
+  resendUserInvite(command: $command) {
+    correlationId
+  }
+}
+
+mutation ActivateUser($command: ActivateUserCmd!) {
+  activateUser(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeactivateUser($command: DeactivateUserCmd!) {
+  deactivateUser(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyMyProfile($command: ModifyMyProfileCmd!) {
+  modifyMyProfile(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyMyAvatar($command: ModifyMyAvatarCmd!) {
+  modifyMyAvatar(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyMyStatus($command: ModifyMyStatusCmd!) {
+  modifyMyStatus(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyMyPreference($command: ModifyMyPreferenceCmd!) {
+  modifyMyPreference(command: $command) {
+    correlationId
+  }
+}

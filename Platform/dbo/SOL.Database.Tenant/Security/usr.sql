@@ -1,0 +1,3 @@
+CREATE SCHEMA [usr]
+    AUTHORIZATION [dbo];
+GO

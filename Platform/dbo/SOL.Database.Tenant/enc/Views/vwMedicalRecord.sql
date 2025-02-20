@@ -1,0 +1,17 @@
+CREATE VIEW [enc].[vw_MedicalRecord]
+  AS
+SELECT [Id]
+      ,[FacilityId]
+      ,[CreatedAt]
+      ,[ModifiedAt]
+      ,[Number]
+      ,[FirstName]
+      ,[LastName]
+      ,[Birthday]
+      ,[FirstSeenOn]
+      ,[LastSeenOn]
+      ,(SELECT COUNT(*) FROM [enc].[vw_Line] WHERE [MedicalRecordId] = [Id]) as [LinesTotal]
+      ,(SELECT COUNT(*) FROM [enc].[vw_Line] WHERE [MedicalRecordId] = [Id] AND [Dwelling] = 1) as [LinesIn]
+      ,CONVERT(BIT, (SELECT COUNT(*) FROM [enc].[vw_Line] WHERE [MedicalRecordId] = [Id] AND [Dwelling] = 1)) as [Active]
+  FROM [enc].[MedicalRecord]
+GO

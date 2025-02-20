@@ -1,0 +1,38 @@
+name: Database CI/CD
+
+on:
+  workflow_dispatch: 
+
+env:
+  DOCKER_IMAGE: sol-database-tenant
+  AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}.database.windows.net
+  AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare build context
+        working-directory: Platform/dbo/SOL.Database.Tenant
+        run: |
+          # Create symbolic links to include parent directories in Docker context
+          ln -s ../../../../src src
+          ln -s ../../../../LinesApp LinesApp
+          ln -s ../../../../tst tst
+
+      - name: Build Docker image
+        working-directory: Platform/dbo/SOL.Database.Tenant
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} .
+
+      - name: Deploy to Azure SQL
+        run: |
+          docker run --rm \
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }} \
+            /opt/sqlpackage/sqlpackage \
+            /Action:Publish \
+            /SourceFile:./SOL.Database.Tenant.dacpac \
+            /TargetConnectionString:"Server=${{ env.AZURE_SQL_SERVER }};Database=${{ env.AZURE_SQL_DATABASE }};User Id=${{ secrets.AZURE_SQL_ADMIN_USER }};Password=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }};Encrypt=True;TrustServerCertificate=False"

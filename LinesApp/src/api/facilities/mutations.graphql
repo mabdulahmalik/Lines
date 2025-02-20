@@ -1,0 +1,47 @@
+mutation CreateFacility($command: CreateFacilityCmd!) {
+  createFacility(command: $command) {
+    correlationId
+  }
+}
+
+mutation CreateFacilityRoom($command: CreateFacilityRoomCmd!) {
+  createFacilityRoom(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyFacilityRoom($command: ModifyFacilityRoomCmd!) {
+  modifyFacilityRoom(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyFacility($command: ModifyFacilityCmd!) {
+  modifyFacility(command: $command) {
+    correlationId
+  }
+}
+
+mutation ArchiveFacility($command: ArchiveFacilityCmd!) {
+  archiveFacility(command: $command) {
+    correlationId
+  }
+}
+
+mutation UnarchiveFacility($command: UnarchiveFacilityCmd!) {
+  unarchiveFacility(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeleteFacility($command: DeleteFacilityCmd!) {
+  deleteFacility(command: $command) {
+    correlationId
+  }
+}
+
+mutation SortFacility($command: SortFacilityCmd!) {
+  sortFacility(command: $command) {
+    correlationId
+  }
+}

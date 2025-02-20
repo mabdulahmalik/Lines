@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import '/node_modules/flowbite-vue/dist/index.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #f8fafc;
+  overflow: hidden;
+}
+html,
+body,
+#app {
+  height: 100%;
+}
+
+/* Custom Scrollbar */
+
+/* width */
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+/* Handle */
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 5px;
+}
+/* Handle on hover */
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Removed datepicker up arrow*/
+.vtd-datepicker.place-right:before {
+  display: none;
+}
+
+/* Select flowbite validition classes */
+.bg-radical-red-50 select {
+  border-color: #e11d47;
+  background-color: inherit;
+}
+
+/* Custom styles for the toast container */
+.Vue-Toastification__container .default_toast.Vue-Toastification__toast {
+  padding: 16px;
+  border-radius: 50px;
+  background-color: #1e293b;
+  font-family: inherit;
+}
+.default_toast .Vue-Toastification__icon{
+  width: auto;
+  margin-right: 10px;
+}
+.default_toast .Vue-Toastification__toast-body{
+  align-self: center;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.default_toast .Vue-Toastification__close-button{
+  margin-left: 10px;
+  padding-left: 2px;
+  align-self: center;
+  opacity: 0.6;
+}
+.default_toast .Vue-Toastification__progress-bar{
+  background-color: #5E4DB5;
+}
+
+/* Telerik Report Viewer UI Styling */
+.k-menu:not(.k-context-menu) > .k-item {
+  color: #646974 !important;
+}
+
+.k-menu:not(.k-context-menu) > .k-item:hover, .k-menu:not(.k-context-menu) > .k-item.k-hover {
+  color: #5e4db5 !important;
+}
+
+.\!k-bg-primary {
+  background-color: #5e4db5 !important;
+}
+.k-listview-content > .k-selected {
+  background-color: rgb(94 77 181 / 22%);
+}
+.trv-pages-area.interactive .trv-page-container .trv-page-wrapper.active .trv-report-page:not(.k-state-default) {
+  background: #f8fafc;
+}
+.trv-pages-area.interactive .trv-page-container .trv-page-wrapper {
+  background: #f8fafc;
+}
+.trv-content {
+  border: 0;
+}
+.trv-pages-area .trv-page-container {
+  overflow-x: hidden !important;
+  background: #f8fafc;
+}
+.trv-parameters-area{
+  /* height: 350px !important; */
+}
+li[aria-label="Toggle FullPage/PageWidth"],
+li[aria-label="Toggle print preview"], 
+li[aria-label="Toggle document map"], 
+li[aria-label="Search in report contents"], 
+li[aria-label="Navigate backward"],
+li[aria-label="Navigate forward"],
+li[aria-label="Stop rendering"],
+li[aria-label="First page"],
+li[aria-label="Previous page"],
+li[aria-label="Page number selector"],
+li[aria-label="Next page"],
+li[aria-label="Last page"],
+li[aria-label=""],
+li[aria-label=""]{
+  display: none;
+}

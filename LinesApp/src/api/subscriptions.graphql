@@ -1,0 +1,17 @@
+subscription Broadcast {
+  broadcast {
+    actorId
+    correlationId
+    eventName
+    payload
+  }
+}
+
+subscription Direct {
+  direct {
+    actorId
+    correlationId
+    eventName
+    payload
+  }
+}

@@ -1,0 +1,15 @@
+mutation ModifyMedicalRecord($command: ModifyMedicalRecordCmd!) {
+  modifyMedicalRecord(command: $command) {
+    correlationId
+  }
+}
+mutation DeleteMedicalRecord($command: DeleteMedicalRecordCmd!) {
+  deleteMedicalRecord(command: $command) {
+    correlationId
+  }
+}
+mutation RenumberMedicalRecord($command: RenumberMedicalRecordCmd!) {
+  renumberMedicalRecord(command: $command) {
+    correlationId
+  }
+}

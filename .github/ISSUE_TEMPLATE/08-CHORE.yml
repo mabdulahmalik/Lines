@@ -1,0 +1,32 @@
+name: CHORE - product upkeep, no direct end-user value
+description: Used for defining Chores for proper product upkeep.
+projects: "SalubrityOnline/1"
+type: chore
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Describe the specific product behavior (in standard story format if appropriate), or just explain what is needed; and include any additional supporting information.
+      placeholder: As a <type of user>, I want <some goal> so that <some reason>.
+    validations:
+      required: true
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions
+      description: >-
+        List any assumptions that need to be considered with this Chore.
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        List out all the criteria that must be met in order for this chore to be considered complete, using the Gherkin syntax where appropriate, otherwise just listing expectations.
+      placeholder: >-
+        Given <some initial context>
+        When <an event happens>
+        Then <ensure some outcomes>
+    validations:
+      required: true

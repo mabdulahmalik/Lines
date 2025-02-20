@@ -1,0 +1,35 @@
+name: BUG - unexpected behavior, something isn't working
+description: Used for defining unexpected behavior and how it should be corrected.
+projects: "SalubrityOnline/1"
+type: bug
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: Provide lead-in context that describes the circumstances in which the bug was encountered.
+      placeholder: Be sure to include clear steps to consistently reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expectedResult
+    attributes:
+      label: Expected Result
+      description: Described what you were expecting to happen and at what point in the Scenario you were expecting it to happen.
+      placeholder: Be very specific about things like user interactions, state transitions, and language usage.
+    validations:
+      required: true
+  - type: textarea
+    id: actualResult
+    attributes:
+      label: Actual Result
+      description: Describe what is actually happening and at what point in the Scenario it should happen.
+      placeholder: Be very specific about things like user interactions, state transitions, and language usage.
+    validations:
+      required: true
+  - type: textarea
+    id: errorDetails
+    attributes:
+      label: Error/Exception Details
+      description: Provide any applicable error logs and/or error messages.
+      render: shell

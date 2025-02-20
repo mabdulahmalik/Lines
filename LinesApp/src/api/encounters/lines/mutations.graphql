@@ -1,0 +1,34 @@
+mutation RecordLineInfection($command: RecordLineInfectionCmd!) {
+  recordLineInfection(command: $command) {
+    correlationId
+  }
+}
+
+mutation ClearLineInfection($command: ClearLineInfectionCmd!) {
+  clearLineInfection(command: $command) {
+    correlationId
+  }
+}
+
+mutation PlaceLineInternally($command: PlaceLineInternallyCmd!) {
+  placeLineInternally(command: $command) {
+    correlationId
+  }
+}
+
+mutation PlaceLineExternally($command: PlaceLineExternallyCmd!) {
+  placeLineExternally(command: $command) {
+    correlationId
+  }
+}
+mutation CloseLine($command: CloseLineCmd!) {
+  closeLine(command: $command) {
+    correlationId
+  }
+}
+mutation EnactListRevision($command: EnactLineRevisionPrc!) {
+  enactListRevision(command: $command) {
+    correlationId
+  }
+}
+

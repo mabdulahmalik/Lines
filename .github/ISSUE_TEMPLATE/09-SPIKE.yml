@@ -1,0 +1,21 @@
+name: SPIKE - time-boxed investigations, exploratory in nature
+description: Used for exploratory work like research and prototyping.
+projects: "SalubrityOnline/1"
+type: spike
+body:
+  - type: textarea
+    id: subjectOfExploration
+    attributes:
+      label: Subject of Exploration
+      description: >-
+        Describe the scope of what needs to be explored, how (e.g. research, prototyping, etc.), and what is being held back by this uncertainty.
+    validations:
+      required: true
+  - type: textarea
+    id: decisionPoint
+    attributes:
+      label: Decision Point
+      description: >-
+        Describe what needs to be uncovered or proven to make a decision on the next steps.
+    validations:
+      required: true

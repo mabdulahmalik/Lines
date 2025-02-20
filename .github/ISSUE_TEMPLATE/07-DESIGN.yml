@@ -1,0 +1,19 @@
+name: DESIGN - modifications to the user experience
+description: Used for making modifications to the end-user experience.
+projects: "SalubrityOnline/1"
+type: design
+body:
+  - type: textarea
+    id: desiredExperience
+    attributes:
+      label: Desired Experience
+      description: >-
+        Describe the desired experience for the end-user and the problem that needs to be solved.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: >-
+        Describe any constraints that need to be considered when designing the solution.

@@ -1,0 +1,77 @@
+mutation EnactJobIntake($command: EnactJobIntakePrc!) {
+  enactJobIntake(command: $command) {
+    correlationId
+  }
+}
+
+mutation AttachNoteToJob($command: AttachNoteToJobCmd!) {
+  attachNoteToJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyNoteForJob($command: ModifyNoteForJobCmd!) {
+  modifyNoteForJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation RemoveNoteFromJob($command: RemoveNoteFromJobCmd!) {
+  removeNoteFromJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation CancelJob($command: CancelJobCmd!) {
+  cancelJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeleteJob($command: DeleteJobCmd!) {
+  deleteJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation DiscardNoteAsObservation($command: DiscardNoteAsObservationCmd!) {
+  discardNoteAsObservation(command: $command) {
+    correlationId
+  }
+}
+
+mutation MakeNoteAnObservation($command: MakeNoteAnObservationCmd!) {
+  makeNoteAnObservation(command: $command) {
+    correlationId
+  }
+}
+
+mutation UnpinNoteFromJob($command: UnpinNoteFromJobCmd!) {
+  unpinNoteFromJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation PinNoteToJob($command: PinNoteToJobCmd!) {
+  pinNoteToJob(command: $command) {
+    correlationId
+  }
+}
+
+mutation MakeNoteAnObservation($command: MakeNoteAnObservationCmd!) {
+  makeNoteAnObservation(command: $command) {
+    correlationId
+  }
+}
+
+mutation DiscardNoteAsObservation($command: DiscardNoteAsObservationCmd!) {
+  discardNoteAsObservation(command: $command) {
+    correlationId
+  }
+}
+
+mutation EnactJobReschedule($command: EnactJobReschedulePrc!) {
+  enactJobReschedule(command: $command) {
+    correlationId
+  }
+}

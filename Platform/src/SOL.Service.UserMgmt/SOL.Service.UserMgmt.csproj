@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\SOL.Abstractions\SOL.Abstractions.csproj" />
+		<ProjectReference Include="..\SOL.Messaging\SOL.Messaging.csproj" />
+		<ProjectReference Include="..\SOL.DataAccess\SOL.DataAccess.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Dawn.Guard" Version="1.12.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+		<PackageReference Include="NodaTime" Version="3.1.11" />
+		<PackageReference Include="Scrutor" Version="4.2.2" />
+		<PackageReference Include="SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime" Version="8.0.1" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoWarn>8601;8618</NoWarn>
+	</PropertyGroup>
+
+</Project>

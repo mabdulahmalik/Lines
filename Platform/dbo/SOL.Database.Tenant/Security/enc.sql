@@ -1,0 +1,3 @@
+CREATE SCHEMA [enc]
+    AUTHORIZATION [dbo];
+GO

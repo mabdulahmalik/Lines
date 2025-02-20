@@ -1,0 +1,21 @@
+name: RISK - identified areas of exposure
+description: Used to address Security, Governance, Compliance, and other Risk-related concerns.
+projects: "SalubrityOnline/1"
+type: risk
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Describe the business purpose, why is this being done and what value does it bring?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        Clearly define the conditions that signify the completion of the Risk.
+    validations:
+      required: true

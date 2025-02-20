@@ -1,0 +1,32 @@
+name: CHANGE - quality improvements of existing business value
+description: Used for defining existing areas that could be made more valuable.
+projects: "SalubrityOnline/1"
+type: change
+body:
+  - type: dropdown
+    id: personas
+    attributes:
+      label: Affected Personas
+      multiple: true
+      options:
+        - Clinician
+        - Director
+        - Administrator
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Describe the business purpose, why is this being done and what value does it bring?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        Clearly define the conditions that signify the completion of the Change.
+    validations:
+      required: true

@@ -1,0 +1,29 @@
+mutation CreateRoutine($command: CreateRoutineCmd!) {
+  createRoutine(command: $command) {
+    correlationId
+  }
+}
+
+mutation ModifyRoutine($command: ModifyRoutineCmd!) {
+  modifyRoutine(command: $command) {
+    correlationId
+  }
+}
+
+mutation ActivateRoutine($command: ActivateRoutineCmd!) {
+  activateRoutine(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeactivateRoutine($command: DeactivateRoutineCmd!) {
+  deactivateRoutine(command: $command) {
+    correlationId
+  }
+}
+
+mutation DeleteRoutine($command: DeleteRoutineCmd!) {
+  deleteRoutine(command: $command) {
+    correlationId
+  }
+}

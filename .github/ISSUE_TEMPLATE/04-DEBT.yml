@@ -1,0 +1,21 @@
+name: DEBT - removal of impediments to future development
+description: Used to improve the software and operational architecture.
+projects: "SalubrityOnline/1"
+type: debt
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Describe the business purpose, why is this being done and what value does it bring?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        Clearly define the conditions that signify the completion of the Debt.
+    validations:
+      required: true

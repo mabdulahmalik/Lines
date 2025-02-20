@@ -1,0 +1,48 @@
+name: FEATURE - net-new development, new business value
+description: Used for defining currently non-existent business value.
+projects: "SalubrityOnline/1"
+type: feature
+body:
+  - type: dropdown
+    id: personas
+    attributes:
+      label: Affected Personas
+      multiple: true
+      options:
+        - Clinician
+        - Director
+        - Administrator
+    validations:
+      required: true
+  - type: textarea
+    id: benefitHypothesis
+    attributes:
+      label: Benefit Hypothesis
+      description: >-
+        Specify how the functionality will provide advantages to users.
+    validations:
+      required: true      
+  - type: textarea
+    id: businessValue
+    attributes:
+      label: Business Value
+      description: >-
+        Determine the business value through various methods, considering user volume, feature usage frequency, release timing, and development effort.
+    validations:
+      required: true      
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >-
+        Articulate the feature's context and user interactions, emphasizing the necessity rather than the technical implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        Clearly define the conditions that signify the completion of the Feature.
+    validations:
+      required: true

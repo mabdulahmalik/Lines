@@ -1,0 +1,36 @@
+name: STORY - discreet unit of work as a user interaction
+description: Used for defining new User Stories.
+projects: "SalubrityOnline/1"
+type: story
+body:
+  - type: textarea
+    id: statement
+    attributes:
+      label: Statement
+      description: >-
+        Describe the specific user interaction in standard story format; and include any additional supporting information.
+      placeholder: As a <type of user>, I want <some goal> so that <some reason>.
+    validations:
+      required: true
+  - type: textarea
+    id: assumptions
+    attributes:
+      label: Assumptions
+      description: >-
+        List any assumptions that need to be considered with this Story.      
+  - type: textarea
+    id: acceptanceCriteria
+    attributes:
+      label: Acceptance Criteria
+      description: >-
+        List out all the criteria that must be met in order for this story to be considered complete, using the Gherkin syntax.
+      placeholder: >-
+        Given <some initial context>
+        When <an event happens>
+        Then <ensure some outcomes>
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: >-
+        For a good description of the Gherkin-style Acceptance Criteria syntax, view [this article by AtlexSoft](https://www.altexsoft.com/blog/acceptance-criteria-purposes-formats-and-best-practices/)

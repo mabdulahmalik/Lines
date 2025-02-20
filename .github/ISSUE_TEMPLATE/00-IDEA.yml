@@ -1,0 +1,12 @@
+name: IDEA - potential new business value
+description: Used for quickly capturing new ideas.
+projects: "SalubrityOnline/1"
+type: idea
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the Idea in detail. What should the product do differently? What problem does it solve? How does it benefit the user?
+    validations:
+      required: true

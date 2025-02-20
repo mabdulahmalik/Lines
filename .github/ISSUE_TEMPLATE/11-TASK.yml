@@ -1,0 +1,12 @@
+name: TASK - general piece of work
+description: Used for tracking any other kind of work.
+projects: "SalubrityOnline/1"
+type: task
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the Task in however much detail is necessary in detail.
+    validations:
+      required: true

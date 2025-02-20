@@ -1,0 +1,35 @@
+mutation CreateProcedure($command: CreateProcedureCmd!) {
+    createProcedure(command: $command) {
+      correlationId
+    }
+}
+
+mutation ModifyProcedure($command: ModifyProcedureCmd!) {
+    modifyProcedure(command: $command) {
+      correlationId
+    }
+}
+
+mutation DeleteProcedure($command: DeleteProcedureCmd!) {
+  deleteProcedure(command: $command) {
+    correlationId
+  }
+}
+
+mutation ArchiveProcedure($command: ArchiveProcedureCmd!) {
+  archiveProcedure(command: $command) {
+    correlationId
+  }
+}
+
+mutation UnarchiveProcedure($command: UnarchiveProcedureCmd!) {
+  unarchiveProcedure(command: $command) {
+    correlationId
+  }
+}
+
+mutation SortProcedure($command: SortProcedureCmd!) {
+  sortProcedure(command: $command) {
+    correlationId
+  }
+}
