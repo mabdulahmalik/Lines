@@ -7,6 +7,8 @@ env:
   DOCKER_IMAGE: sol-database-tenant
   AZURE_SQL_SERVER: ${{ secrets.AZURE_SQL_SERVER }}.database.windows.net
   AZURE_SQL_DATABASE: ${{ secrets.AZURE_SQL_DATABASE }}
+  AZURE_SQL_ADMIN_USER: ${{ secrets.AZURE_SQL_ADMIN_USER }}
+  AZURE_SQL_ADMIN_PASSWORD: ${{ secrets.AZURE_SQL_ADMIN_PASSWORD }}
 
 jobs:
   build-and-deploy:
@@ -29,8 +31,12 @@ jobs:
       - name: Deploy to Azure SQL
         run: |
           docker run --rm \
+            -e SQL_SERVER=${{ env.AZURE_SQL_SERVER }} \
+            -e SQL_DATABASE=${{ env.AZURE_SQL_DATABASE }} \
+            -e SQL_USER=${{ secrets.AZURE_SQL_ADMIN_USER }} \
+            -e SQL_PASSWORD=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }} \
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }} \
             /opt/sqlpackage/sqlpackage \
             /Action:Publish \
             /SourceFile:./SOL.Database.Tenant.dacpac \
-            /TargetConnectionString:"Server=${{ env.AZURE_SQL_SERVER }};Database=${{ env.AZURE_SQL_DATABASE }};User Id=${{ secrets.AZURE_SQL_ADMIN_USER }};Password=${{ secrets.AZURE_SQL_ADMIN_PASSWORD }};Encrypt=True;TrustServerCertificate=False"
+            /TargetConnectionString:"Server=${SQL_SERVER};Database=${SQL_DATABASE};User Id=${SQL_USER};Password=${SQL_PASSWORD};Encrypt=True;TrustServerCertificate=False"
