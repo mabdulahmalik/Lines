@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  SOLUTION_PATH: Platform/tst/SOL.Service.PatientEncounter.Tests/SalubrityOnline.sln
+  SOLUTION_PATH: Platform/SalubrityOnline.sln
   SQL_PROJECT_PATH: Platform/dbo/SOL.Database.Tenant/SOL.Database.Tenant.sqlproj
   DOCKERFILE_PATH: Platform/dbo/Dockerfile
   WORKING_DIR: Platform/dbo
