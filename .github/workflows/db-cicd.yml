@@ -24,6 +24,7 @@ jobs:
 
       - name: Build Solution
         working-directory: ${{ env.WORKING_DIR }}
+        shell: cmd
         run: |
           msbuild "${{ github.workspace }}/${{ env.SOLUTION_PATH }}" ^
           /p:Configuration=Release ^
