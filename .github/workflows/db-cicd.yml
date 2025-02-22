@@ -25,9 +25,10 @@ jobs:
       - name: Build Solution
         working-directory: ${{ env.WORKING_DIR }}
         run: |
-          msbuild "${{ github.workspace }}/${{ env.SOLUTION_PATH }}" \
-          /p:Configuration=Release \
-          /p:TargetFrameworkVersion=v4.7.1"
+          $solutionPath = "${{ github.workspace }}/${{ env.SOLUTION_PATH }}"
+          msbuild $solutionPath `
+            /p:Configuration=Release `
+            /p:TargetFrameworkVersion=v4.7.1"
 
       - name: Verify DACPAC Output
         working-directory: ${{ env.WORKING_DIR }}
