@@ -19,6 +19,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Visual Studio Locator
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/microsoft/vswhere/releases/download/3.0.3/vswhere.exe" -OutFile "$env:ProgramFiles\vswhere.exe"
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3.1
 
