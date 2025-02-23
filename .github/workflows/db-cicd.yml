@@ -74,6 +74,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+
       - name: Build Database Project
         run: |
           msbuild Platform/dbo/SOL.Database.Tenant/SOL.Database.Tenant.sqlproj /p:Configuration=Debug
