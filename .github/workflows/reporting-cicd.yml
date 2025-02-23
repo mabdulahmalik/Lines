@@ -1,4 +1,4 @@
-name: Platform Service CI/CD
+name: Reporting Service CI/CD
 
 on:
   pull_request:
@@ -7,57 +7,62 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '8.0.x'  
-  PROJECT_PATH: Platform/src/SOL.Gateway/SOL.Gateway.csproj
-  DOCKERFILE_PATH: Platform/src/Dockerfile
-  BUILD_OUTPUT_PATH: Platform/src/SOL.Gateway/publish
-  AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-  IMAGE_NAME: platform-service
+  DOTNET_VERSION: '8.0.x'
+  ACR_NAME: youracrname  
+  IMAGE_NAME: ${{ env.ACR_NAME }}.azurecr.io/reporting-service
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Platform/src/SOL.Reporting
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore Dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }}
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: Build
-        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+      - name: Build project
+        run: dotnet build --configuration Release
 
-      - name: Publish
-        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ${{ env.BUILD_OUTPUT_PATH }}
+      - name: Publish project
+        run: dotnet publish -c Release -o published
 
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: platform-service-artifact
-          path: ${{ env.BUILD_OUTPUT_PATH }}
+          name: reporting-service-artifact
+          path: published
 
-  docker-build-and-push:
-    needs: build
+  docker:
     runs-on: ubuntu-latest
+    needs: build
+    env:
+      REGISTRY_USERNAME: ${{ secrets.ACR_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+      ACR_NAME: ${{ env.ACR_NAME }}
+      IMAGE_NAME: ${{ env.IMAGE_NAME }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Log in to Azure Container Registry
+      - name: Build Docker image
+        working-directory: Platform/src/SOL.Reporting
         run: |
-          echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+          docker build -t $IMAGE_NAME:${{ github.sha }} -t $IMAGE_NAME:latest .
 
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH }}
-          docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Log in to ACR
+        run: echo $REGISTRY_PASSWORD | docker login $ACR_NAME.azurecr.io -u $REGISTRY_USERNAME --password-stdin
 
-      - name: Push Docker Image to ACR
-        run: |
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Push Docker image (SHA tag)
+        run: docker push $IMAGE_NAME:${{ github.sha }}
+
+      - name: Push Docker image (latest tag)
+        run: docker push $IMAGE_NAME:latest
