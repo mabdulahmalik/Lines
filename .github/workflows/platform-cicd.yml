@@ -49,6 +49,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🔍 Check & Install Docker (if missing)
+        shell: powershell
         run: |
           if (!(Get-Command docker -ErrorAction SilentlyContinue)) {
             Write-Host "❌ Docker is not installed. Installing Docker..."
@@ -58,7 +59,6 @@ jobs:
           } else {
             Write-Host "✅ Docker is already installed!"
           }
-        shell: pwsh
 
       - name: 🚀 Start Docker Service (Windows only)
         if: runner.os == 'Windows'
