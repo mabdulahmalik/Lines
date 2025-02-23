@@ -1,4 +1,4 @@
-name: CI/CD - Platform Service
+name: Platform Service CI/CD
 
 on:
   pull_request:
@@ -8,14 +8,13 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'  
-  SOLUTION_PATH: Platform/tst/SOL.Service.PatientEncounter.Tests/SalubrityOnline.sln
-  PLATFORM_PROJECT_PATH: Platform/src
+  PROJECT_PATH: Platform/src/SOL.Gateway/SOL.Gateway.csproj
   DOCKERFILE_PATH: Platform/src/Dockerfile
+  BUILD_OUTPUT_PATH: Platform/src/SOL.Gateway/publish
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: platform-service
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -28,22 +27,19 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore Dependencies
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
 
       - name: Build
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
 
       - name: Publish
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -o ${{ env.BUILD_OUTPUT_PATH }}
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: platform-service-artifact
-          path: ${{ env.PLATFORM_PROJECT_PATH }}/publish
+          path: ${{ env.BUILD_OUTPUT_PATH }}
 
   docker-build-and-push:
     needs: build
@@ -58,7 +54,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PLATFORM_PROJECT_PATH }}
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH }}
           docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker Image to ACR
