@@ -19,10 +19,10 @@ jobs:
         working-directory: Platform/src/SOL.Reporting/SOL.Reporting
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -36,7 +36,7 @@ jobs:
         run: dotnet publish -c Release -o published
 
       - name: Upload publish artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reporting-service-artifact
           path: published
@@ -46,7 +46,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         working-directory: Platform/src/SOL.Reporting/SOL.Reporting
