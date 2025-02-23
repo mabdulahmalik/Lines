@@ -48,12 +48,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🔍 Check Docker Installation
+      - name: 🔍 Check & Install Docker (if missing)
         run: |
           if (!(Get-Command docker -ErrorAction SilentlyContinue)) {
-            Write-Error "❌ Docker is not installed or not in PATH. Please install Docker and restart the runner."; exit 1
+            Write-Host "❌ Docker is not installed. Installing Docker..."
+            Invoke-WebRequest -Uri "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" -OutFile "$env:TEMP\DockerInstaller.exe"
+            Start-Process -FilePath "$env:TEMP\DockerInstaller.exe" -ArgumentList "install", "--quiet", "--norestart" -Wait
+            Write-Host "✅ Docker installation completed!"
           } else {
-            Write-Host "✅ Docker is installed!"
+            Write-Host "✅ Docker is already installed!"
           }
         shell: pwsh
 
@@ -65,11 +68,9 @@ jobs:
           if ($service -and $service.Status -ne 'Running') {
             Write-Host "🚀 Starting Docker..."
             Start-Service docker
-            Start-Sleep -s 5  # Wait for Docker to start
+            Start-Sleep -s 10  # Wait for Docker to start
           } else {
             Write-Host "✅ Docker is already running!"
-          }
-        shell: pwsh
 
       - name: Log in to Azure Container Registry
         run: |
