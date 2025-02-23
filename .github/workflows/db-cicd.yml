@@ -72,7 +72,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Database Project
         run: |
@@ -86,7 +86,7 @@ jobs:
         shell: powershell
 
       - name: Upload DACPAC Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dropDacpac
           path: staging
@@ -97,7 +97,7 @@ jobs:
     environment: dbaverificationscript
     steps:
       - name: Download DACPAC Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dropDacpac
           path: staging
