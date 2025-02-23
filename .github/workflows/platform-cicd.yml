@@ -27,8 +27,8 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore Dependencies
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet restore
+        working-directory: ${{ github.workspace }}
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
 
       - name: Build
         working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
