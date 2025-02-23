@@ -28,22 +28,19 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore Dependencies
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet restore
+        run: dotnet restore ${{ env.PLATFORM_PROJECT_PATH }}
 
       - name: Build
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ${{ env.PLATFORM_PROJECT_PATH }} --configuration Release --no-restore
 
       - name: Publish
-        working-directory: ${{ env.PLATFORM_PROJECT_PATH }}
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish ${{ env.PLATFORM_PROJECT_PATH }} -c Release -o ${{ env.BUILD_OUTPUT_PATH }}
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: platform-service-artifact
-          path: ${{ env.PLATFORM_PROJECT_PATH }}/publish
+          path: ${{ env.BUILD_OUTPUT_PATH }}
 
   docker-build-and-push:
     needs: build
