@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PLATFORM_PROJECT_PATH }}
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH }}
           docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker Image to ACR
