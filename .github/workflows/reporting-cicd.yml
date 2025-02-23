@@ -8,15 +8,15 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  ACR_NAME: youracrname  
-  IMAGE_NAME: ${{ env.ACR_NAME }}.azurecr.io/reporting-service
+  AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+  IMAGE_NAME: reporting-service
 
 jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Platform/src/SOL.Reporting
+        working-directory: Platform/src/SOL.Reporting/SOL.Reporting
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -44,25 +44,21 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs: build
-    env:
-      REGISTRY_USERNAME: ${{ secrets.ACR_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-      ACR_NAME: ${{ env.ACR_NAME }}
-      IMAGE_NAME: ${{ env.IMAGE_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Build Docker image
-        working-directory: Platform/src/SOL.Reporting
+        working-directory: Platform/src/SOL.Reporting/SOL.Reporting
         run: |
-          docker build -t $IMAGE_NAME:${{ github.sha }} -t $IMAGE_NAME:latest .
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Log in to ACR
         run: echo $REGISTRY_PASSWORD | docker login $ACR_NAME.azurecr.io -u $REGISTRY_USERNAME --password-stdin
 
       - name: Push Docker image (SHA tag)
-        run: docker push $IMAGE_NAME:${{ github.sha }}
+        run: docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Push Docker image (latest tag)
-        run: docker push $IMAGE_NAME:latest
+        run: docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
