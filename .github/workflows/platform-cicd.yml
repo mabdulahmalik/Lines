@@ -10,6 +10,7 @@ env:
   DOTNET_VERSION: '8.0.x'  
   PROJECT_PATH: Platform/src/SOL.Gateway/SOL.Gateway.csproj
   DOCKERFILE_PATH: Platform/src/Dockerfile
+  PROJECT_PATH_SOL: Platform/src
   BUILD_OUTPUT_PATH: Platform/src/SOL.Gateway/publish
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: platform-service
@@ -54,7 +55,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH }}
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH_SOL }}
           docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker Image to ACR
