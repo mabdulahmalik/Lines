@@ -1,4 +1,4 @@
-name: CI/CD - Platform Service
+name: Platform Service CI/CD
 
 on:
   pull_request:
