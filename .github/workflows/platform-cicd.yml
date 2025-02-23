@@ -1,4 +1,4 @@
-name: CI/CD - Platform Service
+name: Platform Service CI/CD
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '6.0.x'  
+  DOTNET_VERSION: '8.0.x'  
   PROJECT_PATH: Platform/src/SOL.Gateway/SOL.Gateway.csproj
   DOCKERFILE_PATH: Platform/src/Dockerfile
   BUILD_OUTPUT_PATH: Platform/src/SOL.Gateway/publish
