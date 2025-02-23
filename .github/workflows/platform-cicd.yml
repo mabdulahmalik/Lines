@@ -48,29 +48,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: 🔍 Check & Install Docker (if missing)
+      - name: Install Chocolatey (if not already installed)
         shell: powershell
         run: |
-          if (!(Get-Command docker -ErrorAction SilentlyContinue)) {
-            Write-Host "❌ Docker is not installed. Installing Docker..."
-            Invoke-WebRequest -Uri "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe" -OutFile "$env:TEMP\DockerInstaller.exe"
-            Start-Process -FilePath "$env:TEMP\DockerInstaller.exe" -ArgumentList "install", "--quiet", "--norestart" -Wait
-            Write-Host "✅ Docker installation completed!"
-          } else {
-            Write-Host "✅ Docker is already installed!"
-          }
-
-      - name: 🚀 Start Docker Service (Windows only)
-        if: runner.os == 'Windows'
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+      
+      - name: Install Docker Desktop
+        shell: powershell
         run: |
-          Write-Host "Checking if Docker service is running..."
-          $service = Get-Service docker -ErrorAction SilentlyContinue
-          if ($service -and $service.Status -ne 'Running') {
-            Write-Host "🚀 Starting Docker..."
-            Start-Service docker
-            Start-Sleep -s 10  # Wait for Docker to start
-          } else {
-            Write-Host "✅ Docker is already running!"
+          choco install docker-desktop -y --force
+          
+      - name: Start Docker Service
+        shell: powershell
+        run: |
+          Start-Service Docker
+          Set-Service -Name Docker -StartupType Automatic
+
+      - name: Verify Docker Installation
+        shell: powershell
+        run: |
+          docker --version
 
       - name: Log in to Azure Container Registry
         run: |
