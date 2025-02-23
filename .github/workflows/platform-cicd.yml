@@ -48,6 +48,29 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: 🔍 Check Docker Installation
+        run: |
+          if (!(Get-Command docker -ErrorAction SilentlyContinue)) {
+            Write-Error "❌ Docker is not installed or not in PATH. Please install Docker and restart the runner."; exit 1
+          } else {
+            Write-Host "✅ Docker is installed!"
+          }
+        shell: pwsh
+
+      - name: 🚀 Start Docker Service (Windows only)
+        if: runner.os == 'Windows'
+        run: |
+          Write-Host "Checking if Docker service is running..."
+          $service = Get-Service docker -ErrorAction SilentlyContinue
+          if ($service -and $service.Status -ne 'Running') {
+            Write-Host "🚀 Starting Docker..."
+            Start-Service docker
+            Start-Sleep -s 5  # Wait for Docker to start
+          } else {
+            Write-Host "✅ Docker is already running!"
+          }
+        shell: pwsh
+
       - name: Log in to Azure Container Registry
         run: |
           echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
