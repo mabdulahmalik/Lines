@@ -44,16 +44,17 @@ jobs:
           name: dropDacpac
           path: staging
 
-      - name: Rename DACPAC to ZIP
+      - name: Repackage DACPAC as ZIP
         run: |
-          Rename-Item -Path staging/SOL.Database.Tenant.dacpac -NewName SOL.Database.Tenant.zip
+          # Create a valid zip archive containing the DACPAC file
+          Compress-Archive -Path staging/SOL.Database.Tenant.dacpac -DestinationPath staging/SOL.Database.Tenant.zip -Force
         shell: powershell
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-  
+
       - name: Deploy Database
         uses: Azure/sql-action@v2
         with:
