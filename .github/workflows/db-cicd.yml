@@ -44,6 +44,11 @@ jobs:
           name: dropDacpac
           path: staging
 
+      - name: Rename DACPAC to ZIP
+        run: |
+          Rename-Item -Path staging/SOL.Database.Tenant.dacpac -NewName SOL.Database.Tenant.zip
+        shell: powershell
+
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -53,6 +58,6 @@ jobs:
         uses: Azure/sql-action@v2
         with:
           connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
-          path: staging/SOL.Database.Tenant.dacpac
+          path: staging/SOL.Database.Tenant.zip
           action: publish
           arguments: '/p:DropObjectsNotInSource=true /p:BlockOnPossibleDataLoss=true'
