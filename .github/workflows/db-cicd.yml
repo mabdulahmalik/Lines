@@ -77,22 +77,22 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
 
-      - name: Install .NET Framework 4.0 Developer Pack (if missing)
+      - name: Install .NET Framework 4.0 Targeting Pack (if missing)
         shell: powershell
         run: |
-          $frameworkPath = "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
-          if (!(Test-Path $frameworkPath)) {
-            Write-Host "❌ .NET Framework 4.0 Developer Pack not found. Installing..."
-            Invoke-WebRequest -Uri "https://download.microsoft.com/download/3/0/9/3093DF06-882A-41B1-8BE4-2D34FE456D17/dotNetFx40_Full_x86_x64.exe" -OutFile "$env:TEMP\dotNetFx40.exe"
+          $targetingPackPath = "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
+          if (!(Test-Path $targetingPackPath)) {
+            Write-Host "❌ .NET Framework 4.0 Targeting Pack not found. Installing..."
+            Invoke-WebRequest -Uri "https://download.microsoft.com/download/B/4/3/B43777DC-342A-4CC2-8F5C-66C2B04630E6/dotNetFx40_Full_setup.exe" -OutFile "$env:TEMP\dotNetFx40.exe"
             Start-Process -FilePath "$env:TEMP\dotNetFx40.exe" -ArgumentList "/q" -Wait
-            Write-Host "✅ .NET Framework 4.0 Developer Pack installed!"
+            Write-Host "✅ .NET Framework 4.0 Targeting Pack installed!"
           } else {
-            Write-Host "✅ .NET Framework 4.0 Developer Pack is already installed!"
+            Write-Host "✅ .NET Framework 4.0 Targeting Pack is already installed!"
           }
 
-      - name: Build Database Project
+      - name: Build Database Project (Force .NET 4.0 Reference Assemblies)
         run: |
-          msbuild Platform/dbo/SOL.Database.Tenant/SOL.Database.Tenant.sqlproj /p:Configuration=Debug
+          msbuild Platform/dbo/SOL.Database.Tenant/SOL.Database.Tenant.sqlproj /p:Configuration=Debug /p:TargetFrameworkRootPath="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework"
         shell: powershell
 
       - name: Copy DACPAC to Staging Directory
