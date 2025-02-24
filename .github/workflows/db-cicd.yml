@@ -44,10 +44,10 @@ jobs:
           name: dropDacpac
           path: staging
 
-      - name: Repackage DACPAC as ZIP
+      - name: Repackage DACPAC as ZIP using tar
         run: |
-          # Create a valid zip archive containing the DACPAC file
-          Compress-Archive -Path staging/SOL.Database.Tenant.dacpac -DestinationPath staging/SOL.Database.Tenant.zip -Force
+          # Use tar to create a valid zip archive from the dacpac file.
+          tar -a -c -f staging/SOL.Database.Tenant.zip -C staging SOL.Database.Tenant.dacpac
         shell: powershell
 
       - name: Azure Login
