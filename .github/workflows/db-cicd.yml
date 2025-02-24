@@ -69,23 +69,8 @@ on:
 
 jobs:
   build-db:
-    runs-on: self-hosted
+    runs-on: windows-latest
     steps:
-      - name: Install .NET Framework 4.0 Developer Pack (if needed)
-        shell: powershell
-        run: |
-          $refAssembliesPath = "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
-          if (-Not (Test-Path $refAssembliesPath)) {
-              Write-Host ".NET Framework 4.0 Developer Pack not found. Installing..."
-              $installerUrl = "https://download.microsoft.com/download/8/7/0/870C91B1-2602-49C2-AC35-3D5863B20560/NDP40-DevPack.exe"
-              $installerPath = "$env:TEMP\NDP40-DevPack.exe"
-              Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
-              Start-Process -FilePath $installerPath -ArgumentList "/quiet" -Wait
-              Write-Host ".NET Framework 4.0 Developer Pack installation completed."
-          } else {
-              Write-Host ".NET Framework 4.0 Developer Pack already installed."
-          }
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
