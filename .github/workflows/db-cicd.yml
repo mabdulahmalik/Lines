@@ -44,24 +44,14 @@ jobs:
           name: dropDacpac
           path: staging
 
-      - name: Repackage DACPAC as ZIP using .NET ZipFile API
+      - name: Repackage DACPAC using Compress-Archive
         run: |
-          # Load the assembly containing System.IO.Compression.ZipFile
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          
           $sourceFile = "staging\SOL.Database.Tenant.dacpac"
           $zipPath = "staging\SOL.Database.Tenant.zip"
-          $tempFolder = "staging\tempZip"
           
           if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-          if (Test-Path $tempFolder) { Remove-Item $tempFolder -Recurse -Force }
           
-          New-Item -ItemType Directory -Force -Path $tempFolder | Out-Null
-          Copy-Item $sourceFile -Destination $tempFolder
-          
-          [System.IO.Compression.ZipFile]::CreateFromDirectory($tempFolder, $zipPath)
-          
-          Remove-Item $tempFolder -Recurse -Force
+          Compress-Archive -Path $sourceFile -DestinationPath $zipPath -Force
         shell: powershell  
 
       - name: Azure Login
