@@ -44,16 +44,6 @@ jobs:
           name: dropDacpac
           path: staging
 
-      - name: Repackage DACPAC using Compress-Archive
-        run: |
-          $sourceFile = "staging\SOL.Database.Tenant.dacpac"
-          $zipPath = "staging\SOL.Database.Tenant.zip"
-          
-          if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-          
-          Compress-Archive -Path $sourceFile -DestinationPath $zipPath -Force
-        shell: powershell  
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -63,6 +53,6 @@ jobs:
         uses: Azure/sql-action@v2
         with:
           connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
-          path: staging/SOL.Database.Tenant.zip
+          path: staging/SOL.Database.Tenant.dacpac
           action: publish
           arguments: '/p:DropObjectsNotInSource=true /p:BlockOnPossibleDataLoss=true'
