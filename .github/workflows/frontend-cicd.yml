@@ -32,6 +32,10 @@ jobs:
         working-directory: ${{ env.FRONTEND_PATH }}
         run: npm install
 
+      - name: Generate GraphQL Types
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run generate
+
       - name: Build Vue App
         working-directory: ${{ env.FRONTEND_PATH }}
         run: npm run build
