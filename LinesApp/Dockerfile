@@ -16,8 +16,8 @@ RUN npm run codegen
 RUN npm run build
 
 # Stage 2: Create the Nginx image and copy the build files
-FROM nginx:1.27-alpine
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY --from=build-stage /app/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# FROM nginx:1.27-alpine
+# COPY --from=build-stage /app/dist /usr/share/nginx/html
+# COPY --from=build-stage /app/nginx.conf /etc/nginx/conf.d/default.conf
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]
