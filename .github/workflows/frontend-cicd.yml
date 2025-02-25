@@ -13,6 +13,8 @@ env:
   FRONTEND_PATH: LinesApp
   DOCKER_IMAGE_NAME: linesapp
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+  GQL_SCHEMA_PATH: http://host.docker.internal:5051/graphql # Adjust as needed
+
 
 jobs:
   # build-frontend:
@@ -57,16 +59,18 @@ jobs:
       #     name: frontend-dist
       #     path: ${{ env.FRONTEND_PATH }}/dist
 
-      - name: Log in to Azure Container Registry
+      - name: 🔑 Log in to Azure Container Registry
         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: 🏗️ Build and Push Docker Image
         working-directory: ${{ env.FRONTEND_PATH }}
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
+          docker build --build-arg GQL_SCHEMA_PATH=${{ env.GQL_SCHEMA_PATH }} \
+            -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
           docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Tag and Push Latest Image
+      - name: 🏷️ Tag and Push Latest Image
         run: |
-          docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} \
+            ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
           docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
