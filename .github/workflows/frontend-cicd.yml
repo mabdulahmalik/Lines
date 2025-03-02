@@ -13,8 +13,6 @@ env:
   FRONTEND_PATH: LinesApp
   DOCKER_IMAGE_NAME: linesapp
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
-  GQL_SCHEMA_PATH: http://host.docker.internal:5051/graphql # Adjust as needed
-
 
 jobs:
   # build-frontend:
@@ -65,8 +63,7 @@ jobs:
       - name: 🏗️ Build and Push Docker Image
         working-directory: ${{ env.FRONTEND_PATH }}
         run: |
-          docker build --build-arg GQL_SCHEMA_PATH=${{ env.GQL_SCHEMA_PATH }} \
-            -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
           docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
 
       - name: 🏷️ Tag and Push Latest Image
