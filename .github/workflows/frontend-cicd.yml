@@ -60,8 +60,13 @@ jobs:
 
       - name: Install Dependencies
         working-directory: LinesApp
-        run: npm ci
-
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci || npm install
+          else
+            npm install
+          fi
+          
       - name: Generate GraphQL Types
         working-directory: LinesApp
         run: npm run codegen 
