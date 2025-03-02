@@ -21,7 +21,7 @@ public class RemoveProcedureFromEncounterHandler : CommandHandler<RemoveProcedur
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.UndoProcedures([command.Id]);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

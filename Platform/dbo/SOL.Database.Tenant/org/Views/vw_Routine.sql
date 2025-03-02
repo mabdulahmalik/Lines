@@ -5,10 +5,10 @@ SELECT
     r.[CreatedAt],
     r.[ModifiedAt],
     r.[Active],
+    r.[FollowUp], 
     r.[Name],
     r.[Description],
     r.[PurposeId],
-    r.[Settings],
     (SELECT COUNT(*) FROM [org].[FacilityRoutine] fr WHERE fr.[RoutineId] = r.[Id]) as [AssignmentCount]
 FROM
     [org].[Routine] r

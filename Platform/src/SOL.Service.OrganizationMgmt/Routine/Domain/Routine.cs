@@ -21,8 +21,8 @@ public class Routine : AggregateRoot
     public string Name { get; private set; }
     public string? Description { get; private set; }
     public bool Active { get; private set; }
+    public bool FollowUp { get; private set; }
     public Guid PurposeId { get; private set; }
-    public RoutineSetting Settings { get; private set; }
     public RollingSchedule? Rolling { get; private set; }
     public RecurringSchedule Recurring => _recurring;
     public IReadOnlyList<Trigger> Origins => _origins;
@@ -39,7 +39,7 @@ public class Routine : AggregateRoot
 
         var retVal = new Routine(Guid.NewGuid(), name, description, active) {
             PurposeId = purposeId,
-            Settings = isFollowUp ? RoutineSetting.FollowUp : 0
+            FollowUp = isFollowUp
         };
 
         retVal._origins.AddRange(origins);
@@ -79,7 +79,7 @@ public class Routine : AggregateRoot
             : Rolling.NextRun(current).InZone(timeZone);
     }
 
-    public void Modify(string name, string? description, Guid purposeId, bool isFollowUp)
+    public void Modify(string name, string? description, Guid purposeId)
     {
         Guard.Argument(name).NotNull().NotEmpty().NotWhiteSpace();
         Guard.Argument(purposeId).NotDefault();
@@ -87,7 +87,6 @@ public class Routine : AggregateRoot
         Name = name;
         Description = description;
         PurposeId = purposeId;
-        Settings = isFollowUp ? RoutineSetting.FollowUp : 0;
         
         RaiseEventModified();
     }

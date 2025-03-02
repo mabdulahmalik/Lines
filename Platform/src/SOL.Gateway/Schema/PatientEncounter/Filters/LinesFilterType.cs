@@ -1,5 +1,5 @@
 using HotChocolate.Data.Filters;
-using SOL.Service.PatientEncounter.Line.View;
+using SOL.Gateway.Views.PatientEncounter.Line;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 

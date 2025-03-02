@@ -25,7 +25,7 @@ public class DeactivateUserHandler : CommandHandler<DeactivateUser>
 
         user.Deactivate();
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }

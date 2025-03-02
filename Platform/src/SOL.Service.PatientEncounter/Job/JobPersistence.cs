@@ -37,7 +37,7 @@ class JobPersistence : IEntityTypeConfiguration<Domain.Job>
             oeb.Property<Guid>("JobId");
             oeb.Property(x => x.UserId).HasColumnName("AuthorId");
             oeb.Property(x => x.CreatedAt);
-            oeb.Property(x => x.Treatment);
+            oeb.Property(x => x.IsPinned);
             oeb.Property(x => x.Text);
             oeb.Property(x => x.Id);
             
@@ -81,5 +81,16 @@ class JobPersistence : IEntityTypeConfiguration<Domain.Job>
 
         builder.Navigation("_status")
             .UsePropertyAccessMode(PropertyAccessMode.Field);            
+    }
+}
+
+class ScheduledJobPersistence : IEntityTypeConfiguration<Domain.ScheduledJob>
+{
+    public void Configure(EntityTypeBuilder<Domain.ScheduledJob> builder)
+    {
+        builder.ToView("vw_Job");
+        builder.HasKey(x => x.Id);
+        
+        builder.HasQueryFilter(x => !x.DeletedAt.HasValue);
     }
 }

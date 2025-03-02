@@ -23,15 +23,6 @@ public static class Startup
                 .AddTransient(readerInterface, repositoryType)
                 .AddTransient(repositoryInterface, repositoryType);
         }
-        
-        var views = assembly.GetTypes().Where(t => t.Name.EndsWith("View") && t.IsClass && !t.IsAbstract);
-        foreach (var type in views)
-        {
-            var queryType = typeof(GenericQuery<,>).MakeGenericType(ctxType, type);
-            var queryInterface = typeof(IDomainQuery<>).MakeGenericType(type);
-            
-            services.AddTransient(queryInterface, queryType);
-        }
 
         services
             .AddDbContextFactory<TDbCtx>(dbOptions)

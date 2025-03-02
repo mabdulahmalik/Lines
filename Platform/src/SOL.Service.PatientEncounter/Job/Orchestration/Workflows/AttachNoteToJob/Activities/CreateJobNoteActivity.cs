@@ -38,7 +38,7 @@ public class CreateJobNoteActivity : IStateMachineActivity<AttachNoteToJobState,
             job.AddNotes(note);
         }
         
-        _repository.Update(job);
+        await _repository.Update(job, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
         
         context.Saga.Note = note;

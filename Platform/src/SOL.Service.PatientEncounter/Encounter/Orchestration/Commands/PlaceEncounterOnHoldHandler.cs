@@ -25,7 +25,7 @@ public class PlaceEncounterOnHoldHandler : CommandHandler<PlaceEncounterOnHold>
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.PlaceOnHold(_operationContext.Value.ActorId, command.Reason);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

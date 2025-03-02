@@ -27,11 +27,11 @@ public class EncounterPriorityChangedHandler : DomainEventHandler<EncounterPrior
         {
             var statReason = message.Args as string ?? String.Empty;
             if(!String.IsNullOrWhiteSpace(statReason)) {
-                var job = await _jobRepository.Get(message.JobId, stoppageToken);
+                var job = await _jobRepository.Get(message.JobId, stoppageToken);;
                 
-                job.AddNotes(new Note(_operationContext.Value.ActorId, statReason, JobNoteTreatment.ReasonStat));
+                job.PinNote(new Note(_operationContext.Value.ActorId, statReason));
 
-                _jobRepository.Update(job);
+                await _jobRepository.Update(job, stoppageToken);
                 await _jobRepository.Commit(stoppageToken);
             }            
         }

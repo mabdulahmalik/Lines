@@ -25,7 +25,7 @@ public class CancelAssistanceRequestForEncounterHandler : CommandHandler<CancelA
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.CancelAssistance();
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

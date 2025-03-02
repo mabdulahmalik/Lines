@@ -19,7 +19,7 @@ public class ModifyMedicalRecordHandler : CommandHandler<ModifyMedicalRecord>
         var medicalRecord = await _repository.Get(message.Id!.Value, stoppageToken);
         medicalRecord.Modify(message.FirstName, message.LastName, message.Birthday);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

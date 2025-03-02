@@ -1,22 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class RollingScheduleLoader : BatchDataLoader<Guid, RollingScheduleView>
+public class RollingScheduleLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : BatchDataLoader<Guid, RollingScheduleView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<RollingScheduleView> _getRoutineRollings;
-
-    public RollingScheduleLoader(IDomainQuery<RollingScheduleView> getRoutineRollings, IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getRoutineRollings = getRoutineRollings;
-    }
-
     protected override async Task<IReadOnlyDictionary<Guid, RollingScheduleView>> LoadBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var rollings = await _getRoutineRollings.Query.Where(x => keys.Contains(x.RoutineId)).ToListAsync(cancellationToken);
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var rollings = await dbCtx.Set<RollingScheduleView>()
+            .Where(x => keys.Contains(x.RoutineId))
+            .ToListAsync(cancellationToken);
+        
         return rollings.ToDictionary(x => x.RoutineId);
     }
 }

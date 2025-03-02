@@ -19,13 +19,19 @@ public class AzureFileStorage : IFileStorage
         _operationContext = new(operationContextFactory.Get);
     }
     
+    public async Task Create(string partitionName)
+    {
+        var containerClient = _blobServiceClient.GetBlobContainerClient(partitionName);
+        await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+    }
+    
     public string GetAbsoluteUrl(string path) => $"{_appRootUrl}/{_operationContext.Value.TenantKey}/{path}";
 
     public async Task WriteAsync(string path, Stream stream, IDictionary<string, string>? metadata = null, CancellationToken cancellationToken = default)
     {
         var containerName = path.Split('/').First();
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-        await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob, cancellationToken: cancellationToken);
+        await containerClient.CreateIfNotExistsAsync();
 
         var filePath = String.Join("/", path.Split('/').Skip(1));
         var blobClient = containerClient.GetBlobClient(filePath);

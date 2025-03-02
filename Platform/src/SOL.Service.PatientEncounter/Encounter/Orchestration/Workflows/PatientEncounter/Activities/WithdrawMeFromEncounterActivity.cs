@@ -31,7 +31,7 @@ public class WithdrawMeFromEncounterActivity : IStateMachineActivity<PatientEnco
         var encounter = await _repository.Get(context.Message.EncounterId, context.CancellationToken);
         encounter.Withdraw([_operationContext.Value.ActorId]);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
 
         await next.Execute(context);

@@ -1,6 +1,6 @@
 using SOL.Abstractions.Domain;
 using SOL.Gateway.Schema.Common;
-using SOL.Service.PatientEncounter.Procedure.View;
+using SOL.Gateway.Views.PatientEncounter.Procedure;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
@@ -22,6 +22,12 @@ public class ProcedureType : ObjectType<ProcedureView>
             .Field(x => x.Name)
             .Name("name")
             .Description("The Name of the Procedure.");
+        
+        descriptor
+            .Field(x => x.Type)
+            .Type<ProcedureTypeType>()
+            .Name("type")
+            .Description("The Type of the Procedure.");
         
         descriptor
             .Field(x => x.Archived)

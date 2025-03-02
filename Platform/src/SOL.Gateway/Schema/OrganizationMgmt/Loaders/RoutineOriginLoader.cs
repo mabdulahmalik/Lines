@@ -1,23 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class RoutineOriginLoader : GroupedDataLoader<Guid, RoutineOriginView>
+public class RoutineOriginLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, RoutineOriginView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<RoutineOriginView> _getRoutineOriginQuery;
-
-    public RoutineOriginLoader(IDomainQuery<RoutineOriginView> getRoutineOriginQuery,
-        IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getRoutineOriginQuery = getRoutineOriginQuery;
-    }
-
     protected override async Task<ILookup<Guid, RoutineOriginView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getRoutineOriginQuery.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<RoutineOriginView>()
             .Where(x => keys.Contains(x.RoutineId))
             .ToListAsync(cancellationToken);
 

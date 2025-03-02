@@ -1,22 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.Facility.View;
+using SOL.Gateway.Views.OrganizationMgmt.Facility;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class FacilityPurposeLoader : GroupedDataLoader<Guid, FacilityPurposeView>
+public class FacilityPurposeLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, FacilityPurposeView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<FacilityPurposeView> _getFacilityPurpose;
-
-    public FacilityPurposeLoader(IDomainQuery<FacilityPurposeView> getFacilityPurpose, IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getFacilityPurpose = getFacilityPurpose;
-    }
-
     protected override async Task<ILookup<Guid, FacilityPurposeView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getFacilityPurpose.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<FacilityPurposeView>()
             .Where(x => keys.Contains(x.FacilityId))
             .ToListAsync(cancellationToken);
 

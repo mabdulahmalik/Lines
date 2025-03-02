@@ -1,23 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.FacilityRoom.Views;
+using SOL.Gateway.Views.OrganizationMgmt.FacilityRoom;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class FacilityRoomPropertyOptionLoader : GroupedDataLoader<Guid, FacilityRoomPropertyOptionView>
+public class FacilityRoomPropertyOptionLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, FacilityRoomPropertyOptionView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<FacilityRoomPropertyOptionView> _getRoomPropertyOptionQuery;
-
-    public FacilityRoomPropertyOptionLoader(IDomainQuery<FacilityRoomPropertyOptionView> getProcedureFieldQuery
-        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getRoomPropertyOptionQuery = getProcedureFieldQuery;
-    }
-
     protected override async Task<ILookup<Guid, FacilityRoomPropertyOptionView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getRoomPropertyOptionQuery.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<FacilityRoomPropertyOptionView>()
             .Where(x => keys.Contains(x.PropertyId))
             .OrderBy(x => x.Order)
             .ToListAsync(cancellationToken);

@@ -1,7 +1,7 @@
 using HotChocolate.Resolvers;
 using Newtonsoft.Json.Linq;
 using SOL.Abstractions.Storage;
-using SOL.Activities.Views;
+using SOL.Gateway.Views.Activity;
 using Path = System.IO.Path;
 
 namespace SOL.Gateway.Schema.Activities.Objects;

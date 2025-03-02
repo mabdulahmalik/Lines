@@ -19,7 +19,7 @@ public class ActivateScheduledJobsSingleton : ISingleScheduler
     {
         var activatedSchedule = (ActivateScheduledJobs)command;
         var cacheKey = GetCacheKey(activatedSchedule);
-        var token = await _cacheManager.Get(cacheKey);
+        var token = await _cacheManager.GetPartitioned(cacheKey);
 
         return !string.IsNullOrWhiteSpace(token) 
             ? Guid.Parse(token) 
@@ -31,7 +31,7 @@ public class ActivateScheduledJobsSingleton : ISingleScheduler
         var activatedSchedule = (ActivateScheduledJobs)command;
         var cacheKey = GetCacheKey(activatedSchedule);
 
-        await _cacheManager.Set(cacheKey, scheduleToken.ToString()
+        await _cacheManager.SetPartitioned(cacheKey, scheduleToken.ToString()
             , activatedSchedule.Date.ToDateTimeUnspecified());
     }
 

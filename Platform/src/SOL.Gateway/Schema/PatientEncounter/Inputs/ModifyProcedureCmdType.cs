@@ -27,16 +27,6 @@ public class ModifyProcedureCmdType : InputObjectType<ModifyProcedure>
             .Description("Whether Performance Reporting is enabled for the Procedure.");
 
         descriptor
-            .Field(t => t.IsInsertion)
-            .Name("isInsertion")
-            .Description("Whether the Procedure is an Insertion.");
-
-        descriptor
-            .Field(t => t.IsRemoval)
-            .Name("isRemoval")
-            .Description("Whether the Procedure is a Removal.");
-
-        descriptor
             .Field(t => t.RequiredData)
             .Type<ListType<RequiredPatientDataType>>()
             .Name("requiredData")

@@ -8,8 +8,6 @@ public record ModifyProcedure : IMessage
     public Guid Id { get; init; }
     public string Name { get; init; }
     public bool EnablePerformanceReporting { get; init; }
-    public bool IsInsertion { get; init; }
-    public bool IsRemoval { get; init; }
     public List<RequiredPatientData> RequiredData { get; init; } = new();
     public List<ModifyProcedureField> Fields { get; init; } = new();
 }

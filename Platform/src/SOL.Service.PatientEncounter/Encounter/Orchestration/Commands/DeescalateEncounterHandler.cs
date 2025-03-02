@@ -20,7 +20,7 @@ public class DeescalateEncounterHandler : CommandHandler<DeescalateEncounter>
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.Deescalate();
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

@@ -21,7 +21,7 @@ public class SortFacilityRoomPropertyHandler : CommandHandler<SortFacilityRoomPr
         var facilityType = await _repository.Get(command.FacilityTypeId, stoppageToken);
         facilityType.SortProperty(command.Id, command.From, command.To);
         
-        _repository.Update(facilityType);
+        await _repository.Update(facilityType, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

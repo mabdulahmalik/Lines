@@ -120,8 +120,6 @@ public class User : AggregateRoot
     
     public void SetPreferences(UserPreference preference)
     {
-        Guard.Argument(preference, nameof(preference)).NotDefault();
-
         Preference = preference;
         RaiseEvent(new UserPreferenceChanged(Id, preference));
     }

@@ -31,7 +31,7 @@ public class ModifyMedicalRecordActivity : IStateMachineActivity<LineModificatio
             , context.Message.MedicalRecord.LastName!
             , context.Message.MedicalRecord.Birthday!);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
 
         await next.Execute(context);

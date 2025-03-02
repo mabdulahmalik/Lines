@@ -8,14 +8,14 @@ select '{511d58c7-8599-4158-810e-c072aa53d4b8}','2024-10-24 14:38:09.5194536',NU
 select '{5da586e7-1f69-414e-b477-c37fc3711357}','2024-10-24 14:31:25.7772714',NULL,7,N'Dressing Change',0 UNION ALL
 select '{04f7d7e9-259c-4b10-b8b7-cb2691ad50eb}','2024-10-24 14:33:21.5058212',NULL,5,N'Lab Draw',0
 
-insert [enc].[Procedure] ([Id],[CreatedAt],[ModifiedAt],[Order],[Name],[Settings],[RequiredData],[Archived])
-select '{a8533b8c-0e9b-4da2-ab6b-2d0868188cc5}','2024-10-24 15:55:59.4406975',NULL,6,N'Insertion Procedure',129,31,0 UNION ALL
-select '{2dafa8b2-86c8-4b69-bd56-65627f829955}','2024-10-24 15:42:38.1509957',NULL,4,N'Line Check',128,0,0 UNION ALL
-select '{0e1e8195-46f5-4548-a14b-b28ee4cff5fe}','2024-10-24 15:32:09.4726150',NULL,3,N'Lab Draw',128,0,0 UNION ALL
-select '{f88b8373-36bb-4440-93f8-c389d6d500f1}','2024-10-24 16:28:49.6085654',NULL,7,N'PICC/CVL/Midline Removal',130,15,0 UNION ALL
-select '{32a24e89-0a68-4c44-b999-c3acd0e60259}','2024-10-24 14:57:38.8266267',NULL,1,N'IV',128,0,0 UNION ALL
-select '{d4d98eec-9bb4-4820-a914-e1e7ba9b8d32}','2024-10-24 15:24:09.9528951',NULL,2,N'Blood Culture',128,0,0 UNION ALL
-select '{b2af0adb-42f9-4054-b834-e4e13c2a9411}','2024-10-24 15:47:36.0412768',NULL,5,N'Dressing Change',128,0,0
+insert [enc].[Procedure] ([Id],[CreatedAt],[ModifiedAt],[Order],[Name],[Type],[Settings],[RequiredData],[Archived])
+select '{a8533b8c-0e9b-4da2-ab6b-2d0868188cc5}','2024-10-24 15:55:59.4406975',NULL,6,N'Insertion Procedure',1,128,31,0 UNION ALL
+select '{2dafa8b2-86c8-4b69-bd56-65627f829955}','2024-10-24 15:42:38.1509957',NULL,4,N'Line Check',0,128,0,0 UNION ALL
+select '{0e1e8195-46f5-4548-a14b-b28ee4cff5fe}','2024-10-24 15:32:09.4726150',NULL,3,N'Lab Draw',0,128,0,0 UNION ALL
+select '{f88b8373-36bb-4440-93f8-c389d6d500f1}','2024-10-24 16:28:49.6085654',NULL,7,N'PICC/CVL/Midline Removal',2,128,15,0 UNION ALL
+select '{32a24e89-0a68-4c44-b999-c3acd0e60259}','2024-10-24 14:57:38.8266267',NULL,1,N'IV',0,128,0,0 UNION ALL
+select '{d4d98eec-9bb4-4820-a914-e1e7ba9b8d32}','2024-10-24 15:24:09.9528951',NULL,2,N'Blood Culture',0,128,0,0 UNION ALL
+select '{b2af0adb-42f9-4054-b834-e4e13c2a9411}','2024-10-24 15:47:36.0412768',NULL,5,N'Dressing Change',0,128,0,0
 
 insert [enc].[ProcedureField] ([Id],[ProcedureId],[Order],[Type],[Settings],[Name],[Instruction],[Archived])
 select '{747355e6-8d0d-407e-915e-168997671e9d}','{a8533b8c-0e9b-4da2-ab6b-2d0868188cc5}',9,2,0,N'Insertion Length',N'',0 UNION ALL

@@ -1,7 +1,7 @@
 using SOL.Abstractions.Domain;
 using SOL.Gateway.Schema.UserMgmt.Enums;
 using SOL.Gateway.Schema.UserMgmt.Loaders;
-using SOL.Service.UserMgmt.User.View;
+using SOL.Gateway.Views.UserMgmt.User;
 
 namespace SOL.Gateway.Schema.UserMgmt.Objects;
 
@@ -90,12 +90,11 @@ public class UserType : ObjectType<UserView>
             .Description("The current status of the user.")
             .Resolve(async ctx =>
                 await ctx.DataLoader<UserStatusLoader>().LoadAsync(ctx.Parent<UserView>().Id, ctx.RequestAborted));
-
+        
         descriptor
-            .Field("roles")
-            .Type<ListType<UserRoleType>>()
-            .Description("The roles assigned to the user.")
-            .Resolve(async ctx =>
-                await ctx.DataLoader<UserRoleLoader>().LoadAsync(ctx.Parent<UserView>().Id, ctx.RequestAborted));
+            .Field(x => x.Roles)
+            .Name("roles")
+            .Type<ListType<UuidType>>()
+            .Description("The roles assigned to the user.");
     }
 }

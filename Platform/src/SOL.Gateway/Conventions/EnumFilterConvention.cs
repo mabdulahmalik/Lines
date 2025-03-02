@@ -16,13 +16,10 @@ public class EnumFilterConvention : FilterConvention
         descriptor.BindRuntimeType<EncounterAssigneePosition, EnumOperationFilterInputType<EncounterAssigneePosition>>();
         descriptor.BindRuntimeType<EncounterPriority, EnumOperationFilterInputType<EncounterPriority>>();
         descriptor.BindRuntimeType<EncounterStage, EnumOperationFilterInputType<EncounterStage>>();
-        descriptor.BindRuntimeType<JobNoteTreatment, EnumOperationFilterInputType<JobNoteTreatment>>();
         descriptor.BindRuntimeType<JobStatus, EnumOperationFilterInputType<JobStatus>>();
         descriptor.BindRuntimeType<LineDwelling, EnumOperationFilterInputType<LineDwelling>>();
         descriptor.BindRuntimeType<ProcedureFieldSetting, EnumOperationFilterInputType<ProcedureFieldSetting>>();
         descriptor.BindRuntimeType<ProcedureFieldType, EnumOperationFilterInputType<ProcedureFieldType>>();
         descriptor.BindRuntimeType<ProcedureSetting, EnumOperationFilterInputType<ProcedureSetting>>();
-        
-        descriptor.BindRuntimeType<RoutineSetting, EnumOperationFilterInputType<RoutineSetting>>();
     }
 }

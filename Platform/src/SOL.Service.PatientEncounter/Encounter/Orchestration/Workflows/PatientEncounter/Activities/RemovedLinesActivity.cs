@@ -34,7 +34,7 @@ public class RemovedLinesActivity : IStateMachineActivity<PatientEncounterState>
         foreach (var keyValuePair in context.Saga.LinesRemoved) {
             var line = lines.Single(x => x.Id == keyValuePair.Value);
             line.Close(Instant.FromDateTimeUtc(DateTime.Now), keyValuePair.Key);
-            _repository.Update(line);
+            await _repository.Update(line, context.CancellationToken);
         }
         
         await _repository.Commit(context.CancellationToken);

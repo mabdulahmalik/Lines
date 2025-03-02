@@ -7,8 +7,7 @@ public record CreateProcedure : IMessage
 {
     public string Name { get; init; }
     public bool EnablePerformanceReporting { get; init; }
-    public bool IsInsertion { get; init; }
-    public bool IsRemoval { get; init; }
+    public ProcedureType Type { get; init; }
     public List<RequiredPatientData> RequiredData { get; init; } = new();
     public List<ProcedureField> Fields { get; init; } = new();
 }

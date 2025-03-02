@@ -28,7 +28,7 @@ public class ModifyEncounterActivity : IStateMachineActivity<EncounterModificati
         var encounter = await _repository.Get(context.Message.Id!.Value, context.CancellationToken);
         encounter.Modify(context.Message.RoomId, context.Saga.MedicalRecordId);
         
-        _repository.Update(encounter);
+        await _repository.Update(encounter, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
         
         await next.Execute(context);

@@ -23,7 +23,7 @@ public class UnpinNoteFormJobHandler : CommandHandler<UnpinNoteFromJob>
 
         job.UnpinNote(note);
         
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

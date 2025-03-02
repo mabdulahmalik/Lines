@@ -1,9 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using SOL.Abstractions.Application;
 using SOL.Abstractions.Domain;
 using SOL.Abstractions.Messaging;
 using SOL.Abstractions.Persistence;
-using SOL.Service.UserMgmt.User.View;
+using SOL.IdP;
+using SOL.IdP.Keycloak;
+using SOL.Service.UserMgmt.User.Domain;
+using System.Threading;
 
 namespace SOL.Service.UserMgmt.User;
 
@@ -13,13 +17,15 @@ public class UserRepository : IAggregateRepository<Domain.User>
     private readonly Lazy<UserMgmtDataStore> _dataStore;
     private readonly Lazy<IOperationContext> _operationContext;
     private readonly IDomainBus _domainBus;
+    private readonly IKeycloakAdminClient _keycloakAdminClient;
 
     private readonly IList<Domain.User> _trackedUsers = [];
 
-    public UserRepository(IDbContextFactory<UserMgmtDataStore> dataStoreFactory
+    public UserRepository(IKeycloakAdminClient keycloakAdminClient, IDbContextFactory<UserMgmtDataStore> dataStoreFactory
         , IOperationContextFactory operationContextFactory,
           IDomainBus domainBus)
     {
+        _keycloakAdminClient = keycloakAdminClient;
         _dataStore = new(dataStoreFactory.CreateDbContext);
         _operationContext = new(operationContextFactory.Get);
         _domainBus = domainBus;
@@ -27,32 +33,28 @@ public class UserRepository : IAggregateRepository<Domain.User>
 
     public async Task<Domain.User> Get(Guid id, CancellationToken stoppageToken = default)
     {
-        //Get user from KC API
-        var apiResponse = UserView.GetUsers().Single(x => x.Id == id);
+        var userRep = await _keycloakAdminClient.UsersGET2Async(KeycloakConst.RealmId, id.ToString(), cancellationToken: stoppageToken);
+        if (userRep == null) return null;
 
-        var statuses = await _dataStore.Value.UserStatuses
-            .Where(x => x.UserId == id).ToListAsync(stoppageToken);
+        var groups = await _keycloakAdminClient.GroupsAll4Async(KeycloakConst.RealmId, id.ToString(), briefRepresentation: true, cancellationToken: stoppageToken);
+        var roleIds = groups.Select(x => Guid.Parse(x.Id)).ToList();
+        userRep.Attributes.TryGetValue("picture", out var picture);
+        userRep.Attributes.TryGetValue("phone", out var phone);
 
-        var profileExt = await _dataStore.Value.UserProfileExts
-            .FirstOrDefaultAsync(x => x.UserId == id, stoppageToken);
+        var userProfile = await _dataStore.Value.UserProfileExts.SingleOrDefaultAsync(x => x.UserId == id, stoppageToken);
 
-        var avatar = !String.IsNullOrWhiteSpace(apiResponse.Avatar)
-            ? new Uri(apiResponse.Avatar, UriKind.Absolute)
-            : null;
-
-        var user = Domain.User.MapKeyclockUser(id, 
-            apiResponse.FirstName, 
-            apiResponse.LastName, 
-            apiResponse.Email, 
-            apiResponse.Phone,
-            avatar,
-            profileExt.InTraining,
-            apiResponse.Roles, 
-            statuses, 
-            profileExt?.Preferences ?? UserPreference.ElapsedTime 
-                | UserPreference.MilitaryTime 
-                | UserPreference.MiddleEndianDate,
-            apiResponse.Active
+        var user = Domain.User.MapKeyclockUser(
+            id: Guid.Parse(userRep.Id),
+            firstName: userRep.FirstName,
+            lastName: userRep.LastName,
+            email: userRep.Email,
+            phone: phone?.FirstOrDefault() ?? string.Empty,
+            avatar: picture?.FirstOrDefault() != null ? new Uri(picture.First()) : null,
+            inTraining: userProfile?.InTraining ?? false,
+            roles: roleIds,
+            statuses: new List<UserStatus> { new UserStatus(id, UserAvailability.Offline) },
+            preference: userProfile?.Preferences ?? UserPreference.ElapsedTime,
+            active: userRep.Enabled
         );
 
         _trackedUsers.Add(user);
@@ -66,11 +68,11 @@ public class UserRepository : IAggregateRepository<Domain.User>
         throw new NotImplementedException();
     }
 
-    public void Update(Domain.User aggregateRoot)
+    public Task Update(Domain.User aggregateRoot, CancellationToken stoppageToken = default)
     {
         var userStatus = _dataStore.Value.UserStatuses
             .OrderByDescending(x => x.ChangedAt)
-            .First(x => x.UserId == aggregateRoot.Id);
+            .FirstOrDefault(x => x.UserId == aggregateRoot.Id);
         
         if (userStatus != aggregateRoot.Status) {
             _dataStore.Value.UserStatuses.Add(aggregateRoot.Status);
@@ -94,18 +96,23 @@ public class UserRepository : IAggregateRepository<Domain.User>
             usrProExt.Preferences = aggregateRoot.Preference;
         }
 
-        _webApiCalls.Add(() =>
+        _webApiCalls.Add(async () =>
         {
-            // Update user in KC API
-            var apiResponse = UserView.GetUsers().Single(x => x.Id == aggregateRoot.Id);
-            apiResponse.FirstName = aggregateRoot.FirstName;
-            apiResponse.LastName = aggregateRoot.LastName;
-            apiResponse.Avatar = aggregateRoot.Avatar?.ToString();
-            apiResponse.IsTraining = aggregateRoot.InTraining;
-            apiResponse.Phone = aggregateRoot.Phone;
-            apiResponse.Roles = aggregateRoot.Roles.ToList();
-            apiResponse.Active = aggregateRoot.Active;
+            var keycloakUser = await _keycloakAdminClient.UsersGET2Async(KeycloakConst.RealmId, aggregateRoot.Id.ToString());
+            if (keycloakUser == null) return;
+
+            keycloakUser.FirstName = aggregateRoot.FirstName;
+            keycloakUser.LastName = aggregateRoot.LastName;
+            keycloakUser.Email = aggregateRoot.Email;
+            keycloakUser.Enabled = aggregateRoot.Active;
+
+            keycloakUser.Attributes["phone"] = new List<string> { aggregateRoot.Phone };
+            keycloakUser.Attributes["picture"] = aggregateRoot.Avatar?.ToString() != null ? new List<string> { aggregateRoot.Avatar.ToString() } : new List<string>();
+
+            await _keycloakAdminClient.UsersPUTAsync(KeycloakConst.RealmId, aggregateRoot.Id.ToString(), keycloakUser);
         });
+        
+        return Task.CompletedTask;
     }
     
     public async Task Commit(CancellationToken stoppageToken = default)
@@ -144,7 +151,7 @@ public class UserRepository : IAggregateRepository<Domain.User>
     public Task<IReadOnlyList<Domain.User>> List(ISpecification<Domain.User> spec, CancellationToken stoppageToken = default)
         => throw new NotSupportedException();
     
-    public void Sort(Guid id, int prevPosition, int curPosition)
+    public Task Sort(Guid id, int prevPosition, int curPosition, CancellationToken stoppageToken = default)
         => throw new NotSupportedException();
 
     public Task Add(Domain.User aggregateRoot, CancellationToken stoppageToken = default)

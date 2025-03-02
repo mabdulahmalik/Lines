@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="NodaTime" Version="3.1.11" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\SOL.Abstractions\SOL.Abstractions.csproj" />
+      <ProjectReference Include="..\SOL.Activities\SOL.Activities.csproj" />
+      <ProjectReference Include="..\SOL.DataAccess\SOL.DataAccess.csproj" />
+      <ProjectReference Include="..\SOL.Messaging\SOL.Messaging.csproj" />
+      <ProjectReference Include="..\SOL.Service.OrganizationMgmt\SOL.Service.OrganizationMgmt.csproj" />
+      <ProjectReference Include="..\SOL.Service.PatientEncounter\SOL.Service.PatientEncounter.csproj" />
+      <ProjectReference Include="..\SOL.Service.TenantMgmt\SOL.Service.TenantMgmt.csproj" />
+      <ProjectReference Include="..\SOL.Service.UserMgmt\SOL.Service.UserMgmt.csproj" />
+      <ProjectReference Include="..\SOL.Utility\SOL.Utility.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Workflows\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="ascii_art.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

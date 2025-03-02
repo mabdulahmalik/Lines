@@ -32,7 +32,7 @@ public class ModifyMyAvatarHandler : CommandHandler<ModifyMyAvatar>
 
         user.Modify(user.FirstName, user.LastName, user.Phone, avatarUri);
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 

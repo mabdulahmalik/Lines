@@ -1,4 +1,4 @@
-﻿using SOL.Service.PatientEncounter.Job.Views;
+﻿using SOL.Gateway.Views.PatientEncounter.Job;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
@@ -26,10 +26,9 @@ public class JobNoteType : ObjectType<JobNoteView>
             .Description("The date and time the Note was created.");
 
         descriptor
-            .Field(t => t.Treatment)
-            .Type<JobNoteTreatmentType>()
-            .Name("treatment")
-            .Description("Any special treatments for this Note.");
+            .Field(t => t.IsPinned)
+            .Name("pinned")
+            .Description("Whether or not the Note should be Pinned.");
 
         descriptor
             .Field(t => t.Text)

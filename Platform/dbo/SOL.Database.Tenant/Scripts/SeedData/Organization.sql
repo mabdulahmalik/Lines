@@ -21,7 +21,7 @@ select '{529f34f9-d1e0-434d-a31c-abeeaff038cb}','{007a98b1-2a7a-4233-bd70-63239f
 select '{b7c2d89c-2ae1-418b-a0e9-af3d53779147}','{007a98b1-2a7a-4233-bd70-63239f452993}',2,N'ICU' UNION ALL
 select '{82bed9c4-0868-4826-9151-cbff5f819232}','{007a98b1-2a7a-4233-bd70-63239f452993}',3,N'Therapy'
 
-insert [org].[Routine] ([Id],[CreatedAt],[ModifiedAt],[Active],[Name],[Description],[PurposeId],[Settings])
+insert [org].[Routine] ([Id],[CreatedAt],[ModifiedAt],[Active],[Name],[Description],[PurposeId],[FollowUp])
 select '{09ad5010-0c06-4fd0-8ca1-4c454a74f847}','2024-10-24 16:38:30.2935208',NULL,1,N'Dressing Change',N'Regular check-ups/clean-ups of central line dressings.','{5da586e7-1f69-414e-b477-c37fc3711357}',1 UNION ALL
 select '{2cdf4d65-5494-41c0-9bbe-b78598d728c0}','2024-10-24 16:34:25.8481558',NULL,1,N'Line Check',N'Regular central line maintenance.','{2fc296b2-c6fe-4020-a811-be552304559a}',0
 

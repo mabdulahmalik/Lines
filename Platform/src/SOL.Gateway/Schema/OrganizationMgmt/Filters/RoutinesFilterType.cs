@@ -1,5 +1,5 @@
 using HotChocolate.Data.Filters;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
@@ -33,13 +33,13 @@ public class RoutinesFilterType : FilterInputType<RoutineView>
 
         descriptor
             .Field(x => x.Active)
-            .Name("isActive")
+            .Name("active")
             .Description("Whether the Routine is active.");
         
         descriptor
-            .Field(x => x.Settings)
-            .Name("settings")
-            .Description("The Settings of the Routine.");
+            .Field(x => x.FollowUp)
+            .Name("followUp")
+            .Description("Whether the Routine is a Follow Up.");
         
         descriptor
             .Field(x => x.AssignmentCount)

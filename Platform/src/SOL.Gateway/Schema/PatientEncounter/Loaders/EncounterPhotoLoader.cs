@@ -1,22 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.PatientEncounter.Encounter.Views;
+using SOL.Gateway.Views.PatientEncounter.Encounter;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
-public class EncounterPhotoLoader : GroupedDataLoader<Guid, EncounterPhotoView>
+public class EncounterPhotoLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, EncounterPhotoView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<EncounterPhotoView> _getPhotos;
-
-    public EncounterPhotoLoader(IDomainQuery<EncounterPhotoView> getPhotos, IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
-    { 
-        _getPhotos = getPhotos;
-    }
-
     protected override async Task<ILookup<Guid, EncounterPhotoView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var photos = await _getPhotos.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var photos = await dbCtx.Set<EncounterPhotoView>()
             .Where(x => keys.Contains(x.EncounterId))
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);

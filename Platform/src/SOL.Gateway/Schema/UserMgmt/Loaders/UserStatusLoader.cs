@@ -1,25 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.UserMgmt.User.View;
+using SOL.Gateway.Views.UserMgmt.User;
 
 namespace SOL.Gateway.Schema.UserMgmt.Loaders;
 
 public class UserStatusLoader : BatchDataLoader<Guid, UserStatusView>
 {
-    private readonly IDomainQuery<UserStatusView> _userStatusQuery;
+    private readonly IDbContextFactory<LinesDataStore> _dbCtxFactory;
 
-    public UserStatusLoader(IDomainQuery<UserStatusView> userStatusQuery
-        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
+    public UserStatusLoader(IDbContextFactory<LinesDataStore> dbCtxFactory
+        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
         : base(batchScheduler, options)
     {
-        _userStatusQuery = userStatusQuery;
+        _dbCtxFactory = dbCtxFactory;
     }
 
     protected override async Task<IReadOnlyDictionary<Guid, UserStatusView>> LoadBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var statuses = await _userStatusQuery.Query
+        await using var dbCtx = await _dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var statuses = await dbCtx.Set<UserStatusView>()
             .Where(x => keys.Contains(x.UserId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return statuses.ToDictionary(x => x.UserId);
     }

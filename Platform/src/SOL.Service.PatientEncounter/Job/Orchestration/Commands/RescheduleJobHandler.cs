@@ -25,7 +25,7 @@ public class RescheduleJobHandler : CommandHandler<RescheduleJob>
         var job = await _repository.Get(command.Id, stoppageToken);
         job.Schedule(command.Date, command.Time, command.Reason, _operationContext.Value.ActorId);
         
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

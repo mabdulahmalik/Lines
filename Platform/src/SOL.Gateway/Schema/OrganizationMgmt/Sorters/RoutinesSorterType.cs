@@ -1,5 +1,5 @@
 using HotChocolate.Data.Sorting;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

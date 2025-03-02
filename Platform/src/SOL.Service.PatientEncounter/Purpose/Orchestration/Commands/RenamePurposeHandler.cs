@@ -21,7 +21,7 @@ public class RenamePurposeHandler : CommandHandler<RenamePurpose>
         var purpose = await _purposeRepository.Get(command.PurposeId, stoppageToken);
         purpose.Rename(command.Name);
 
-        _purposeRepository.Update(purpose);
+        await _purposeRepository.Update(purpose, stoppageToken);
         await _purposeRepository.Commit(stoppageToken);
     }
 }

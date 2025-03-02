@@ -29,7 +29,7 @@ namespace SOL.Activities
 
         public async Task Remove(Guid activityId, CancellationToken stoppageToken)
         {
-            var activity = await _context.Set<Activity>().SingleAsync(x => x.Id == activityId);
+            var activity = await _context.Set<Activity>().SingleAsync(x => x.Id == activityId, stoppageToken);
 
             _context.Set<Activity>().Remove(activity);
             await _context.SaveChangesAsync(stoppageToken);

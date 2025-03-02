@@ -1,4 +1,4 @@
-﻿using SOL.Service.OrganizationMgmt.FacilityRoom.Views;
+﻿using SOL.Gateway.Views.OrganizationMgmt.FacilityRoom;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

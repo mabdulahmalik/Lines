@@ -13,8 +13,8 @@ class RoutinePersistence : IEntityTypeConfiguration<Domain.Routine>
 
         builder.Property(x => x.Name);
         builder.Property(x => x.Active);
+        builder.Property(x => x.FollowUp);
         builder.Property(x => x.PurposeId);
-        builder.Property(x => x.Settings);
         builder.Property(x => x.Description);
         builder.Property(x => x.CreatedAt);
         builder.Property(x => x.ModifiedAt);

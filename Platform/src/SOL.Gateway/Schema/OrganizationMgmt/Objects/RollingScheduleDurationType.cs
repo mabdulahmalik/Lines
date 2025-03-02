@@ -1,5 +1,5 @@
 using SOL.Gateway.Schema.Common;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

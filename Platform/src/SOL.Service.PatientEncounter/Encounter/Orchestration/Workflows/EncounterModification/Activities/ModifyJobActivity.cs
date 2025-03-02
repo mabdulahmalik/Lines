@@ -29,7 +29,7 @@ public class ModifyJobActivity : IStateMachineActivity<EncounterModificationStat
         job.Modify(context.Message.RoomId, job.LineId, context.Saga.MedicalRecordId
             , context.Message.OrderingProvider, context.Message.Contact);
         
-        _repository.Update(job);
+        await _repository.Update(job, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
         
         await next.Execute(context);

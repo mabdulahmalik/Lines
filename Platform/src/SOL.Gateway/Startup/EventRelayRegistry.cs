@@ -48,7 +48,10 @@ static class EventRelayRegistry
         // -- Users
         Broadcast<UserStatusChanged>(),
         Direct<UserPreferenceChanged>(),
-        Broadcast<UserActivationChanged>()
+        Broadcast<UserActivationChanged>(),
+        Broadcast<UserInvitationsSent>(),
+        Broadcast<UserInvitationRevoked>(),
+        Broadcast<UserInvitationResent>()
     };
 
     private static Type Broadcast<TType>() where TType : class

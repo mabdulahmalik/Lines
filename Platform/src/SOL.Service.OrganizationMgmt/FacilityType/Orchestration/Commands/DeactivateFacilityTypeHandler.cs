@@ -20,7 +20,7 @@ public class DeactivateFacilityTypeHandler : CommandHandler<DeactivateFacilityTy
         var facilityType = await _repository.Get(command.FacilityTypeId, stoppageToken);
         facilityType.Deactivate();
         
-        _repository.Update(facilityType);
+        await _repository.Update(facilityType, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

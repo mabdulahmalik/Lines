@@ -18,7 +18,7 @@ public class SortFacilityHandler : CommandHandler<SortFacility>
 
     protected override async Task HandleAsync(SortFacility command, CancellationToken stoppageToken)
     {
-        _repository.Sort(command.Id, command.From, command.To);
+        await _repository.Sort(command.Id, command.From, command.To, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

@@ -11,7 +11,7 @@ namespace SOL.Gateway;
 
 static class GraphQLBuilder
 {
-    public static IServiceCollection AddGraphQLConfig(this IServiceCollection services, IWebHostEnvironment env, Action<GraphQLOptions> setOptions)
+    public static IServiceCollection AddGraphQLCfg(this IServiceCollection services, IWebHostEnvironment env, Action<GraphQLOptions> setOptions)
     {
         var options = new GraphQLOptions();
         setOptions(options);
@@ -27,8 +27,8 @@ static class GraphQLBuilder
             .ModifyPagingOptions(o =>
             {
                 o.IncludeTotalCount = true;
-                o.DefaultPageSize = 250;
-                o.MaxPageSize = 1000;
+                o.DefaultPageSize = 50;
+                o.MaxPageSize = 500;
             })
             .ModifyCostOptions(o => o.EnforceCostLimits = false)
             .ModifyRequestOptions(o => o.IncludeExceptionDetails = env.IsDevelopment())
@@ -43,6 +43,7 @@ static class GraphQLBuilder
             .AddMutationType<Mutation>()
             .AddSubscriptionType<Subscription>()
             .AddRedisSubscriptions(sp => ConnectionMultiplexer.Connect(options.RedisConnectionString))
+            .RegisterDbContextFactory<LinesDataStore>()
             .LoadTypeExtensions()
             .LoadAssignableTypes<InputObjectType>()
             .LoadAssignableTypes<ObjectType>()
@@ -53,10 +54,11 @@ static class GraphQLBuilder
         return services;
     }
 
-    public static void UseGraphQLConfig(this WebApplication app)
+    public static IApplicationBuilder UseGraphQLCfg(this WebApplication app)
     {
-        app.UseWebSockets();
-        app.MapGraphQL();
+        app.MapGraphQL("/graphql");
+
+        return app;
     }
 
     private static IRequestExecutorBuilder LoadTypeExtensions(this IRequestExecutorBuilder builder)

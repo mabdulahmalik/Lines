@@ -1,24 +1,22 @@
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SOL.Abstractions.Domain;
 using SOL.Abstractions.Persistence;
 using SOL.DataAccess.Specifications;
 using SOL.Messaging.Contracts.PatientEncounter;
-using SOL.Service.PatientEncounter.Job.Views;
+using SOL.Service.PatientEncounter.Job.Domain.Services;
 
 namespace SOL.Service.PatientEncounter.Job.Orchestration.Workflows.JobActivation.Activities;
 
 public class ActivateJob : IStateMachineActivity<JobActivationState, ActivateScheduledJobs>
 {
     private readonly ILogger<ActivateJob> _logger;
-    private readonly IDomainQuery<JobView> _jobsQuery;
+    private readonly JobManager _jobManager;
     private readonly IAggregateRepository<Domain.Job> _repository;
 
-    public ActivateJob(ILogger<ActivateJob> logger, IDomainQuery<JobView> jobsQuery, IAggregateRepository<Domain.Job> repository)
+    public ActivateJob(ILogger<ActivateJob> logger, JobManager jobManager, IAggregateRepository<Domain.Job> repository)
     {
         _logger = logger;
-        _jobsQuery = jobsQuery;
+        _jobManager = jobManager;
         _repository = repository;
     }
 
@@ -35,14 +33,11 @@ public class ActivateJob : IStateMachineActivity<JobActivationState, ActivateSch
     public async Task Execute(BehaviorContext<JobActivationState, ActivateScheduledJobs> context, IBehavior<JobActivationState, ActivateScheduledJobs> next)
     {
         var sortOrder = 0;
-        var jobIds = await _jobsQuery.Query
-            .Where(x => x.Status == JobStatus.Scheduled
-                        && x.Schedule.Date == context.Message.Date.ToDateOnly()
-                        && context.Message.FacilityIds.Contains(x.Location.FacilityId))
-            .OrderBy(x => x.Location.FacilityId)
-                .ThenBy(x => x.Location.Room)
-            .Select(x => x.Id)
-            .ToDictionaryAsync(k => k, v => ++sortOrder, context.CancellationToken);
+        var scheduledJobs = await _jobManager
+            .GetScheduledJobs(context.Message.Date.ToDateOnly(), context.Message.FacilityIds,
+                context.CancellationToken);
+        var jobIds = scheduledJobs.Select(x => x.Id)
+            .ToDictionary(k => k, v => ++sortOrder);
         
         _logger.LogInformation("Activating {Count} scheduled job(s) on {Date} for the following facilities: {FacilityIds}."
             , jobIds.Count, context.Message.Date, String.Join(", ", context.Message.FacilityIds));
@@ -53,7 +48,7 @@ public class ActivateJob : IStateMachineActivity<JobActivationState, ActivateSch
         
         foreach (var job in jobs) {
             job.Start();
-            _repository.Update(job);
+            await _repository.Update(job, context.CancellationToken);
         }
 
         context.Saga.EncounterData = jobs.Select(x => new JobEncounterData {

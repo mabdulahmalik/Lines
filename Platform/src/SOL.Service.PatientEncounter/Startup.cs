@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SOL.DataAccess;
 using SOL.Service.PatientEncounter;
 using SOL.Service.PatientEncounter.Encounter;
+using SOL.Service.PatientEncounter.Job.Domain.Services;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("SOL.Service.PatientEncounter.Tests")]
 namespace Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,8 @@ public static class Startup
 
         services
             .AddDataAccess<PatientEncounterDataStore>(DbActions)
-            .AddTransient<EncounterPhotoConverter>();
+            .AddTransient<EncounterPhotoConverter>()
+            .AddTransient<JobManager>();
 
         return services;
     }

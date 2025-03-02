@@ -1,10 +1,10 @@
 using SOL.Gateway.Schema.Common;
-using SOL.Service.PatientEncounter.Encounter.Views;
-using SOL.Service.PatientEncounter.Job.Views;
-using SOL.Service.PatientEncounter.Line.View;
-using SOL.Service.PatientEncounter.MedicalRecord.View;
-using SOL.Service.PatientEncounter.Procedure.View;
-using SOL.Service.PatientEncounter.Purpose.View;
+using SOL.Gateway.Views.PatientEncounter.Encounter;
+using SOL.Gateway.Views.PatientEncounter.Job;
+using SOL.Gateway.Views.PatientEncounter.Line;
+using SOL.Gateway.Views.PatientEncounter.MedicalRecord;
+using SOL.Gateway.Views.PatientEncounter.Procedure;
+using SOL.Gateway.Views.PatientEncounter.Purpose;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 

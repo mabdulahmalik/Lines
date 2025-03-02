@@ -41,14 +41,14 @@ public class ApplyProcedureToEncounterActivity : IStateMachineActivity<PatientEn
 
         encounter.ApplyProcedures(encounterProcedure);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
 
         var procedure = await _procedureReader.Get(
             new SingleInstanceSpecification<Procedure.Domain.Procedure>(encounterProcedure.ProcedureId),
             context.CancellationToken);
         
-        if (procedure.Settings.HasFlag(ProcedureSetting.Insertion) && !String.IsNullOrWhiteSpace(context.Message.InsertedLineName)) {
+        if (procedure.Type == ProcedureType.Insertion && !String.IsNullOrWhiteSpace(context.Message.InsertedLineName)) {
             context.Saga.LinesInserted.Add(encounterProcedure.Id, new InsertedLine { 
                 Type = procedure.Name,
                 Name = context.Message.InsertedLineName, 
@@ -56,7 +56,7 @@ public class ApplyProcedureToEncounterActivity : IStateMachineActivity<PatientEn
             });
         }
         
-        if (procedure.Settings.HasFlag(ProcedureSetting.Removal) && context.Message.RemovedLineId.HasValue) {
+        if (procedure.Type == ProcedureType.Removal && context.Message.RemovedLineId.HasValue) {
             context.Saga.LinesRemoved.Add(encounterProcedure.Id, context.Message.RemovedLineId.Value);
         }
 

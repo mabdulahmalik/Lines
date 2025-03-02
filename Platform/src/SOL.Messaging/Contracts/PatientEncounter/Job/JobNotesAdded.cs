@@ -16,5 +16,5 @@ public record JobNote
     public string Text { get; init; }
     public Guid CreatedBy { get; init; }
     public Instant CreatedAt { get; init; }
-    public JobNoteTreatment Treatment { get; init; }
+    public bool IsPinned { get; init; }
 }

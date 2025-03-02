@@ -20,7 +20,7 @@ public class ClearLineInfectionHandler : CommandHandler<ClearLineInfection>
         var line = await _repository.Get(command.Id, stoppageToken);
         line.ClearInfection();
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

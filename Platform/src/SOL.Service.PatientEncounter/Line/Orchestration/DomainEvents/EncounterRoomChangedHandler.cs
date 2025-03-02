@@ -25,7 +25,7 @@ public class EncounterRoomChangedHandler : DomainEventHandler<EncounterRoomChang
         var line = lines.Single();
         line.Modify(line.Name, message.RoomId, line.MedicalRecordId);
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

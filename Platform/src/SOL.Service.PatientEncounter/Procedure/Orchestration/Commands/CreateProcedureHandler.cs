@@ -41,9 +41,8 @@ public class CreateProcedureHandler : CommandHandler<CreateProcedure>
             requiredData |= data;
         });
 
-        var procedure = Domain.Procedure.Create(command.Name, fields, requiredData
-            , command.EnablePerformanceReporting, command.IsInsertion
-            , command.IsRemoval);
+        var procedure = Domain.Procedure.Create(command.Name, command.Type, fields
+            , requiredData, command.EnablePerformanceReporting);
 
         await _procedureRepository.Add(procedure, stoppageToken);
         await _procedureRepository.Commit(stoppageToken);

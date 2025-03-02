@@ -21,7 +21,7 @@ public class RemovePhotoFromEncounterHandler : CommandHandler<RemovePhotoFromEnc
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.DetachPhotos([command.Id]);
         
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

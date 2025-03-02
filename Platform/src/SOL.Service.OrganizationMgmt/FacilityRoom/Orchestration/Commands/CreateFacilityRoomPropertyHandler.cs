@@ -31,7 +31,7 @@ public class CreateFacilityRoomPropertyHandler : CommandHandler<CreateFacilityRo
         roomProperty.SetOptions(options);
         facilityType.AddProperty(roomProperty);
         
-        _repository.Update(facilityType);
+        await _repository.Update(facilityType, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

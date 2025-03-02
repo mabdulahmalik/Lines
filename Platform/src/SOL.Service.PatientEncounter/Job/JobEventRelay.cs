@@ -20,7 +20,7 @@ public class JobEventRelay : Profile
             .ForMember(x => x.Text, x => x.MapFrom(y => y.Text))
             .ForMember(x => x.CreatedBy, x => x.MapFrom(y => y.UserId))
             .ForMember(x => x.CreatedAt, x => x.MapFrom(y => y.CreatedAt))
-            .ForMember(x => x.Treatment, x => x.MapFrom(y => y.Treatment));
+            .ForMember(x => x.IsPinned, x => x.MapFrom(y => y.IsPinned));
         
         CreateMap<JobNotesAdded, SE.JobNotesAdded>()
             .ForMember(x => x.Id, x => x.MapFrom(y => y.JobId))

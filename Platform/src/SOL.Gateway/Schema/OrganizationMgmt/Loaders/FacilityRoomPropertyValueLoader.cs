@@ -1,22 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.Facility.View;
+using SOL.Gateway.Views.OrganizationMgmt.Facility;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class FacilityRoomPropertyValueLoader : GroupedDataLoader<Guid, FacilityRoomPropertyValueView>
+public class FacilityRoomPropertyValueLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, FacilityRoomPropertyValueView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<FacilityRoomPropertyValueView> _getRoomPropertiesQuery;
-
-    public FacilityRoomPropertyValueLoader(IDomainQuery<FacilityRoomPropertyValueView> getJobLine, IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getRoomPropertiesQuery = getJobLine;
-    }
-
     protected override async Task<ILookup<Guid, FacilityRoomPropertyValueView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getRoomPropertiesQuery.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<FacilityRoomPropertyValueView>()
             .Where(x => keys.Contains(x.RoomId))
             .ToListAsync(cancellationToken);
 

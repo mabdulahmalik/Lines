@@ -24,7 +24,7 @@ public class CancelJobHandler : CommandHandler<CancelJob>
         var job = await _repository.Get(message.Id, cancellationToken);
         job.Cancel(_operationContext.Value.ActorId, message.Reason);
         
-        _repository.Update(job);
+        await _repository.Update(job, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }

@@ -21,7 +21,7 @@ public class ModifyNoteForJobHandler : CommandHandler<ModifyNoteForJob>
         var job = await _repository.Get(command.JobId, stoppageToken);
         job.ModifyNote(command.Id, command.Text);
 
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

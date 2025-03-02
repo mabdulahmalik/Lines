@@ -26,8 +26,8 @@ class HttpRequestInterceptor : DefaultHttpRequestInterceptor
             TraceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString("N"),
             TimeStamp = _clock.GetCurrentInstant(),
             CorrelationId = Guid.NewGuid(),
-            TenantKey = "vasaccsol",
-            ActorId = Guid.Parse("462b8b01-ecd7-4140-9e03-420a672ef35a")            
+            TenantKey = "demo",
+            ActorId = Guid.Parse("30400edb-a083-4efc-a823-86b6599e8811")            
         });   
         
         return base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);

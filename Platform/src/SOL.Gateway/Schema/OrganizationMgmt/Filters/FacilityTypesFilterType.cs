@@ -1,5 +1,5 @@
 using HotChocolate.Data.Filters;
-using SOL.Service.OrganizationMgmt.FacilityType.Views;
+using SOL.Gateway.Views.OrganizationMgmt.FacilityType;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

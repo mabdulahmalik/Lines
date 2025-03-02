@@ -38,7 +38,7 @@ public class AssignMeToEncounterActivity : IStateMachineActivity<PatientEncounte
 
         encounter.Assign([new Assignment(_operationContext.Value.ActorId, position)]);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
         
         context.Saga.FacilityRoomId = context.Message.FacilityRoomId;

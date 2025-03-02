@@ -20,7 +20,7 @@ public class RenameFacilityTypeHandler : CommandHandler<RenameFacilityType>
         var facilityType = await _repository.Get(command.Id, stoppageToken);
         facilityType.Rename(command.Name);
         
-        _repository.Update(facilityType);
+        await _repository.Update(facilityType, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

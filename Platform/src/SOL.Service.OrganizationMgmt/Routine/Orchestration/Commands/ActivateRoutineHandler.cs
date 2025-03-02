@@ -21,7 +21,7 @@ public class ActivateRoutineHandler : CommandHandler<ActivateRoutine>
         var routine = await _repository.Get(command.RoutineId, stoppageToken);
         routine.Activate();
         
-        _repository.Update(routine);
+        await _repository.Update(routine, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

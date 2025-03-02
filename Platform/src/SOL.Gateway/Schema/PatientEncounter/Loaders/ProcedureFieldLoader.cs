@@ -1,23 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.PatientEncounter.Procedure.View;
+using SOL.Gateway.Views.PatientEncounter.Procedure;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
-public class ProcedureFieldLoader : GroupedDataLoader<Guid, ProcedureFieldView>
+public class ProcedureFieldLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, ProcedureFieldView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<ProcedureFieldView> _getProcedureFieldQuery;
-
-    public ProcedureFieldLoader(IDomainQuery<ProcedureFieldView> getProcedureFieldQuery
-        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
-    { 
-        _getProcedureFieldQuery = getProcedureFieldQuery;
-    }
-
     protected override async Task<ILookup<Guid, ProcedureFieldView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getProcedureFieldQuery.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<ProcedureFieldView>()
             .Where(x => keys.Contains(x.ProcedureId))
             .OrderBy(x => x.Order)
             .ToListAsync(cancellationToken);

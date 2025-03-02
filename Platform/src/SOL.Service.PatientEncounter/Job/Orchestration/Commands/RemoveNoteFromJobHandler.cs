@@ -25,7 +25,7 @@ public class RemoveNoteFromJobHandler : CommandHandler<RemoveNoteFromJob>
 
         job.RemoveNotes([command.Id]);
 
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

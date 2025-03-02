@@ -1,5 +1,5 @@
 ﻿using SOL.Abstractions.Domain;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
@@ -22,14 +22,9 @@ public class RoutineType : ObjectType<RoutineView>
             .Description("The unique identifier of the Job Purpose that will be created by the Routine.");
 
         descriptor
-            .Field(x => x.Settings)
-            .Type<ListType<RoutineSettingType>>()
-            .Name("settings")
-            .Description("The Settings of the Routine.")
-            .Resolve(ctx => {
-                var routine = ctx.Parent<RoutineView>();
-                return Enum.GetValues<RoutineSetting>().Where(e => routine.Settings.HasFlag(e));
-            });            
+            .Field(x => x.FollowUp)
+            .Name("followUp")
+            .Description("Whether or not the Routine is a Follow Up.");            
 
         descriptor
             .Field(x => x.Name)
@@ -43,7 +38,7 @@ public class RoutineType : ObjectType<RoutineView>
 
         descriptor
             .Field(x => x.Active)
-            .Name("isActive")
+            .Name("active")
             .Description("Whether the Routine is active.");
         
         descriptor

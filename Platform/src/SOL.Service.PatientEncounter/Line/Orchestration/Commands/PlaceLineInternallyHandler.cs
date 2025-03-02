@@ -20,7 +20,7 @@ public class PlaceLineInternallyHandler : CommandHandler<PlaceLineInternally>
         var line = await _repository.Get(message.Id, stoppageToken);
         line.PlacedInternally();
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);        
     }
 }

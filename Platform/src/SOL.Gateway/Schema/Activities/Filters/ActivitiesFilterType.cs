@@ -1,5 +1,5 @@
 using HotChocolate.Data.Filters;
-using SOL.Activities.Views;
+using SOL.Gateway.Views.Activity;
 
 namespace SOL.Gateway.Schema.Activities.Filters;
 

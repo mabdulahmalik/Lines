@@ -1,5 +1,5 @@
 using SOL.Gateway.Schema.UserMgmt.Enums;
-using SOL.Service.UserMgmt.User.View;
+using SOL.Gateway.Views.UserMgmt.User;
 
 namespace SOL.Gateway.Schema.UserMgmt.Objects;
 

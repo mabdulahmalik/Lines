@@ -28,7 +28,7 @@ public class ModifyLineActivity : IStateMachineActivity<LineModificationState, M
         var line = await _repository.Get(context.Message.Id, context.CancellationToken);
         line.Modify(context.Message.Name, context.Message.RoomId, context.Saga.MedicalRecordId);
         
-        _repository.Update(line);
+        await _repository.Update(line, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
 
         await next.Execute(context);

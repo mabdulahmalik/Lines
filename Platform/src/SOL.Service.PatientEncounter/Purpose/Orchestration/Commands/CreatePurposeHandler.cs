@@ -21,7 +21,7 @@ public class CreatePurposeHandler : CommandHandler<CreatePurpose>
         var purpose = Domain.Purpose.Create(command.Name);
         await _purposeRepository.Add(purpose, stoppageToken);
 
-        _purposeRepository.Sort(purpose.Id, Int32.MaxValue, command.InsertOnTop ? 1 : Int32.MaxValue);
+        await _purposeRepository.Sort(purpose.Id, Int32.MaxValue, command.InsertOnTop ? 1 : Int32.MaxValue, stoppageToken);
         
         await _purposeRepository.Commit(stoppageToken);
     }

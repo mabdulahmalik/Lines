@@ -6,7 +6,7 @@ using SOL.Messaging.Contracts.UserMgmt;
 
 namespace SOL.Gateway.Schema.UserMgmt;
 
-public class MutationJobExtensions : ObjectTypeExtension<Mutation>
+public class MutationUserExtensions : ObjectTypeExtension<Mutation>
 {
     protected override void Configure(IObjectTypeDescriptor<Mutation> descriptor)
     {

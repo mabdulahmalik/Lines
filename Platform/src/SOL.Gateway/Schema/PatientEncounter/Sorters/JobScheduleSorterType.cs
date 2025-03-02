@@ -1,5 +1,5 @@
 using HotChocolate.Data.Sorting;
-using SOL.Service.PatientEncounter.Job.Views;
+using SOL.Gateway.Views.PatientEncounter.Job;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 

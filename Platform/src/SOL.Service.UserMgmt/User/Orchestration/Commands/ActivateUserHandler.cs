@@ -25,7 +25,7 @@ public class ActivateUserHandler : CommandHandler<ActivateUser>
 
         user.Activate();
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }

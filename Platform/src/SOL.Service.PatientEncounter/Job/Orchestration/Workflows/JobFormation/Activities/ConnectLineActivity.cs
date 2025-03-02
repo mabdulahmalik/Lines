@@ -30,7 +30,7 @@ public class ConnectLineActivity : IStateMachineActivity<JobFormationState, Prep
             , context.Saga.MedicalRecordId ?? line.MedicalRecordId);
         line.AttachEncounters(context.Saga.EncounterId);
         
-        _repository.Update(line);
+        await _repository.Update(line, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
         
         await next.Execute(context);

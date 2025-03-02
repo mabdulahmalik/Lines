@@ -6,8 +6,8 @@ public interface IAggregateRepository<TAggregateRoot> : IAggregateReader<TAggreg
     where TAggregateRoot : AggregateRoot
 {
     Task Add(TAggregateRoot aggregateRoot, CancellationToken stoppageToken = default);
-    void Update(TAggregateRoot aggregateRoot);
-    void Sort(Guid id, int prevPosition, int curPosition);
+    Task Update(TAggregateRoot aggregateRoot, CancellationToken stoppageToken = default);
+    Task Sort(Guid id, int prevPosition, int curPosition, CancellationToken stoppageToken = default);
     Task Delete(ISpecification<TAggregateRoot> spec, CancellationToken stoppageToken = default);
     Task Restore(ISpecification<TAggregateRoot> spec, CancellationToken stoppageToken = default);
     Task Archive(ISpecification<TAggregateRoot> spec, CancellationToken stoppageToken = default);

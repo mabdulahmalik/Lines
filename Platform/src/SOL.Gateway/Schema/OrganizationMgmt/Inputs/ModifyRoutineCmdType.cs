@@ -29,11 +29,6 @@ public class ModifyRoutineCmdType : InputObjectType<ModifyRoutine>
             .Field(x => x.PurposeId)
             .Name("purposeId")
             .Description("The unique identifier of the Job Purpose to be created by this Routine.");
-        
-        descriptor
-            .Field(x => x.IsFollowUp)
-            .Name("isFollowUp")
-            .Description("Specifies whether the Routine is a Follow Up or regular maintenance.");        
 
         descriptor
             .Field(t => t.Rolling)

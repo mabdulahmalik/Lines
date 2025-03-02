@@ -21,7 +21,7 @@ public class RenumberMedicalRecordHandler : CommandHandler<RenumberMedicalRecord
         var medicalRecord = await _repository.Get(command.Id, stoppageToken);
         medicalRecord.Renumber(command.Number);
 
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

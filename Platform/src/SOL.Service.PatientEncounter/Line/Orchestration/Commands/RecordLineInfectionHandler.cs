@@ -20,7 +20,7 @@ public class RecordLineInfectionHandler : CommandHandler<RecordLineInfection>
         var line = await _repository.Get(message.Id, stoppageToken);
         line.RecordInfection(message.InfectedOn);
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

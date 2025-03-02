@@ -20,7 +20,7 @@ public class CloseLineHandler : CommandHandler<CloseLine>
         var line = await _repository.Get(message.Id, stoppageToken);
         line.Close(message.RemovedOn);
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

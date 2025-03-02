@@ -3,6 +3,7 @@
 		<ProjectReference Include="..\SOL.Abstractions\SOL.Abstractions.csproj" />
 		<ProjectReference Include="..\SOL.Messaging\SOL.Messaging.csproj" />
 		<ProjectReference Include="..\SOL.DataAccess\SOL.DataAccess.csproj" />
+		<ProjectReference Include="..\SOL.Utility\SOL.Utility.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Dawn.Guard" Version="1.12.0" />

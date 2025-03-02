@@ -10,22 +10,22 @@ public class Note : ValueType<Note>
     public Instant CreatedAt { get; private set; }
     public Guid UserId { get; private set; }
     public string Text { get; private set; }
-    public JobNoteTreatment Treatment { get; private set; }
+    public bool IsPinned { get; private set; }
 
-    internal Note(Guid id, Instant createdAt, Guid userId, string text, JobNoteTreatment treatment)
+    internal Note(Guid id, Instant createdAt, Guid userId, string text, bool isPinned)
     { 
         Guard.Argument(text).NotNull().NotEmpty().NotWhiteSpace();
         Guard.Argument(userId).NotDefault("Invalid UserId provided.");
         
         CreatedAt = createdAt;
-        Treatment = treatment;
+        IsPinned = isPinned;
         UserId = userId;
         Text = text;
         Id = id;
     }
 
-    internal Note(Guid userId, string text, JobNoteTreatment treatment = JobNoteTreatment.None)
-        : this(Guid.NewGuid(), SystemClock.Instance.GetCurrentInstant(), userId, text, treatment)
+    internal Note(Guid userId, string text)
+        : this(Guid.NewGuid(), SystemClock.Instance.GetCurrentInstant(), userId, text, false)
     { }
 
     internal void SetText(string text)
@@ -36,12 +36,12 @@ public class Note : ValueType<Note>
 
     internal void Pin()
     {
-        Treatment = JobNoteTreatment.Pinned;
+        IsPinned = true;
     }
     
     internal void Unpin()
     {
-        Treatment = JobNoteTreatment.None;
+        IsPinned = false;
     }
 
     protected override bool EqualsInternal(Note other)

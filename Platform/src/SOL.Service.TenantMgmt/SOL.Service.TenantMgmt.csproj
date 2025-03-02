@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\SOL.Abstractions\SOL.Abstractions.csproj" />
+        <ProjectReference Include="..\SOL.Messaging\SOL.Messaging.csproj" />
+        <ProjectReference Include="..\SOL.Utility\SOL.Utility.csproj" />
+    </ItemGroup>
+
+</Project>

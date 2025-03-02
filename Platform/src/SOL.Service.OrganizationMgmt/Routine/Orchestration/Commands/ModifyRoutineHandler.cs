@@ -24,7 +24,7 @@ public class ModifyRoutineHandler : CommandHandler<ModifyRoutine>
     {
         var routine = await _repository.Get(command.Id, stoppageToken);
 
-        routine.Modify(command.Name, command.Description, command.PurposeId, command.IsFollowUp);
+        routine.Modify(command.Name, command.Description, command.PurposeId);
 
         routine.SetTermini(command.Termini.Select(x => new Trigger(x.ProcedureId, x.PropertyId, x.PropertyValue)).ToArray());
 
@@ -44,7 +44,7 @@ public class ModifyRoutineHandler : CommandHandler<ModifyRoutine>
                 .Select(x => new Recurrence(x.Time, x.Days.ToArray())).ToArray()));
         }
 
-        _repository.Update(routine);
+        await _repository.Update(routine, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

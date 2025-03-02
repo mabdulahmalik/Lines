@@ -29,7 +29,7 @@ public class ModifyFacilityRoomPropertyHandler : CommandHandler<ModifyFacilityRo
             .Select(x => new FacilityType_Domain_RoomPropertyOption(x.Id.GetValueOrDefault(Guid.NewGuid()), x.Text, ++sortOrder))
             .ToArray());
         
-        _repository.Update(facilityType);
+        await _repository.Update(facilityType, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

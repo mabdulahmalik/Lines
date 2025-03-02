@@ -51,7 +51,7 @@ public class AttachPhotosToEncounterHandler : CommandHandler<AttachPhotosToEncou
 
         encounter.AttachPhotos(photos.ToArray());
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

@@ -78,7 +78,7 @@ public class GenericRepository<TDbCtx, TAggregateRoot> : IAggregateRepository<TA
         entry.Property(x => x.CreatedAt).CurrentValue = _clock.GetCurrentInstant();
     }
 
-    public void Update(TAggregateRoot aggregateRoot)
+    public Task Update(TAggregateRoot aggregateRoot, CancellationToken stoppageToken = default)
     {
         var dbSet = _dbCtx.Value.Set<TAggregateRoot>();
         var entry = dbSet.Entry(aggregateRoot);
@@ -88,9 +88,11 @@ public class GenericRepository<TDbCtx, TAggregateRoot> : IAggregateRepository<TA
         }        
         
         entry.Property(x => x.ModifiedAt).CurrentValue = _clock.GetCurrentInstant();
+        
+        return Task.CompletedTask;
     }
 
-    public void Sort(Guid id, int prevPosition, int curPosition)
+    public Task Sort(Guid id, int prevPosition, int curPosition, CancellationToken stoppageToken = default)
     {
         Guard.Support(typeof(TAggregateRoot).IsAssignableTo(typeof(ISortable))
             , $"Cannot sort any [{typeof(TAggregateRoot).Name}] objects because it does not implement {typeof(ISortable).FullName}.");
@@ -105,6 +107,8 @@ public class GenericRepository<TDbCtx, TAggregateRoot> : IAggregateRepository<TA
         _rawSql.AppendLine();
         
         _domainEvents.Add(new AggregateSorted { Id = id, Name = typeof(TAggregateRoot).Name, PosOld = prevPosition, PosNew = curPosition });
+        
+        return Task.CompletedTask;
     }
 
     public async Task Delete(ISpecification<TAggregateRoot> spec, CancellationToken stoppageToken = default)

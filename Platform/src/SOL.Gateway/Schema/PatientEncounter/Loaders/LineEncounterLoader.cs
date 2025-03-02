@@ -1,22 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.PatientEncounter.Line.View;
+using SOL.Gateway.Views.PatientEncounter.Line;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
-public class LineEncounterLoader : GroupedDataLoader<Guid, Guid>
+public class LineEncounterLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, Guid>(batchScheduler, options)
 {
-    private readonly IDomainQuery<LineEncounterView> _getJobLine;
-
-    public LineEncounterLoader(IDomainQuery<LineEncounterView> getJobLine, IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
-    { 
-        _getJobLine = getJobLine;
-    }
-
     protected override async Task<ILookup<Guid, Guid>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getJobLine.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<LineEncounterView>()
             .Where(x => keys.Contains(x.EncounterId))
             .Select(x => new { JobId = x.EncounterId, x.Id })
             .ToListAsync(cancellationToken);

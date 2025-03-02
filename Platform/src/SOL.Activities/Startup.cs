@@ -25,7 +25,7 @@ public static class Startup
         services
             .AddDataAccess<ActivitiesContext>(DbActions);
 
-        services.AddScoped<ActivitiesManager>();
+        services.AddTransient<ActivitiesManager>();
 
         return services;
     }

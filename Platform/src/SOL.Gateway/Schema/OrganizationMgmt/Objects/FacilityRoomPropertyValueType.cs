@@ -1,4 +1,4 @@
-﻿using SOL.Service.OrganizationMgmt.Facility.View;
+﻿using SOL.Gateway.Views.OrganizationMgmt.Facility;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

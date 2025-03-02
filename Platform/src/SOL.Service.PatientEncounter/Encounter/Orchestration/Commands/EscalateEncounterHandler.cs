@@ -21,7 +21,7 @@ public class EscalateEncounterHandler : CommandHandler<EscalateEncounter>
         var encounter = await _repository.Get(command.EncounterId, stoppageToken);
         encounter.Escalate(command.Reason);
 
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

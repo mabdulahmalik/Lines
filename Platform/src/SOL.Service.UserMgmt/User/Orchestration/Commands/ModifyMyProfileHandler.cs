@@ -28,7 +28,7 @@ public class ModifyMyProfileHandler : CommandHandler<ModifyMyProfile>
 
         user.Modify(message.FirstName, message.LastName, message.Phone, user.Avatar);
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }

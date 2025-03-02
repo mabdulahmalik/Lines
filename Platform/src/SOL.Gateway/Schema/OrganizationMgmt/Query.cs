@@ -1,8 +1,8 @@
 using SOL.Gateway.Schema.Common;
-using SOL.Service.OrganizationMgmt.Facility.View;
-using SOL.Service.OrganizationMgmt.FacilityRoom.Views;
-using SOL.Service.OrganizationMgmt.FacilityType.Views;
-using SOL.Service.OrganizationMgmt.Routine.Views;
+using SOL.Gateway.Views.OrganizationMgmt.Facility;
+using SOL.Gateway.Views.OrganizationMgmt.FacilityRoom;
+using SOL.Gateway.Views.OrganizationMgmt.FacilityType;
+using SOL.Gateway.Views.OrganizationMgmt.Routine;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 

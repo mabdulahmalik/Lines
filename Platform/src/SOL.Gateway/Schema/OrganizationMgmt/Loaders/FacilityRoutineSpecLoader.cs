@@ -1,23 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.OrganizationMgmt.Facility.View;
+using SOL.Gateway.Views.OrganizationMgmt.Facility;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
-public class FacilityRoutineSpecLoader : GroupedDataLoader<Guid, FacilityRoutineSpecView>
+public class FacilityRoutineSpecLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, FacilityRoutineSpecView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<FacilityRoutineSpecView> _getAssignmentSpecQuery;
-
-    public FacilityRoutineSpecLoader(IDomainQuery<FacilityRoutineSpecView> getProcedureFieldQuery
-        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _getAssignmentSpecQuery = getProcedureFieldQuery;
-    }
-
     protected override async Task<ILookup<Guid, FacilityRoutineSpecView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var query = await _getAssignmentSpecQuery.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var query = await dbCtx.Set<FacilityRoutineSpecView>()
             .Where(x => keys.Contains(x.FacilityRoutineId))
             .ToListAsync(cancellationToken);
 

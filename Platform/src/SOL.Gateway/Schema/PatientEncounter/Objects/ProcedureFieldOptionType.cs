@@ -1,4 +1,4 @@
-using SOL.Service.PatientEncounter.Procedure.View;
+using SOL.Gateway.Views.PatientEncounter.Procedure;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 

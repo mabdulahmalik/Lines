@@ -1,4 +1,4 @@
-﻿using SOL.Service.UserMgmt.Role.View;
+﻿using SOL.Gateway.Views.UserMgmt.Role;
 
 namespace SOL.Gateway.Schema.UserMgmt.Objects;
 

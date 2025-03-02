@@ -2,36 +2,37 @@ using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Messaging;
 using SOL.Abstractions.Persistence;
 using SOL.Gateway.Application;
+using SOL.Gateway.Views.PatientEncounter.MedicalRecord;
 using SOL.Messaging.Contracts.PatientEncounter;
 using SOL.Messaging.Infrastructure;
-using SOL.Service.PatientEncounter.MedicalRecord.View;
 
 namespace SOL.Gateway.EventHandlers;
 
 public class BroadcastMedicalRecordObservationsAdded : ServiceEventHandler<MedicalRecordObservationsAdded>
 {
     private readonly ISubscriptionHub _subscriptionHub;
-    private readonly IDomainQuery<MedicalRecordObservationView> _queryObservations;
+    private readonly IDbContextFactory<LinesDataStore> _dbCtxFactory;
 
     public BroadcastMedicalRecordObservationsAdded(ILogger<BroadcastMedicalRecordObservationsAdded> logger
-        , IDomainQuery<MedicalRecordObservationView> queryObservations
-        , ISubscriptionHub subscriptionHub) : base(logger)
+        , IDbContextFactory<LinesDataStore> dbCtxFactory, ISubscriptionHub subscriptionHub) 
+        : base(logger)
     {
         _subscriptionHub = subscriptionHub;
-        _queryObservations = queryObservations;
+        _dbCtxFactory = dbCtxFactory;
     }
 
     protected override async Task HandleAsync(MedicalRecordObservationsAdded message, CancellationToken stoppageToken)
     {
         var obs = new List<MedicalRecordObservationView>();
+        await using var dbCtx = await _dbCtxFactory.CreateDbContextAsync(stoppageToken);
         
         message.Observations.GroupBy(x => x.Type)
-            .ToList().ForEach(async observations =>
+            .ToList().ForEach(async void (observations) =>
         {
             var observationType = observations.Key;
             var observationIds = observations.Select(x => x.ObjectId).ToArray();
 
-            var observationViews = await _queryObservations.Query
+            var observationViews = await dbCtx.Set<MedicalRecordObservationView>()
                 .Where(x => x.MedicalRecordId == message.Id 
                             && observationIds.Contains(x.ObjectId) 
                             && x.Type == observationType)

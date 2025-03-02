@@ -1,8 +1,8 @@
 using SOL.Gateway.Schema.Common;
-using SOL.Activities.Views;
 using SOL.Gateway.Schema.Activities.Filters;
 using SOL.Gateway.Schema.Activities.Objects;
 using SOL.Gateway.Schema.Activities.Sorters;
+using SOL.Gateway.Views.Activity;
 
 namespace SOL.Gateway.Schema.Activities;
 

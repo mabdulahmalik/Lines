@@ -1,22 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
-using SOL.Service.PatientEncounter.Job.Views;
+using SOL.Gateway.Views.PatientEncounter.Job;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
-public class JobNoteLoader : GroupedDataLoader<Guid, JobNoteView>
+public class JobNoteLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, JobNoteView>(batchScheduler, options)
 {
-    private readonly IDomainQuery<JobNoteView> _getNote;
-
-    public JobNoteLoader(IDomainQuery<JobNoteView> getNote, IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
-    { 
-        _getNote = getNote;
-    }
-
     protected override async Task<ILookup<Guid, JobNoteView>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var notes = await _getNote.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var notes = await dbCtx.Set<JobNoteView>()
             .Where(x => keys.Contains(x.JobId))
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);

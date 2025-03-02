@@ -1,24 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Domain;
 using SOL.Abstractions.Persistence;
-using SOL.Service.PatientEncounter.Encounter.Views;
+using SOL.Gateway.Views.PatientEncounter.Encounter;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 
-public class EncounterProgressLoader : GroupedDataLoader<Guid, EncounterProgressStage>
+public class EncounterProgressLoader(
+    IDbContextFactory<LinesDataStore> dbCtxFactory,
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions? options = null)
+    : GroupedDataLoader<Guid, EncounterProgressStage>(batchScheduler, options)
 {
-    private readonly IDomainQuery<EncounterProgressView> _getProgress;
-
-    public EncounterProgressLoader(IDomainQuery<EncounterProgressView> getProgress
-        , IBatchScheduler batchScheduler, DataLoaderOptions? options = null) 
-        : base(batchScheduler, options)
-    {
-        _getProgress = getProgress;
-    }
-
     protected override async Task<ILookup<Guid, EncounterProgressStage>> LoadGroupedBatchAsync(IReadOnlyList<Guid> keys, CancellationToken cancellationToken)
     {
-        var progress = await _getProgress.Query
+        await using var dbCtx = await dbCtxFactory.CreateDbContextAsync(cancellationToken);
+        
+        var progress = await dbCtx.Set<EncounterProgressView>()
             .Where(x => keys.Contains(x.EncounterId))
             .ToListAsync(cancellationToken);
 

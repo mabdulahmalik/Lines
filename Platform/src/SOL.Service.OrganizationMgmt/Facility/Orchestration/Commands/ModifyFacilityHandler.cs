@@ -36,7 +36,7 @@ public class ModifyFacilityHandler : CommandHandler<ModifyFacility>
 
         HandleAssignments(command, facility);
 
-        _repository.Update(facility);
+        await _repository.Update(facility, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 

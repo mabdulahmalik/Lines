@@ -25,7 +25,7 @@ public class CompleteJobAfterEncounter : DomainEventHandler<EncounterProgressed>
         var job = await _repository.Get(message.JobId, stoppageToken);
         job.Complete();
 
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);        
     }
 }

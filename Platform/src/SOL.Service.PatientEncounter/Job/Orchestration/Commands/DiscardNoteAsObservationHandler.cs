@@ -25,7 +25,7 @@ public class DiscardNoteAsObservationHandler : CommandHandler<DiscardNoteAsObser
         
         medicalRecord.RemoveObservations(observation);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

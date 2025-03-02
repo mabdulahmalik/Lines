@@ -2,11 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using SOL.Abstractions.Persistence;
 using SOL.Service.UserMgmt;
 using SOL.Service.UserMgmt.Invitation.Domain.Services;
-using SOL.Service.UserMgmt.Invitation.View;
-using SOL.Service.UserMgmt.Role.View;
 using SOL.Service.UserMgmt.User;
 using SOL.Service.UserMgmt.User.Domain;
-using SOL.Service.UserMgmt.User.View;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -30,13 +27,7 @@ public static class Startup
             .AddDbContextFactory<UserMgmtDataStore>(DbActions)
             .AddDbContext<UserMgmtDataStore>(DbActions)
             .AddTransient<InvitationManager>()
-            .AddTransient<IAggregateRepository<User>, UserRepository>()
-            .AddTransient<IDomainQuery<UserView>, UserQuery>()
-            .AddTransient<IDomainQuery<RoleView>, RoleQuery>()
-            .AddTransient<IDomainQuery<UserStatusView>, UserStatusQuery>()
-            .AddTransient<IDomainQuery<UserRoleView>, UserRoleQuery>()
-            .AddTransient<IDomainQuery<InvitationView>, InvitationQuery>()
-            .AddTransient<IDomainQuery<InvitationRoleView>, InvitationRoleQuery>();
+            .AddTransient<IAggregateRepository<User>, UserRepository>();
 
         return services;
     }

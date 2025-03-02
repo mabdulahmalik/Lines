@@ -37,7 +37,7 @@ public abstract class AdvanceTheEncounterActivityBase<TEvent> : IStateMachineAct
         var encounter = await Repository.Get(encounterId, stoppageToken);
         encounter.Advance();
         
-        Repository.Update(encounter);
+        await Repository.Update(encounter, stoppageToken);
         await Repository.Commit(stoppageToken);
     }
 }

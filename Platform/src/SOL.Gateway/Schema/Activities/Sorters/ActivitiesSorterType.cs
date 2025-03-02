@@ -1,5 +1,5 @@
 using HotChocolate.Data.Sorting;
-using SOL.Activities.Views;
+using SOL.Gateway.Views.Activity;
 
 namespace SOL.Gateway.Schema.Activities.Sorters;
 

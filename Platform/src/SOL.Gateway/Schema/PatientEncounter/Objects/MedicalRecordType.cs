@@ -1,4 +1,4 @@
-using SOL.Service.PatientEncounter.MedicalRecord.View;
+using SOL.Gateway.Views.PatientEncounter.MedicalRecord;
 
 namespace SOL.Gateway.Schema.PatientEncounter;
 

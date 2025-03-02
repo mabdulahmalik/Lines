@@ -1,5 +1,4 @@
-﻿using SOL.Service.OrganizationMgmt;
-using SOL.Utility.Geography;
+﻿using SOL.Utility.Geography;
 
 namespace SOL.Gateway.Schema.Common;
 

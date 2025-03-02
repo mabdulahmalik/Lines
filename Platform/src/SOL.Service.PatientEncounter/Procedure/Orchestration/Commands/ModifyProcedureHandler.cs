@@ -26,12 +26,11 @@ public class ModifyProcedureHandler : CommandHandler<ModifyProcedure>
             requiredData |= data;
         });
 
-        procedure.Modify(command.Name, requiredData
-            , command.EnablePerformanceReporting, command.IsInsertion, command.IsRemoval);
+        procedure.Modify(command.Name, requiredData, command.EnablePerformanceReporting);
 
         HandleFields(procedure, command);        
 
-        _procedureRepository.Update(procedure);
+        await _procedureRepository.Update(procedure, stoppageToken);
         await _procedureRepository.Commit(stoppageToken);
     }
 

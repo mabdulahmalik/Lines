@@ -139,7 +139,7 @@ public class Job : AggregateRoot, IRestorable, ITrackableAggregate
     public void PinNote(Note note) {
         Guard.Argument(note).NotNull();
         
-        _notes.Where(x => x.Treatment == JobNoteTreatment.Pinned).ToList()
+        _notes.Where(x => x.IsPinned).ToList()
             .ForEach(UnpinNote);
         
         note.Pin();

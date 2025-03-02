@@ -11,6 +11,7 @@ class ProcedurePersistence : IEntityTypeConfiguration<Domain.Procedure>
         builder.Ignore(x => x.Changes);
 
         builder.Property(x => x.Name).HasMaxLength(255);
+        builder.Property(x => x.Type);
         builder.Property(x => x.Order);
         builder.Property(x => x.Settings);
         builder.Property(x => x.Archived);

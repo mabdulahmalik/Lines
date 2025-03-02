@@ -1,61 +1,68 @@
-using System.Text;
+using MassTransit.Logging;
+using MassTransit.Monitoring;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using OpenTelemetry.Trace;
 using SOL.Abstractions.Application;
 using SOL.Gateway;
 using SOL.Gateway.Application;
 using SOL.Messaging;
-using SOL.Service.OrganizationMgmt.Facility.View;
-using SOL.Service.PatientEncounter.Encounter.Views;
-using SOL.Service.UserMgmt.User.View;
-using SOL.Workflow.JobIntake;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .AddEnvironmentVariables();
 
-var connStrings = builder.Configuration.GetSection("ConnectionStrings");
+var connStrings = new ConnectionStrings();
+builder.Configuration.Bind("ConnectionStrings", connStrings);
 
 builder.Logging
-    .AddOpenTelemetryCfg();
+    .AddOpenTelemetryCfg("lines-api");
 
 builder.Services
-    .AddOpenTelemetryCfg(opt =>
-    {
-        opt.OtlpEndpoint = builder.Configuration["OtlpUrl"];
-        opt.AppInsightsKey = connStrings["AppInsights"];
-    })
     .AddSingleton<IClock>(SystemClock.Instance)
     .AddTransient<ISubscriptionHub, SubscriptionHub>()
     .AddTransient<IOperationContextFactory, OperationContextFactory>()
-    .AddStackExchangeRedisCache(options => {
-        options.Configuration = connStrings["RedisCache"];
+    .AddPooledDbContextFactory<LinesDataStore>(dbOpts =>
+    {
+        dbOpts.UseSqlServer(connStrings.TenantDb, sqlOpts => {
+            sqlOpts.UseNodaTime();
+            sqlOpts.UseAzureSqlDefaults();
+            sqlOpts.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        });
+    })
+    .AddOpenTelemetryCfg(opt =>
+    {
+        opt.ServiceName = "lines-api";
+        opt.AppInsightsKey = connStrings.AppInsights;
+        opt.OtlpEndpoint = builder.Configuration["OtlpUrl"];
+        
+        opt.ConfigureTracerProviderBuilder = b =>
+        {
+            b.AddSource(DiagnosticHeaders.DefaultListenerName); //MassTransit
+            b.AddHotChocolateInstrumentation();
+        };
+        opt.ConfigureMeterProviderBuilder = b =>
+        {
+            b.AddMeter(InstrumentationOptions.MeterName); // MassTransit
+        };
     });
 
 builder.Services
     .AddHttpContextAccessor()
-    .AddGraphQLConfig(builder.Environment, opts => opts.RedisConnectionString = connStrings["RedisCache"])
+    .AddHealthCheckCfg(connStrings)
+    .AddGraphQLCfg(builder.Environment, opts => opts.RedisConnectionString = connStrings.RedisCache)
     .AddMessagingSystem(opts => {
-        opts.Sagas = typeof(JobIntakeStateMachine).Assembly;
+        opts.Consumers.Add("api.lines", new MessagingSystemOptions.ConsumerSource { Assembly = typeof(Program).Assembly, Types = EventRelayRegistry.EventHandlers });
         
-        opts.Consumers.Add("api.gateway", new MessagingSystemOptions.ConsumerSource { Assembly = typeof(Program).Assembly, Types = EventRelayRegistry.EventHandlers });
-        opts.Consumers.Add("encounter.service", new MessagingSystemOptions.ConsumerSource { Assembly = typeof(EncounterView).Assembly });
-        opts.Consumers.Add("organization.service", new MessagingSystemOptions.ConsumerSource { Assembly = typeof(FacilityProcedureView).Assembly });
-        opts.Consumers.Add("user.service", new MessagingSystemOptions.ConsumerSource { Assembly = typeof(UserView).Assembly });
-
-        opts.RedisConnectionString = connStrings["RedisCache"];
-        opts.AzureConnectionString = connStrings["AzureStorage"];
-        
+        builder.Configuration.Bind("ConnectionStrings", opts.ConnStrings);
         builder.Configuration.Bind("RabbitMQ", opts.RabbitMqCfg);
     })
-    .AddCachingSystem()
-    .AddStorageSystem(opts => opts.AzureConnectionString = connStrings["AzureStorage"])
-    .AddActivityTracking(opts => opts.DatabaseConnectionString = connStrings["TenantDb"]);
-
-builder.Services
-    .AddPatientEncounterContext(opts => opts.DatabaseConnectionString = connStrings["TenantDb"])
-    .AddOrganizationMgmtContext(opts => opts.DatabaseConnectionString = connStrings["TenantDb"])
-    .AddUserMgmtContext(opts => opts.DatabaseConnectionString = connStrings["TenantDb"]);
+    .AddCachingSystem(opts => opts.RedisConnectionString = connStrings.RedisCache)
+    .AddStorageSystem(opts => opts.AzureConnectionString = connStrings.AzureStorage)
+    .AddActivityTracking(opts => opts.DatabaseConnectionString = connStrings.TenantDb)
+    .AddIdPClients(opts => builder.Configuration.Bind("Keycloak", opts));
 
 builder.Services.AddCors(options =>
 {
@@ -67,16 +74,37 @@ builder.Services.AddCors(options =>
     });
 });
 
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddHostedService<DataBootstrap>();
+
 var app = builder.Build();
 
 app.UseCors();
-
-app.UseRouting();
-app.UseGraphQLConfig();
-
-app.MapGet("/", async context => {
-    string ascii_art = await File.ReadAllTextAsync("ascii_art.txt");
-    await context.Response.WriteAsync(ascii_art, Encoding.ASCII);
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    DefaultFileNames = new List<string> { "index.html" }
 });
+app.UseStaticFiles(new StaticFileOptions()
+{
+    HttpsCompression = Microsoft.AspNetCore.Http.Features.HttpsCompressionMode.DoNotCompress,
+    OnPrepareResponse = (context) =>
+    {
+        if (context.File.Name.EndsWith(".js") ||
+            context.File.Name.EndsWith(".html"))
+        {
+            context.Context.Response.GetTypedHeaders().CacheControl =
+                new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+                {
+                    Public = true,
+                    MaxAge = TimeSpan.FromDays(0)
+                };
+        }
+    }
+});
+app.UseRouting();
+app.UseWebSockets();
+app.UseGraphQLCfg();
+app.UseHealthCheckCfg();
+app.MapFallbackToFile("index.html");
 
 await app.RunWithGraphQLCommandsAsync(args);

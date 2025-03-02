@@ -23,16 +23,11 @@ public class CreateProcedureCmdType : InputObjectType<CreateProcedure>
             .DefaultValue(false);
 
         descriptor
-            .Field(t => t.IsInsertion)
-            .Name("isInsertion")
-            .Description("Whether the Procedure is an Insertion.")
-            .DefaultValue(false);
-
-        descriptor
-            .Field(t => t.IsRemoval)
-            .Name("isRemoval")
-            .Description("Whether the Procedure is a Removal.")
-            .DefaultValue(false);
+            .Field(t => t.Type)
+            .Type<ProcedureTypeType>()
+            .Name("type")
+            .Description("The Type of Procedure being created.")
+            .DefaultValue(Abstractions.Domain.ProcedureType.Standard);
         
         descriptor
             .Field(t => t.RequiredData)

@@ -1,8 +1,9 @@
-CREATE VIEW [dbo].[vwReportSourceProcedures]
+CREATE VIEW [dbo].[vw_ReportSourceProcedures]
   AS
 SELECT 
     p.[Id] as [ProcedureId],
     p.[Name] as [ProcedureName],
+    DATEDIFF(mi, es.[Attending], ep.[PerformedAt]) as [ProcedureDuration],
     ep.[PerformedBy],
     ep.[PerformedAt],
     ep.[EncounterId],

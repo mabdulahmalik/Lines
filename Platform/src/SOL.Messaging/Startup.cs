@@ -1,13 +1,10 @@
 using System.Reflection;
-using System.Transactions;
 using AutoMapper;
 using Azure.Storage.Blobs;
 using FluentValidation;
 using MassTransit;
 using MassTransit.Internals;
-using MassTransit.MessageData;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using NodaTime.Serialization.SystemTextJson;
 using SOL.Abstractions.Messaging;
 using SOL.Messaging.Infrastructure;
@@ -58,22 +55,77 @@ public static class Startup
             x.AddConsumers(t => t.HasInterface<IServiceHandler>(), GetDomainServiceBridges(consumerAssemblies));
             
             x.SetRedisSagaRepositoryProvider(cfg => {
-                cfg.DatabaseConfiguration(opts.RedisConnectionString);
+                cfg.DatabaseConfiguration(opts.ConnStrings.RedisCache);
                 cfg.ConcurrencyMode = ConcurrencyMode.Pessimistic;
                 cfg.Expiry = TimeSpan.FromDays(2);
                 cfg.KeyPrefix = "mt-saga-svc";
                 cfg.LockSuffix = "-lock";
             });
-            x.AddSagaStateMachines(opts.Sagas);
-            x.AddActivities(opts.Sagas);
-            
-            x.AddDelayedMessageScheduler();
 
-            var messageDataRepository = GetMessagingRepository(opts.AzureConnectionString, "mt-claim-check");
+            if (opts.Sagas != null)
+            {
+                x.AddSagaStateMachines(opts.Sagas);
+                x.AddActivities(opts.Sagas);   
+            }
+
+            var messageDataRepository = GetMessagingRepository(opts.ConnStrings.AzureStorage, "mt-claim-check");
             services.AddTransient<IMessageDataRepository>(_ => messageDataRepository);
 
-            if(opts.RabbitMqCfg.IsValid)
+            if (!String.IsNullOrWhiteSpace(opts.ConnStrings.AzureServiceBus))
             {
+                x.AddServiceBusMessageScheduler();
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Host(opts.ConnStrings.AzureServiceBus);
+                    cfg.ConfigureJsonSerializerOptions(o => {
+                        o.ConfigureForNodaTime(new NodaJsonSettings());
+                        return o;
+                    });
+                    /*
+                    cfg.UseTransaction(x => {
+                        x.Timeout = TimeSpan.FromSeconds(60);
+                        x.IsolationLevel = IsolationLevel.ReadCommitted;
+                    });
+                    */
+                    cfg.UseServiceBusMessageScheduler();
+                    cfg.UsePublishFilter(typeof(PublishMessageHeadersFilter<>), context);
+                    cfg.UseConsumeFilter(typeof(ConsumeMessageHeadersFilter<>), context);
+                    
+                    cfg.UseMessageData(messageDataRepository);
+                    cfg.UseMessageScope(context);
+                    cfg.UseInMemoryOutbox(context);
+                    cfg.ConfigureEndpoints(context);
+                    
+                    /* TODO: Revisit this later (to complete it)
+                    opts.Consumers.ToList().ForEach(c => {
+                        var commandHandlers = c.Value.Assembly.GetTypes().Union(c.Value.Types)
+                            .Where(t => t.HasInterface<IServiceHandler>() && t.BaseType!.Name == "CommandHandler`1")
+                            .ToList();
+                        
+                        if (commandHandlers.Any())
+                            cfg.ReceiveEndpoint(c.Key,
+                                e => commandHandlers.ForEach(t => e.ConfigureConsumer(context, t)));
+                        
+                        var eventHandlers = c.Value.Assembly.GetTypes().Union(c.Value.Types)
+                            .Where(t => t.HasInterface<IServiceHandler>() && t.BaseType!.Name == "ServiceEventHandler`1")
+                            .ToList();
+
+                        if (eventHandlers.Any())
+                        {
+                            cfg.SubscriptionEndpoint("Self", c.Key,
+                                s => eventHandlers.ForEach(t => s.ConfigureConsumer(context, t)));
+                        }
+                    });
+                    
+                    cfg.ReceiveEndpoint("faulted-messages", e => {
+                        e.ConfigureConsumer<FaultedMessageHandler>(context);
+                    });
+                    */
+                });
+            }
+            else if(opts.RabbitMqCfg.IsValid)
+            {
+                x.AddDelayedMessageScheduler();
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(opts.RabbitMqCfg.Host, "/", h => {
@@ -91,7 +143,6 @@ public static class Startup
                         x.IsolationLevel = IsolationLevel.ReadCommitted;
                     });
                     */
-                    
                     cfg.UseDelayedMessageScheduler();
                     cfg.UsePublishFilter(typeof(PublishMessageHeadersFilter<>), context);
                     cfg.UseConsumeFilter(typeof(ConsumeMessageHeadersFilter<>), context);
@@ -113,9 +164,9 @@ public static class Startup
             x.AddConsumers(t => t.HasInterface<IDomainHandler>(), GetDomainRelayHandlers(consumerAssemblies));
             
             x.SetRedisSagaRepositoryProvider(cfg => {
-                cfg.DatabaseConfiguration(opts.RedisConnectionString);
+                cfg.DatabaseConfiguration(opts.ConnStrings.RedisCache);
                 cfg.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                cfg.Expiry = TimeSpan.FromDays(2);
+                cfg.Expiry = TimeSpan.FromDays(5);
                 cfg.KeyPrefix = "mt-saga-dmn";
                 cfg.LockSuffix = "-lock";
             });
@@ -197,10 +248,9 @@ public static class Startup
 
 public class MessagingSystemOptions
 {
-    public string RedisConnectionString { get; set; }
-    public string AzureConnectionString { get; set; }
-    public Assembly Sagas { get; set; }
+    public Assembly? Sagas { get; set; }
     public Dictionary<string, ConsumerSource> Consumers { get; } = new();
+    public ConnectionStrings ConnStrings { get; set; } = new();
     public RabbitMq RabbitMqCfg { get; set; } = new();
 
     public class RabbitMq {
@@ -214,5 +264,11 @@ public class MessagingSystemOptions
     public class ConsumerSource {
         public Assembly Assembly { get; set; }
         public IEnumerable<Type> Types { get; set; } = new List<Type>();
+    }
+    
+    public class ConnectionStrings {
+        public string RedisCache { get; set; } = default!;
+        public string AzureStorage { get; set; } = default!;
+        public string AzureServiceBus { get; set; } = default!;
     }
 }

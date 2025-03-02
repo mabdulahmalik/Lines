@@ -31,7 +31,7 @@ public class MakeNoteAnObservationHandler : CommandHandler<MakeNoteAnObservation
 
         medicalRecord.AddObservations(observation);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

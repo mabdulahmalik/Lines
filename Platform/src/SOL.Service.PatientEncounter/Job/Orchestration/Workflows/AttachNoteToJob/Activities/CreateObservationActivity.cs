@@ -32,7 +32,7 @@ public class CreateObservationActivity : IStateMachineActivity<AttachNoteToJobSt
         
         medicalRecord.AddObservations(observation);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, context.CancellationToken);
         await _repository.Commit(context.CancellationToken);
 
         await next.Execute(context);

@@ -21,7 +21,7 @@ public class DeactivateRoutineHandler : CommandHandler<DeactivateRoutine>
         var routine = await _repository.Get(command.RoutineId, stoppageToken);
         routine.Deactivate();
         
-        _repository.Update(routine);
+        await _repository.Update(routine, stoppageToken);
         await _repository.Commit(stoppageToken);
     }    
 }

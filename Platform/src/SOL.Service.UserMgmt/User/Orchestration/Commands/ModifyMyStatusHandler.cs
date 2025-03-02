@@ -25,7 +25,7 @@ public class ModifyMyStatusHandler : CommandHandler<ModifyMyStatus>
         var user = await _repository.Get(_operationContext.Value.ActorId, cancellationToken);
         user.ChangeStatus(message.Status, message.Message);
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }

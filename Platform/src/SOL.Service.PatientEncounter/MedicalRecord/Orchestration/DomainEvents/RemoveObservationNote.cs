@@ -31,7 +31,7 @@ public class RemoveObservationNote : DomainEventHandler<JobNotesRemoved>
 
         medicalRecord.RemoveObservations(observations);
         
-        _repository.Update(medicalRecord);
+        await _repository.Update(medicalRecord, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

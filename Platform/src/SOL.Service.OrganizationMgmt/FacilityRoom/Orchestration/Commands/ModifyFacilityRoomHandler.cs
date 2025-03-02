@@ -32,7 +32,7 @@ public class ModifyFacilityRoomHandler : CommandHandler<ModifyFacilityRoom>
             room.ClearProperties();
         }
 
-        _repository.Update(room);
+        await _repository.Update(room, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

@@ -35,13 +35,13 @@ public class ScheduledJobCreated : DomainEventHandler<AggregateCreated>
             if (existingJob.ScheduledDate > activeJob.ScheduledDate) 
             {
                 line.FollowUp(activeJob.Id);
-                _repository.Update(line);
+                await _repository.Update(line, stoppageToken);
             }
         }
         else
         {
             line.FollowUp(activeJob.Id);
-            _repository.Update(line);
+            await _repository.Update(line, stoppageToken);
         }
         
         await _repository.Commit(stoppageToken);

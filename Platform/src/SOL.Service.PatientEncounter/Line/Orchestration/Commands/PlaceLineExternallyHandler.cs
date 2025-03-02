@@ -20,7 +20,7 @@ public class PlaceLineExternallyHandler : CommandHandler<PlaceLineExternally>
         var line = await _repository.Get(message.Id, stoppageToken);
         line.PlacedExternally(message.PlacedOn, message.PlacedBy);
         
-        _repository.Update(line);
+        await _repository.Update(line, stoppageToken);
         await _repository.Commit(stoppageToken);        
     }
 }

@@ -23,7 +23,7 @@ public class PinNoteToJobHandler : CommandHandler<PinNoteToJob>
 
         job.PinNote(note);
         
-        _repository.Update(job);
+        await _repository.Update(job, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

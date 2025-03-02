@@ -5,6 +5,7 @@ CREATE TABLE [enc].[Procedure] (
     [Archived]            BIT              NOT NULL,
     [Order]               INT              DEFAULT ((2147483647)) NOT NULL,
     [Name]                NVARCHAR (255)   NOT NULL,
+    [Type]                TINYINT          NOT NULL, 
     [Settings]            TINYINT          NOT NULL,    
     [RequiredData]        TINYINT          NOT NULL,
     CONSTRAINT [PK_Procedure] PRIMARY KEY CLUSTERED ([Id] ASC)

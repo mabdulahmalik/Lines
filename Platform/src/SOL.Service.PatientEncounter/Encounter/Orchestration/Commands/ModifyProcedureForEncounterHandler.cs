@@ -26,7 +26,7 @@ public class ModifyProcedureForEncounterHandler : CommandHandler<ModifyProcedure
         
         encounter.ModifyProcedure(command.Id, procedureValues);
         
-        _repository.Update(encounter);
+        await _repository.Update(encounter, stoppageToken);
         await _repository.Commit(stoppageToken);
     }
 }

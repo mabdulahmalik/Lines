@@ -26,13 +26,13 @@ public class ModifyMyPreferencesHandler : CommandHandler<ModifyMyPreferences>
         var user = await _repository.Get(_operationContext.Value.ActorId, cancellationToken);
         
         UserPreference userPrefs = default;
-        message.Preferences.ForEach(data => {
+        message.Preferences?.ForEach(data => {
             userPrefs |= data;
         });
         
         user.SetPreferences(userPrefs);
 
-        _repository.Update(user);
+        await _repository.Update(user, cancellationToken);
         await _repository.Commit(cancellationToken);
     }
 }
