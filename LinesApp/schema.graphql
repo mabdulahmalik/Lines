@@ -1,0 +1,2758 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"A segment of a collection."
+type ActivitiesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Activity]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"The Activity."
+type Activity {
+  "The unique identifier of the Activity."
+  activityId: UUID
+  "The Activity."
+  activityType: String
+  "The unique identifier of the Aggregate."
+  aggregateId: UUID
+  "The Aggregate."
+  aggregateType: String
+  "The Metadata of the Activity."
+  metadata: String @cost(weight: "10")
+  "The unique identifier of the User who performed the Activity."
+  userId: UUID
+  "The date and time the Activity was performed."
+  timestamp: DateTime
+}
+
+"A physical location based in the USA."
+type Address {
+  "The Street name, suite #, etc."
+  street: String!
+  "The name of the City."
+  city: String!
+  "The State abbreviation."
+  state: String!
+  "The 5 or 9 digit Zip Code."
+  zipCode: String!
+}
+
+"Information about the offset pagination."
+type CollectionSegmentInfo {
+  "Indicates whether more items exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more items exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+}
+
+"Core unit of work performed by one or more clinicians, describes an Encounter with a Patient."
+type Encounter {
+  "The unique identifier for the Encounter."
+  id: UUID!
+  "The unique identifier for the Job this Encounter belongs to."
+  jobId: UUID
+  "The Purpose of the Encounter."
+  purposeId: UUID
+  "The Medical Record associated with the Encounter."
+  medicalRecordId: UUID
+  "The Location of the Encounter."
+  location: Location
+  "The date and time the Encounter was created."
+  createdAt: DateTime
+  "The date and time the Encounter was modified."
+  modifiedAt: DateTime
+  "The priority of the Encounter."
+  priority: EncounterPriority
+  "The current Stage of the Encounter."
+  stage: EncounterStage
+  "The assigned Clinicians on the Encounter."
+  assignments: [EncounterAssignment] @cost(weight: "10")
+  "The executed Procedures during this Encounter."
+  procedures: [EncounterProcedure] @cost(weight: "10")
+  "The Photos associated with the Encounter."
+  photos: [EncounterPhoto] @cost(weight: "10")
+  "The Lines associated with the Encounter."
+  lines: [UUID] @cost(weight: "10")
+  "The progression of the Encounter through the Workflow."
+  progress: [EncounterProgressStage] @cost(weight: "10")
+  "The Alerts that need to be surfaced for this Encounter."
+  alerts: [EncounterAlert] @cost(weight: "10")
+}
+
+"An Alert for an Encounter. Important things that need to be surfaced about the Encounter."
+type EncounterAlert {
+  "The date and time the Alert was created."
+  alertedAt: DateTime!
+  "The unique identifier of the User who created the Alert."
+  alertedBy: UUID!
+  "The Type of Alert."
+  type: EncounterAlertType
+  "The text\/reason for the Alert."
+  text: String
+}
+
+"The clinician assigned to the Encounter."
+type EncounterAssignment {
+  "The unique identifier for the clinician."
+  clinicianId: UUID
+  "The position of the clinician."
+  position: EncounterAssigneePosition
+  "The date and time the clinician was assigned to the encounter."
+  assignedAt: DateTime!
+}
+
+"The Photo associated with the Encounter."
+type EncounterPhoto {
+  "The unique identifier for the photo."
+  id: UUID!
+  "The Absolute Url to the Photo."
+  url: String @cost(weight: "10")
+  "The date and time the Photo was created."
+  createdAt: DateTime!
+  "The uploaded file name of the File."
+  fileName: String!
+  "The content type of the file."
+  contentType: String!
+  "The size of the file."
+  length: Long!
+}
+
+"A Procedure performed on a Patient, during an Encounter."
+type EncounterProcedure {
+  "The unique identifier for the Procedure."
+  id: UUID!
+  "The unique identifier for the Procedure."
+  procedureId: UUID!
+  "The date and time the Procedure was performed."
+  performAt: DateTime!
+  "The unique identifier of the user that performed the Procedure."
+  performedBy: UUID!
+  "The values of the Procedure per this Encounter."
+  values: [EncounterProcedureValue] @cost(weight: "10")
+}
+
+"The Field\/Value associated with the Procedure executed for the Encounter."
+type EncounterProcedureValue {
+  "The unique identifier for the ProcedureField."
+  fieldId: UUID!
+  "The value ProcedureField."
+  value: String!
+}
+
+"Represents the progression of an Encounter through the workflow."
+type EncounterProgressStage {
+  "The Workflow Stage."
+  stage: EncounterStage
+  "When the Encounter entered this stage."
+  enteredAt: DateTime!
+  "The amount of time spent in this stage (in minutes)."
+  duration: Int
+}
+
+"A segment of a collection."
+type EncountersCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Encounter]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A segment of a collection."
+type FacilitiesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Facility]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A Facility."
+type Facility {
+  "The unique identifier of the Facility."
+  id: UUID!
+  "The Name of the Facility."
+  name: String
+  "The unique identifier of the Facility Type."
+  typeId: UUID
+  "The time zone of the Facility."
+  timeZone: String
+  "The Address of the Facility."
+  address: Address
+  "Whether or not the Facility is archived."
+  archived: Boolean
+  "The required Patient data for the Facility."
+  requiredData: [RequiredPatientData] @cost(weight: "10")
+  "The date and time the Facility was Created."
+  createdAt: DateTime
+  "The date and time the Facility was last Modified."
+  modifiedAt: DateTime
+  "The number of Jobs, Encounters, and Lines referencing this Facility."
+  referenceCount: Int
+  "The list of Procedure Unique Identifiers that are excluded."
+  procedureIds: [UUID] @cost(weight: "10")
+  "The list of Purpose Unique Identifiers that are excluded."
+  purposeIds: [UUID] @cost(weight: "10")
+  "The list of Routine Assignments."
+  routineAssignments: [FacilityRoutine] @cost(weight: "10")
+}
+
+"A Room within a Facility."
+type FacilityRoom {
+  "The unique identifier of the Room."
+  id: UUID!
+  "The name of the Room."
+  name: String
+  "The unique identifier of the Facility."
+  facilityId: UUID!
+  "The list of Properties of the Room."
+  properties: [FacilityRoomPropertyValue] @cost(weight: "10")
+  "The date and time the facility was created."
+  createdAt: DateTime
+  "The date and time the facility was last modified."
+  modifiedAt: DateTime
+}
+
+"The Room Property definition for a Facility Type."
+type FacilityRoomProperty {
+  "The unique identifier of the Room Property."
+  id: UUID!
+  "The name of the Room Property."
+  name: String!
+  "A list of Options for room property."
+  options: [FacilityRoomPropertyOption] @cost(weight: "10")
+}
+
+"The Option definition for a Room Property."
+type FacilityRoomPropertyOption {
+  "The unique identifier of the Option."
+  id: UUID!
+  "The text for Option."
+  text: String!
+}
+
+"A Room Property assignment for a Facility."
+type FacilityRoomPropertyValue {
+  "The unique identifier of the Room Property."
+  propertyId: UUID!
+  "The unique identifier of the Room Property Value."
+  value: UUID!
+}
+
+"A segment of a collection."
+type FacilityRoomsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [FacilityRoom]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A Routine Assignment to a Facility."
+type FacilityRoutine {
+  "The unique identifier of the Routine Assignment."
+  id: UUID!
+  "The unique identifier of the Routine."
+  routineId: UUID!
+  "The name of the Routine Assignment."
+  name: String!
+  "The list of Routine Assignment specs."
+  specs: [FacilityRoutineSpec] @cost(weight: "10")
+}
+
+"A Routine Assignment Specification for a Facility."
+type FacilityRoutineSpec {
+  "The unique identifier of the Room Property."
+  propertyId: UUID!
+  "The unique identifier of the Room Property Value."
+  propertyValue: UUID!
+}
+
+"A Facility Type."
+type FacilityType {
+  "The unique identifier of the Facility Type."
+  id: UUID!
+  "The name of the Facility Type."
+  name: String
+  "Whether the Facility Type is active."
+  isActive: Boolean
+  "The date and time the Facility Type was created."
+  createdAt: DateTime
+  "The date and time the Facility Type was last modified."
+  modifiedAt: DateTime
+  "A list of facility type room properties."
+  properties: [FacilityRoomProperty] @cost(weight: "10")
+}
+
+"A segment of a collection."
+type FacilityTypesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [FacilityType]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"Initial work order placed that serves as the basis for an Encounter."
+type Job {
+  "The unique identifier for the job."
+  id: UUID!
+  "The unique identifier of the Purpose for the Job."
+  purposeId: UUID
+  "The unique identifier of the existing Line identified for the Job."
+  lineId: UUID
+  "The unique identifier of Medical Record identified for the Job."
+  medicalRecordId: UUID
+  "The Location of the Job."
+  location: Location
+  "The current status of the Job."
+  status: JobStatus
+  "The date and time the Job was CREATED."
+  createdAt: DateTime
+  "The date and time the Job was MODIFIED."
+  modifiedAt: DateTime
+  "The date and time the Job status was changed at."
+  statusChangedAt: DateTime
+  "The contact associated with the Job."
+  contact: String
+  "The ordering provider associated with the Job."
+  orderingProvider: String
+  "Any\/all Notes associated with the Job."
+  notes: [JobNote] @cost(weight: "10")
+  "The date and time the Job is scheduled for."
+  schedule: JobSchedule
+  "The Encounter and Procedure used to trigger this Follow Up Job."
+  origin: JobRoutine @cost(weight: "10")
+}
+
+"A Note associated with a Job."
+type JobNote {
+  "The unique identifier for the Note."
+  id: UUID!
+  "The Author of the Note."
+  createdBy: UUID!
+  "The date and time the Note was created."
+  createdAt: DateTime!
+  "Whether or not the Note should be Pinned."
+  pinned: Boolean!
+  "The content of the Note."
+  text: String!
+}
+
+"A view of a Job's Routine Assignment."
+type JobRoutine {
+  "The unique identifier of the referenced Encounter."
+  encounterId: UUID!
+  "The unique identifier of the applied Procedure."
+  encounterProcedureId: UUID!
+  "The unique identifier of the Routine Assignment."
+  routineAssignmentId: UUID
+  "The unique identifier of the Routine."
+  routineId: UUID
+}
+
+"The scheduled date and time the Job should be attended to."
+type JobSchedule {
+  "The DATE in which the Job should be executed."
+  date: Date!
+  "The TIME in which the Job should be executed."
+  time: TimeSpan
+}
+
+"A segment of a collection."
+type JobsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Job]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A Central Line."
+type Line {
+  "The unique identifier of the Line."
+  id: UUID!
+  "The name of the Line."
+  name: String
+  "The type of the Line."
+  type: String
+  "The Dwelling of the Line."
+  dwelling: LineDwelling
+  "The date the Line was inserted."
+  insertedOn: Date
+  "The date the Line was removed."
+  removedOn: Date
+  "The amount of time (in Days) the Line was in the patient."
+  dwellTime: Int
+  "The date the Line was created."
+  createdAt: DateTime
+  "The date the Line was last modified."
+  modifiedAt: DateTime
+  "Whether the date the Line was infected."
+  infectedOn: LocalDate
+  "Whether the line is externally placed."
+  externallyPlaced: Boolean
+  "The Name of the person\/entity who placed the Line externally."
+  externallyPlacedBy: String
+  "The Medical Record associated with the Line."
+  medicalRecordId: UUID
+  "The Follow Up details the Line."
+  followUp: LineFollowUp
+  "The Location of the Line."
+  location: Location
+  "The Encounter and Procedure used to INSERT the Line."
+  insertedWith: LineProcedure
+  "The Encounter and Procedure used to REMOVE the Line."
+  removedWith: LineProcedure
+}
+
+"The Follow Up details for a Line."
+type LineFollowUp {
+  "The unique identifier of the Job."
+  jobId: UUID
+  "The unique identifier of the Purpose."
+  purposeId: UUID
+  "The DATE of the scheduled Follow Up."
+  date: Date
+}
+
+"An applied Procedure that implicitly carries more weight because it indicates more (ie. triggered a follow up, is a Line insertion, etc)."
+type LineProcedure {
+  "The unique identifier of the referenced Encounter."
+  encounterId: UUID!
+  "The unique identifier of the applied Procedure."
+  encounterProcedureId: UUID!
+}
+
+"A segment of a collection."
+type LinesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Line]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A physical Location."
+type Location {
+  "The unique identifier of the Facility."
+  facilityId: UUID!
+  "The unique identifier of the Room."
+  roomId: UUID!
+}
+
+"A Medical Record of a Patient."
+type MedicalRecord {
+  "The unique identifier of the Medical Record."
+  id: UUID!
+  "The unique identifier of the Facility associated to the Medical Record."
+  facilityId: UUID
+  "The Medical Record Number (MRN)."
+  number: String
+  "The first name of the Patient."
+  firstName: String
+  "The last name of the Patient."
+  lastName: String
+  "The birthday of the Patient."
+  birthday: Date
+  "The date of the first encounter with the Patient."
+  firstSeenOn: Date
+  "The date of last (most recent) encounter with the Patient."
+  lastSeenOn: Date
+  "The date and time the Record was created."
+  createdAt: DateTime
+  "The date and time the Record was last modified."
+  modifiedAt: DateTime
+  "The Total # of Lines on this Record."
+  linesTotal: Int
+  "The IN\/Active # of Lines on this Record."
+  linesIn: Int
+  "Whether or not the Record is ACTIVE."
+  active: Boolean
+  "The Observations tied to the Medical Record."
+  observations: [MedicalRecordObservation] @cost(weight: "10")
+}
+
+"A Patient Observation tied to their Medical Record."
+type MedicalRecordObservation {
+  "The unique identifier of the referenced Object."
+  objectId: UUID!
+  "The date and time the Observation was recorded."
+  timestamp: DateTime!
+  "The Type of Observation."
+  type: MedicalRecordObservationType
+  "The Data for the Observation. This structure is dynamic and will vary based on the Observation Type."
+  data: JSON
+}
+
+"A segment of a collection."
+type MedicalRecordsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [MedicalRecord]
+  totalCount: Int! @cost(weight: "10")
+}
+
+type Mutation {
+  "Updates the logged-in user's preferences."
+  modifyMyPreference(command: ModifyMyPreferenceCmd): MutationResponse @cost(weight: "10")
+  "Updates the logged-in user's status."
+  modifyMyStatus(command: ModifyMyStatusCmd): MutationResponse @cost(weight: "10")
+  "Updates a user's profile."
+  modifyMyProfile(command: ModifyMyProfileCmd): MutationResponse @cost(weight: "10")
+  "Updates a user's avatar."
+  modifyMyAvatar(command: ModifyMyAvatarCmd): MutationResponse @cost(weight: "10")
+  "Updates a user's details."
+  modifyUser(command: ModifyUserCmd): MutationResponse @cost(weight: "10")
+  "Invites new users by sending email invitations."
+  inviteUsers(command: InviteUsersCmd): MutationResponse @cost(weight: "10")
+  "Resends a pending user invitation."
+  resendUserInvite(command: ResendUserInviteCmd): MutationResponse @cost(weight: "10")
+  "Cancels a pending user invitation."
+  cancelUserInvite(command: CancelUserInviteCmd): MutationResponse @cost(weight: "10")
+  "Activates a user."
+  activateUser(command: ActivateUserCmd): MutationResponse @cost(weight: "10")
+  "Deactivates a user."
+  deactivateUser(command: DeactivateUserCmd): MutationResponse @cost(weight: "10")
+  "Provisions a new Tenant and all it's dependent resources."
+  enactTenantCreation(command: EnactTenantCreationPrc): MutationResponse @cost(weight: "10")
+  "Creates a new Job, and an Encounter if the Job is not scheduled for the future."
+  enactJobIntake(command: EnactJobIntakePrc): MutationResponse @cost(weight: "10")
+  "Modifies the ancillary details of an Encounter and Job."
+  enactEncounterRevision(command: EnactEncounterRevisionPrc): MutationResponse @cost(weight: "10")
+  "Reschedule an existing Job."
+  enactJobReschedule(command: EnactJobReschedulePrc): MutationResponse @cost(weight: "10")
+  "Cancels an existing Job along with with any associated encounters."
+  cancelJob(command: CancelJobCmd): MutationResponse @cost(weight: "10")
+  "Deletes an existing Job along with with any associated encounters."
+  deleteJob(command: DeleteJobCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Purpose to describe a Job."
+  createPurpose(command: CreatePurposeCmd): MutationResponse @cost(weight: "10")
+  "Deletes an existing Purpose that describes a Job."
+  deletePurpose(command: DeletePurposeCmd): MutationResponse @cost(weight: "10")
+  "Adjust the descriptor of the Purpose."
+  renamePurpose(command: RenamePurposeCmd): MutationResponse @cost(weight: "10")
+  "Changes the sort order of the Purpose."
+  sortPurpose(command: SortPurposeCmd): MutationResponse @cost(weight: "10")
+  "Archives the Purpose."
+  archivePurpose(command: ArchivePurposeCmd): MutationResponse @cost(weight: "10")
+  "Restores (from Archives) the Purpose."
+  unarchivePurpose(command: UnarchivePurposeCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Procedure to be executed within a Job."
+  createProcedure(command: CreateProcedureCmd): MutationResponse @cost(weight: "10")
+  "Deletes an existing Procedure that's being executed within a Job."
+  deleteProcedure(command: DeleteProcedureCmd): MutationResponse @cost(weight: "10")
+  "Modifies the Procedure to be executed within a Job."
+  modifyProcedure(command: ModifyProcedureCmd): MutationResponse @cost(weight: "10")
+  "Sorts the Procedure to be executed within a Job."
+  sortProcedure(command: SortProcedureCmd): MutationResponse @cost(weight: "10")
+  "Archives the Procedure to be executed within a Job."
+  archiveProcedure(command: ArchiveProcedureCmd): MutationResponse @cost(weight: "10")
+  "Restores (from Archives) the Procedure to be executed within a Job."
+  unarchiveProcedure(command: UnarchiveProcedureCmd): MutationResponse @cost(weight: "10")
+  "Places the Encounter on Hold."
+  placeEncounterOnHold(command: PlaceEncounterOnHoldCmd): MutationResponse @cost(weight: "10")
+  "Removes the Hold from the Encounter."
+  removeHoldFromEncounter(command: RemoveHoldFromEncounterCmd): MutationResponse @cost(weight: "10")
+  "Escalates the Encounter."
+  escalateEncounter(command: EscalateEncounterCmd): MutationResponse @cost(weight: "10")
+  "Deescalates the Encounter."
+  deescalateEncounter(command: DeescalateEncounterCmd): MutationResponse @cost(weight: "10")
+  "Requests assistance for a specific encounter."
+  requestAssistanceForEncounter(command: RequestAssistanceForEncounterCmd): MutationResponse @cost(weight: "10")
+  "Cancels assistance request for a specific encounter."
+  cancelAssistanceRequestForEncounter(command: CancelAssistanceRequestForEncounterCmd): MutationResponse @cost(weight: "10")
+  "Advances the Encounter workflow to 'Attending'."
+  attendToPatient(command: AttendToPatientCmd): MutationResponse @cost(weight: "10")
+  "Submit the applied Procedures to the Encounter."
+  submitProcedures(command: SubmitProceduresCmd): MutationResponse @cost(weight: "10")
+  "Completes the Encounter."
+  completeEncounter(command: CompleteEncounterCmd): MutationResponse @cost(weight: "10")
+  "Attaches Photos to the Encounter"
+  attachPhotosToEncounter(command: AttachPhotosToEncounterCmd): MutationResponse @cost(weight: "10")
+  "Removes a Photo from the Encounter"
+  removePhotoFromEncounter(command: RemovePhotoFromEncounterCmd): MutationResponse @cost(weight: "10")
+  "Attaches a Note to the Job"
+  attachNoteToJob(command: AttachNoteToJobCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Note for the Job"
+  modifyNoteForJob(command: ModifyNoteForJobCmd): MutationResponse @cost(weight: "10")
+  "Removes a Note from the Job"
+  removeNoteFromJob(command: RemoveNoteFromJobCmd): MutationResponse @cost(weight: "10")
+  "PINS a Note to it's Job"
+  pinNoteToJob(command: PinNoteToJobCmd): MutationResponse @cost(weight: "10")
+  "UNPINS a Note from it's Job"
+  unpinNoteFromJob(command: UnpinNoteFromJobCmd): MutationResponse @cost(weight: "10")
+  "Assigns the logged-in User to the Encounter"
+  assignMeToEncounter(command: AssignMeToEncounterCmd): MutationResponse @cost(weight: "10")
+  "Withdraws the logged-in User from the Encounter"
+  withdrawMeFromEncounter(command: WithdrawMeFromEncounterCmd): MutationResponse @cost(weight: "10")
+  "Applies a Procedure to the Encounter"
+  applyProcedureToEncounter(command: ApplyProcedureToEncounterCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Procedure for the Encounter"
+  modifyProcedureForEncounter(command: ModifyProcedureForEncounterCmd): MutationResponse @cost(weight: "10")
+  "Removes a Procedure from the Encounter"
+  removeProcedureFromEncounter(command: RemoveProcedureFromEncounterCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Line."
+  enactListRevision(command: EnactLineRevisionPrc): MutationResponse @cost(weight: "10")
+  "Closes\/Removes a Line."
+  closeLine(command: CloseLineCmd): MutationResponse @cost(weight: "10")
+  "Records an Infection on a Line."
+  recordLineInfection(command: RecordLineInfectionCmd): MutationResponse @cost(weight: "10")
+  "Clears an Infection on a Line."
+  clearLineInfection(command: ClearLineInfectionCmd): MutationResponse @cost(weight: "10")
+  "Places a Line Externally."
+  placeLineExternally(command: PlaceLineExternallyCmd): MutationResponse @cost(weight: "10")
+  "Places a Line Internally."
+  placeLineInternally(command: PlaceLineInternallyCmd): MutationResponse @cost(weight: "10")
+  "Changes the Number of a Medical Record."
+  renumberMedicalRecord(command: RenumberMedicalRecordCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Medical Record."
+  modifyMedicalRecord(command: ModifyMedicalRecordCmd): MutationResponse @cost(weight: "10")
+  "Deletes a Medical Record."
+  deleteMedicalRecord(command: DeleteMedicalRecordCmd): MutationResponse @cost(weight: "10")
+  "Turns a Job Note into a Medical Record Observation."
+  makeNoteAnObservation(command: MakeNoteAnObservationCmd): MutationResponse @cost(weight: "10")
+  "Discards a Job Note as a Medical Record Observation."
+  discardNoteAsObservation(command: DiscardNoteAsObservationCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Facility Type."
+  createFacilityType(command: CreateFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Renames a Facility Type."
+  renameFacilityType(command: RenameFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Changes the Sort Order of a Facility Type."
+  sortFacilityType(command: SortFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Adds a Room Property to Facility Type."
+  addFacilityRoomProperty(command: CreateFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Room Property for Facility Type."
+  modifyFacilityRoomProperty(command: ModifyFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
+  "Sorts a Room Property for Facility Type."
+  sortFacilityRoomProperty(command: SortFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
+  "Activates a Facility Type."
+  activateFacilityType(command: ActivateFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Deactivates a Facility Type."
+  deactivateFacilityType(command: DeactivateFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Routine."
+  createRoutine(command: CreateRoutineCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Routine."
+  modifyRoutine(command: ModifyRoutineCmd): MutationResponse @cost(weight: "10")
+  "Deletes a Routine."
+  deleteRoutine(command: DeleteRoutineCmd): MutationResponse @cost(weight: "10")
+  "Activates a Routine."
+  activateRoutine(command: ActivateRoutineCmd): MutationResponse @cost(weight: "10")
+  "Deactivates a Routine."
+  deactivateRoutine(command: DeactivateRoutineCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Facility."
+  createFacility(command: CreateFacilityCmd): MutationResponse @cost(weight: "10")
+  "Modifies a facility."
+  modifyFacility(command: ModifyFacilityCmd): MutationResponse @cost(weight: "10")
+  "Changes the Sort Order of a Facility."
+  sortFacility(command: SortFacilityCmd): MutationResponse @cost(weight: "10")
+  "Deletes a Facility."
+  deleteFacility(command: DeleteFacilityCmd): MutationResponse @cost(weight: "10")
+  "Archives a Facility."
+  archiveFacility(command: ArchiveFacilityCmd): MutationResponse @cost(weight: "10")
+  "Unarchives a Facility."
+  unarchiveFacility(command: UnarchiveFacilityCmd): MutationResponse @cost(weight: "10")
+  "Creates a new Room."
+  createFacilityRoom(command: CreateFacilityRoomCmd): MutationResponse @cost(weight: "10")
+  "Modifies a Room."
+  modifyFacilityRoom(command: ModifyFacilityRoomCmd): MutationResponse @cost(weight: "10")
+}
+
+"The response from a mutation."
+type MutationResponse {
+  "The identifier of the operation being performed."
+  correlationId: UUID!
+}
+
+"A Procedure definition."
+type Procedure {
+  "The unique identifier of the Procedure."
+  id: UUID!
+  "The Name of the Procedure."
+  name: String
+  "The Type of the Procedure."
+  type: ProcedureType
+  "Whether the Procedure is Archived."
+  archived: Boolean
+  "The number of objects that reference this Procedure."
+  references: Int
+  "The Settings of the Procedure."
+  settings: [ProcedureSetting] @cost(weight: "10")
+  "The required Patient data for the Procedure."
+  requiredData: [RequiredPatientData] @cost(weight: "10")
+  "The Fields\/data points the Procedure captures."
+  fields: [ProcedureField] @cost(weight: "10")
+  "The date and time the Procedure was created."
+  createdAt: DateTime
+  "The date and time the Procedure was modified."
+  modifiedAt: DateTime
+}
+
+"A Field (data point) for a Procedure."
+type ProcedureField {
+  "The unique identifier of the Field."
+  id: UUID!
+  "The Name of the Field."
+  name: String!
+  "The Instructions for the Field."
+  instruction: String
+  "The Data Type of the Field."
+  type: ProcedureFieldType
+  "Whether the Field is Archived."
+  archived: Boolean!
+  "The number of objects that reference this Field."
+  references: Int!
+  "The Settings for the Field."
+  settings: [ProcedureFieldSetting] @cost(weight: "10")
+  "The List Options for the Field that is of type 'List'."
+  options: [ProcedureFieldOption] @cost(weight: "10")
+}
+
+"An option for a ProcedureField, that is of type `List`."
+type ProcedureFieldOption {
+  "The unique identifier of the Option."
+  id: UUID!
+  "The text\/value of the Option."
+  text: String!
+  "Whether the Option is Archived."
+  archived: Boolean!
+  "The number of objects that reference this Option."
+  references: Int!
+}
+
+"A segment of a collection."
+type ProceduresCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Procedure]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"The Purpose of a Job."
+type Purpose {
+  "The unique identifier of the Purpose."
+  id: UUID!
+  "The Name of the Purpose."
+  name: String
+  "Whether the purpose is Archived."
+  archived: Boolean
+  "The date and time the Purpose was created."
+  createdAt: DateTime
+  "The date and time the Purpose was last modified."
+  modifiedAt: DateTime
+  "The number of objects that reference this Purpose."
+  references: Int
+}
+
+"A segment of a collection."
+type PurposesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Purpose]
+  totalCount: Int! @cost(weight: "10")
+}
+
+type Query {
+  "Gets all Time Zones."
+  timeZones: [String] @cost(weight: "10")
+  "Gets all US States."
+  states: [State] @cost(weight: "10")
+  "Gets the logged in user's information."
+  me: User @cost(weight: "10")
+  "Get all Users."
+  users(skip: Int take: Int): UsersCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Invitations."
+  userInvitations(skip: Int take: Int): UserInvitationsCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Get all application Roles."
+  roles(skip: Int take: Int): RolesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets the Tenant details of the logged in user."
+  tenant: Tenant @cost(weight: "10")
+  "Get all Jobs."
+  jobs(skip: Int take: Int where: JobsFilter @cost(weight: "10") order: [JobsSorter!] @cost(weight: "10")): JobsCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Encounters."
+  encounters(skip: Int take: Int where: EncountersFilter @cost(weight: "10") order: [EncountersSorter!] @cost(weight: "10")): EncountersCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Central Lines."
+  lines(skip: Int take: Int where: LinesFilter @cost(weight: "10") order: [LinesSorter!] @cost(weight: "10")): LinesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Medical Records."
+  medicalRecords(skip: Int take: Int where: MedicalRecordsFilter @cost(weight: "10") order: [MedicalRecordsSorter!] @cost(weight: "10")): MedicalRecordsCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Job Purposes."
+  purposes(skip: Int take: Int where: PurposesFilter @cost(weight: "10")): PurposesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Procedures."
+  procedures(skip: Int take: Int where: ProceduresFilter @cost(weight: "10")): ProceduresCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Facility Types."
+  facilityTypes(skip: Int take: Int where: FacilityTypesFilter @cost(weight: "10")): FacilityTypesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Routines."
+  routines(skip: Int take: Int where: RoutinesFilter @cost(weight: "10") order: [RoutinesSorter!] @cost(weight: "10")): RoutinesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Facilities."
+  facilities(skip: Int take: Int where: FacilitiesFilter @cost(weight: "10")): FacilitiesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Gets all Rooms."
+  facilityRooms(skip: Int take: Int where: FacilityRoomsFilter @cost(weight: "10") order: [FacilityRoomsSorter!] @cost(weight: "10")): FacilityRoomsCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  "Get all Activities."
+  activities(skip: Int take: Int where: ActivitiesFilter @cost(weight: "10") order: [ActivitiesSorter!] @cost(weight: "10")): ActivitiesCollectionSegment @listSize(assumedSize: 500, slicingArguments: [ "take" ], slicingArgumentDefaultValue: 50, sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+}
+
+"A Recurrence Schedule entry."
+type RecurrenceSchedule {
+  "The time of day for Recurrence Schedule."
+  time: LocalTime!
+  "The Days of Recurrence Schedule."
+  days: [IsoDayOfWeek]
+}
+
+"Represents the application Role."
+type Role {
+  "The unique identifier of the Role."
+  id: UUID!
+  "The name of the Role."
+  name: String
+}
+
+"A segment of a collection."
+type RolesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Role]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A Rolling Interval Schedule."
+type RollingSchedule {
+  "The interval value for the Routine's Rolling Schedule."
+  interval: RollingScheduleDuration @cost(weight: "10")
+  "The delay value for the Routine's Rolling Schedule."
+  delay: RollingScheduleDuration @cost(weight: "10")
+}
+
+"The Duration of the Rolling Interval Schedule."
+type RollingScheduleDuration {
+  "The value for the Rolling Schedule."
+  value: Int!
+  "The unit for the Rolling Schedule."
+  unit: DurationUnit
+}
+
+"A Routine definition."
+type Routine {
+  "The unique identifier of the Routine."
+  id: UUID!
+  "The unique identifier of the Job Purpose that will be created by the Routine."
+  purposeId: UUID
+  "Whether or not the Routine is a Follow Up."
+  followUp: Boolean
+  "The Name of the Routine."
+  name: String
+  "The Description of the Routine."
+  description: String
+  "Whether the Routine is active."
+  active: Boolean
+  "The number of Assignments to Facilities."
+  assignmentCount: Int
+  "The date and time the Routine was Created."
+  createdAt: DateTime
+  "The date and time the Routine was last Modified."
+  modifiedAt: DateTime
+  "The Rolling Schedule for the Routine."
+  rolling: RollingSchedule @cost(weight: "10")
+  "A list of Scheduled Recurrences for the Routine."
+  recurrence: [RecurrenceSchedule] @cost(weight: "10")
+  "A list of Triggers to START the Routine."
+  origin: [RoutineOrigin] @cost(weight: "10")
+  "A list of Triggers to TERMINATE the Routine."
+  termini: [RoutineTermini] @cost(weight: "10")
+}
+
+"A Procedure Trigger to START the Routine."
+type RoutineOrigin {
+  "The unique identifier of the Procedure Property."
+  propertyId: UUID
+  "The unique identifier for the Procedure."
+  procedureId: UUID!
+  "The value for the Procedure Property."
+  propertyValue: String
+}
+
+"A Procedure Trigger to TERMINATE the Routine."
+type RoutineTermini {
+  "The unique identifier of the Procedure Property."
+  propertyId: UUID
+  "The unique identifier of the Procedure."
+  procedureId: UUID!
+  "The value of the Procedure Property."
+  propertyValue: String
+}
+
+"A segment of a collection."
+type RoutinesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Routine]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"A US State."
+type State {
+  "The name of the US State."
+  name: String!
+  "The 02 letter code of the US State."
+  code: String!
+}
+
+type Subscription {
+  "Messages sent through this subscription are intended only for the active subscriber."
+  direct: SubscriptionResponse @cost(weight: "10")
+  "Messages sent through this subscription are intended for all subscribers."
+  broadcast: SubscriptionResponse @cost(weight: "10")
+}
+
+"The response from a subscription."
+type SubscriptionResponse {
+  "The identifier of the actor that sent the message."
+  actorId: UUID!
+  "The identifier of the operation being performed."
+  correlationId: UUID!
+  "The name of the event being sent."
+  eventName: String!
+  "The data being sent with the event."
+  payload: String!
+}
+
+"A customer instance of the application."
+type Tenant {
+  "The unique identifier of the Tenant."
+  id: UUID!
+  "The Name of the Tenant."
+  name: String!
+  "The unique Key of the Tenant."
+  key: String!
+  "Whether or not the Tenant is Active."
+  active: Boolean!
+}
+
+"Represents a user of the product."
+type User {
+  "The unique identifier of the user."
+  id: UUID!
+  "The first name of the user."
+  firstName: String
+  "The last name of the user."
+  lastName: String
+  "The email address of the user."
+  email: String
+  "The phone number of the user."
+  phone: String
+  "The avatar image URL of the user."
+  avatar: String
+  "Indicates whether the user is Active."
+  active: Boolean!
+  "The date and time of when the user last logged in."
+  loggedInAt: DateTime
+  "The date and time of when the user last changed their password."
+  passwordChangedAt: DateTime
+  "The date and time of when the user created their account."
+  registeredAt: DateTime
+  "Indicates whether the user is enrolled in training."
+  inTraining: Boolean
+  "The authentication identity of the user."
+  identity: String!
+  "The preferences of the user."
+  preferences: [UserPreference] @cost(weight: "10")
+  "The current status of the user."
+  status: UserStatus @cost(weight: "10")
+  "The roles assigned to the user."
+  roles: [UUID]
+}
+
+"Represents a pending invitation for a user to join this organization."
+type UserInvitation {
+  "The unique identifier of the invitation."
+  id: UUID!
+  "The unique identifier of the user that sent the invitation."
+  invitedBy: UUID
+  "The date and time when the invitation was initially created and sent."
+  createdAt: DateTime
+  "The email address to which the invitation was sent."
+  email: String
+  "The list of roles assigned to the user being invited."
+  roles: [UUID]
+}
+
+"A segment of a collection."
+type UserInvitationsCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [UserInvitation]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"Represents the Status of a user."
+type UserStatus {
+  "The availability status of the user."
+  status: UserAvailability
+  "The status message of the user."
+  message: String
+  "The date and time of when the status was last changed."
+  changedAt: DateTime
+}
+
+"A segment of a collection."
+type UsersCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [User]
+  totalCount: Int! @cost(weight: "10")
+}
+
+"The Command for activating a Facility Type."
+input ActivateFacilityTypeCmd {
+  "The unique identifier of the Facility Type to Activate."
+  id: UUID!
+}
+
+"The Command for activating a Routine."
+input ActivateRoutineCmd {
+  "The unique identifier of the Routine to Activate."
+  id: UUID!
+}
+
+"Command to activate a user."
+input ActivateUserCmd {
+  "Unique identifier of the user to activate."
+  userId: UUID!
+}
+
+"Filters the Activity."
+input ActivitiesFilter {
+  and: [ActivitiesFilter!]
+  or: [ActivitiesFilter!]
+  "The Aggregate."
+  aggregate: StringOperationFilterInput
+  "The unique identifier of the Aggregate."
+  aggregateId: UuidOperationFilterInput
+  "The Activity."
+  activityType: StringOperationFilterInput
+  "The unique identifier of the User who performed the Activity."
+  userId: UuidOperationFilterInput
+  "The date and time the Activity was performed."
+  timestamp: DateTimeOperationFilterInput
+}
+
+"Sorting the Activity Query."
+input ActivitiesSorter {
+  "The date and time the Activity was performed."
+  timestamp: SortEnumType @cost(weight: "10")
+  "The Activity."
+  activityType: SortEnumType @cost(weight: "10")
+  "The Aggregate."
+  aggregateType: SortEnumType @cost(weight: "10")
+}
+
+"A physical location based in the USA."
+input AddressFilter {
+  and: [AddressFilter!]
+  or: [AddressFilter!]
+  "The Street name, suite #, etc."
+  street: StringOperationFilterInput
+  "The name of the City."
+  city: StringOperationFilterInput
+  "The State abbreviation."
+  state: StringOperationFilterInput
+  "The 5 or 9 digit Zip Code."
+  zipCode: StringOperationFilterInput
+}
+
+"The 'Address' object as a Command parameter."
+input AddressPrm {
+  "The Street name, suite #, etc."
+  street: String!
+  "The name of the City."
+  city: String!
+  "The State abbreviation."
+  state: String!
+  "The 5 or 9 digit Zip Code."
+  zipCode: String!
+}
+
+"The Command that applies a Procedure to the Encounter."
+input ApplyProcedureToEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The unique identifier of the Procedure."
+  procedureId: UUID!
+  "The list of Procedure Values."
+  values: [EncounterProcedureValuePrm]
+  "The a List of unique identifiers of the Routine Assignment(s) that should be ADDED. This is only necessary when the Procedure triggers a follow up."
+  routinesAssigned: [UUID!]!
+  "The a List of the unique identifiers of the Routine Assignments(s) that should be REMOVED. This is only necessary when the Procedure triggers a follow up."
+  routinesRemoved: [UUID!]!
+  "The unique identifier of the existing Line being removed. This is only necessary when the Procedure is a Removal."
+  removedLineId: UUID
+  "The Name of the Line being inserted by this Procedure. This is only necessary when the Procedure is an Insertion."
+  insertedLineName: String
+}
+
+"The Command for Archiving a Facility."
+input ArchiveFacilityCmd {
+  "The unique identifier of the Facility to Archive."
+  id: UUID!
+}
+
+"Archives a Procedure by its unique identifier."
+input ArchiveProcedureCmd {
+  "The unique identifier of the Procedure."
+  id: UUID!
+}
+
+"Archives a Purpose by its unique identifier."
+input ArchivePurposeCmd {
+  "The unique identifier of the Purpose."
+  id: UUID!
+}
+
+"The Command that assigns the active user to the Encounter."
+input AssignMeToEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The unique identifier of the Room of the Patient."
+  facilityRoomId: UUID!
+  "The unique identifier of the Medical Record of the Patient."
+  medicalRecordId: UUID
+}
+
+"The Command that attaches a Note to the Job."
+input AttachNoteToJobCmd {
+  "The unique identifier of the Job."
+  jobId: UUID!
+  "The Text for the Note."
+  text: String!
+  "Whether or not the Note is Pinned and displayed on the card of the Job and Encounter."
+  pinned: Boolean! = false
+  "The unique identifier of the Medical Record. Specifying this value will create an Observation out of this Note."
+  medicalRecordId: UUID
+}
+
+"The Command that attaches multiple Photos to the Encounter."
+input AttachPhotosToEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The list of binary representations of the Photos."
+  photos: [Upload!]!
+}
+
+"The Command that advances the Encounter workflow into the active most state."
+input AttendToPatientCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+}
+
+input BooleanOperationFilterInput {
+  eq: Boolean @cost(weight: "10")
+  neq: Boolean @cost(weight: "10")
+}
+
+"Command to cancel assistance request for a specific encounter."
+input CancelAssistanceRequestForEncounterCmd {
+  "The unique identifier of the encounter for which assistance request is being canceled."
+  encounterId: UUID!
+}
+
+"Command that holds the Job Cancellation details."
+input CancelJobCmd {
+  "The unique identifier of the Job."
+  id: UUID!
+  "The Reason for Job being Canceled."
+  reason: String
+}
+
+"The command to cancel a pending user invitation."
+input CancelUserInviteCmd {
+  "The unique identifier of the invitation to be canceled."
+  inviteId: UUID!
+}
+
+"The Command that CLEARS a Line Infection."
+input ClearLineInfectionCmd {
+  "The unique identifier of the Line."
+  id: UUID!
+}
+
+"The Command that closes\/removes a Line."
+input CloseLineCmd {
+  "The unique identifier of the Line."
+  id: UUID!
+  "The date when the Line was removed."
+  removedOn: Instant!
+}
+
+"The Command that COMPLETES the Encounter."
+input CompleteEncounterCmd {
+  "The unique identifier of the Encounter."
+  id: UUID!
+}
+
+"The Command for creating a new facility."
+input CreateFacilityCmd {
+  "The name of the facility."
+  name: String!
+  "The unique identifier of the Facility Type."
+  typeId: UUID!
+  "The time zone for the facility."
+  timeZone: String!
+  "The address of the facility."
+  address: AddressPrm
+  "The required Patient data for the facility."
+  requiredData: [RequiredPatientData]
+}
+
+"The Command for creating a new Room for Facility."
+input CreateFacilityRoomCmd {
+  "The Name of the Room."
+  name: String!
+  "The unique identifier of the Facility."
+  facilityId: UUID!
+  "The properties of the Facility."
+  properties: [FacilityRoomPropertyPrm]
+}
+
+"The Command for creating a Room Property for a Facility Type."
+input CreateFacilityRoomPropertyCmd {
+  "The unique identifier of the Facility Type."
+  facilityTypeId: UUID!
+  "The Name of the room property."
+  name: String!
+  "Options for the room property."
+  options: [String]
+}
+
+"The Command for creating a Facility Type."
+input CreateFacilityTypeCmd {
+  "The name of the facility type."
+  name: String!
+}
+
+"The Command that holds the data needed to create a new Procedure."
+input CreateProcedureCmd {
+  "The Name\/Descriptor of the Procedure to create."
+  name: String!
+  "Whether performance reporting is enabled for the Procedure."
+  enablePerformanceReporting: Boolean! = false
+  "The Type of Procedure being created."
+  type: ProcedureType = STANDARD
+  "The required Patient Data fields for the Procedure."
+  requiredData: [RequiredPatientData]
+  "The fields that are part of the Procedure."
+  fields: [ProcedureFieldPrm]
+}
+
+"The Command that holds the data needed to create a new Purpose."
+input CreatePurposeCmd {
+  "The Name\/Descriptor of the Job Purpose."
+  name: String!
+  "Whether to insert the new Purpose at the top or bottom of the existing Purposes."
+  insertOnTop: Boolean! = false
+}
+
+"The Command for creating a Routine."
+input CreateRoutineCmd {
+  "The Name of the Routine."
+  name: String!
+  "The Description of the Routine."
+  description: String
+  "The unique identifier of the Job Purpose that will be created by this Routine."
+  purposeId: UUID!
+  "Specifies whether the Routine is a Follow Up or regular maintenance."
+  isFollowUp: Boolean!
+  "Indicates the 'Rolling Interval' style Schedule in which the Routine will be executed."
+  rolling: RollingSchedulePrm
+  "Indicates the 'Recurrence' style Schedule in which the Routine will be executed."
+  recurrence: [RecurrenceSchedulePrm]
+  "The Procedure Triggers that START the Routine."
+  origins: [RoutineTriggerPrm]
+  "The Procedure Triggers that TERMINATE the Routine."
+  termini: [RoutineTriggerPrm]
+}
+
+input DateOperationFilterInput {
+  eq: Date @cost(weight: "10")
+  neq: Date @cost(weight: "10")
+  in: [Date] @cost(weight: "10")
+  nin: [Date] @cost(weight: "10")
+  gt: Date @cost(weight: "10")
+  ngt: Date @cost(weight: "10")
+  gte: Date @cost(weight: "10")
+  ngte: Date @cost(weight: "10")
+  lt: Date @cost(weight: "10")
+  nlt: Date @cost(weight: "10")
+  lte: Date @cost(weight: "10")
+  nlte: Date @cost(weight: "10")
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime @cost(weight: "10")
+  neq: DateTime @cost(weight: "10")
+  in: [DateTime] @cost(weight: "10")
+  nin: [DateTime] @cost(weight: "10")
+  gt: DateTime @cost(weight: "10")
+  ngt: DateTime @cost(weight: "10")
+  gte: DateTime @cost(weight: "10")
+  ngte: DateTime @cost(weight: "10")
+  lt: DateTime @cost(weight: "10")
+  nlt: DateTime @cost(weight: "10")
+  lte: DateTime @cost(weight: "10")
+  nlte: DateTime @cost(weight: "10")
+}
+
+"The Command for deactivating a Facility Type."
+input DeactivateFacilityTypeCmd {
+  "The unique identifier of the Facility Type to deactivate."
+  id: UUID!
+}
+
+"The Command for deactivating a Routine."
+input DeactivateRoutineCmd {
+  "The unique identifier of the Routine to Deactivate."
+  id: UUID!
+}
+
+"Command to deactivate a user."
+input DeactivateUserCmd {
+  "Unique identifier of the user to deactivate."
+  userId: UUID!
+}
+
+"The Command that Deescalates the Encounter."
+input DeescalateEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+}
+
+"The Command for deleting a Facility."
+input DeleteFacilityCmd {
+  "The unique identifier of the Facility to Delete."
+  id: UUID!
+}
+
+"Command that holds the Job Deletion details."
+input DeleteJobCmd {
+  "The unique identifier of the Job."
+  id: UUID!
+}
+
+"Deletes a Medical Record by its unique identifier."
+input DeleteMedicalRecordCmd {
+  "The unique identifier of the Medical Record."
+  id: UUID!
+}
+
+"Deletes a Procedure by its unique identifier."
+input DeleteProcedureCmd {
+  "The unique identifier of the Procedure."
+  id: UUID!
+}
+
+"Deletes a Purpose by its unique identifier."
+input DeletePurposeCmd {
+  "The unique identifier of the Purpose."
+  id: UUID!
+}
+
+"The Command for deleting a Routine."
+input DeleteRoutineCmd {
+  "The unique identifier of the Routine to Delete."
+  id: UUID!
+}
+
+"The Command that discards a Note as an Observation."
+input DiscardNoteAsObservationCmd {
+  "The unique identifier of the Note."
+  id: UUID!
+  "The unique identifier of the Job that owns the Note."
+  jobId: UUID!
+  "The unique identifier of the Medical Record for the Observation."
+  medicalRecordId: UUID!
+}
+
+"The Process that modifies an Encounter, and it's Job, with the supplied details."
+input EnactEncounterRevisionPrc {
+  "The unique identifier of the Job."
+  jobId: UUID!
+  "The unique identifier of the Encounter."
+  encounterId: UUID
+  "The Contact info on the Job."
+  contact: String
+  "The Ordering Provider on the Job."
+  orderingProvider: String
+  "The Location of the Encounter."
+  location: IntakeLocationPrm
+  "The Medical Record of the Encounter."
+  medicalRecord: EncounterMedicalRecordPrm
+}
+
+"The Process that intakes a new Job and all requisite dependencies."
+input EnactJobIntakePrc {
+  "The unique identifier of the Job Purpose."
+  purposeId: UUID!
+  "The Contact information for the job."
+  contact: String
+  "The Ordering Provider information for the job."
+  orderingProvider: String
+  "A Note to be displayed with the job."
+  preNote: String
+  "The date and time the job is scheduled to execute."
+  medicalRecord: IntakeMedicalRecordPrm
+  "The date and time the job is scheduled to execute."
+  schedule: IntakeSchedulePrm
+  "The location data for the Job Intake process."
+  location: IntakeLocationPrm
+  "The Line data for the Job Intake process."
+  line: IntakeLinePrm
+  "The Urgency data for the Job Intake process."
+  urgency: IntakeUrgencyPrm
+}
+
+"Process to reschedule a Job."
+input EnactJobReschedulePrc {
+  "The unique identifier of the Job that needs to be rescheduled."
+  id: UUID!
+  "The unique identifier of the Facility where the Job is to be done."
+  facilityId: UUID!
+  "The DATE in which the Job should be rescheduled to."
+  date: LocalDate!
+  "The TIME in which the Job should be rescheduled to."
+  time: LocalTime
+  "The Reason for rescheduling the Job."
+  reason: String!
+}
+
+"The Process that modifies a Line with the supplied details."
+input EnactLineRevisionPrc {
+  "The unique identifier of the Line."
+  id: UUID!
+  "The Name of the Line."
+  name: String
+  "The Location of the Line."
+  location: IntakeLocationPrm
+  "The Medical Record of the Line."
+  medicalRecord: EncounterMedicalRecordPrm
+}
+
+"Command to create a Tenant."
+input EnactTenantCreationPrc {
+  "Name to give the new Tenant."
+  name: String!
+  "Key for the Tenant (must be unique)."
+  key: String!
+}
+
+"The Parameters for creating\/re-assigning a Medical Record."
+input EncounterMedicalRecordPrm {
+  "The unique identifier of the Medical Record."
+  id: UUID
+  "The Medical Record Number (MRN)."
+  number: String
+  "The First Name for the Medical Record."
+  firstName: String
+  "The Last Name for the Medical Record."
+  lastName: String
+  "The Birthday for the Medical Record."
+  birthday: LocalDate
+}
+
+input EncounterPriorityOperationFilterInput {
+  eq: EncounterPriority @cost(weight: "10")
+  neq: EncounterPriority @cost(weight: "10")
+  in: [EncounterPriority!] @cost(weight: "10")
+  nin: [EncounterPriority!] @cost(weight: "10")
+}
+
+"The Parameters for the ProcedureField Value."
+input EncounterProcedureValuePrm {
+  "The unique identifier of the Procedure Field."
+  fieldId: UUID!
+  "The Value for the Procedure Field."
+  value: String!
+}
+
+input EncounterStageOperationFilterInput {
+  eq: EncounterStage @cost(weight: "10")
+  neq: EncounterStage @cost(weight: "10")
+  in: [EncounterStage!] @cost(weight: "10")
+  nin: [EncounterStage!] @cost(weight: "10")
+}
+
+"Filters the Encounters Query."
+input EncountersFilter {
+  and: [EncountersFilter!]
+  or: [EncountersFilter!]
+  "The unique identifier for the Encounter."
+  id: UuidOperationFilterInput
+  "The unique identifier for the Job associated with the Encounter."
+  jobId: UuidOperationFilterInput
+  "The Purpose of the Encounter."
+  purposeId: UuidOperationFilterInput
+  "The Medical Record associated with the Encounter."
+  medicalRecordId: UuidOperationFilterInput
+  "The Location of the Encounter."
+  location: LocationFilter
+  "The date and time the Encounter was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Encounter was modified."
+  modifiedAt: DateTimeOperationFilterInput
+  "The current Status of the Encounter."
+  status: EncounterStageOperationFilterInput
+  "The Priority of the Encounter."
+  priority: EncounterPriorityOperationFilterInput
+}
+
+"Sorts the Encounters Query."
+input EncountersSorter {
+  "The date and time the Encounter was created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date and time the Encounter was modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+  "The current Status of the Encounter."
+  status: SortEnumType @cost(weight: "10")
+  "The Priority of the Encounter."
+  priority: SortEnumType @cost(weight: "10")
+}
+
+"The Command that Escalates the Encounter."
+input EscalateEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The reason behind the Escalation."
+  reason: String
+}
+
+"Filters the Facilities Query."
+input FacilitiesFilter {
+  and: [FacilitiesFilter!]
+  or: [FacilitiesFilter!]
+  "The unique identifier of the Facility."
+  id: UuidOperationFilterInput
+  "The Name of the Facility."
+  name: StringOperationFilterInput
+  "The unique identifier of the Facility Type."
+  typeId: UuidOperationFilterInput
+  "The time zone of the Facility."
+  timeZone: StringOperationFilterInput
+  "The Address of the Facility."
+  address: AddressFilter
+  "The required Patient data for the Facility."
+  requiredData: RequiredPatientDataOperationFilterInput
+  "The date and time the Facility was Created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Facility was last Modified."
+  modifiedAt: DateTimeOperationFilterInput
+}
+
+"The Parameters for the Room Property Option."
+input FacilityRoomPropertyOptionPrm {
+  "The unique identifier of the Room Property Option."
+  id: UUID
+  "The text for Room Property Option."
+  text: String!
+}
+
+"The Room Property Parameters, used in Facility Room mutations."
+input FacilityRoomPropertyPrm {
+  "The unique identifier of the Property."
+  propertyId: UUID!
+  "The unique identifier of the Property Value"
+  optionId: UUID!
+}
+
+"Filters the Rooms Query."
+input FacilityRoomsFilter {
+  and: [FacilityRoomsFilter!]
+  or: [FacilityRoomsFilter!]
+  "The unique identifier of the Room."
+  id: UuidOperationFilterInput
+  "The name of the Room."
+  name: StringOperationFilterInput
+  "The unique identifier of the Facility."
+  facilityId: UuidOperationFilterInput
+  "The date and time the facility was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the facility was last modified."
+  modifiedAt: DateTimeOperationFilterInput
+}
+
+"Sorts the Rooms Query Results."
+input FacilityRoomsSorter {
+  "The name of the Room."
+  name: SortEnumType @cost(weight: "10")
+  "The date and time the facility was created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date and time the facility was last modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+}
+
+"Filters the Facility Type Query."
+input FacilityTypesFilter {
+  and: [FacilityTypesFilter!]
+  or: [FacilityTypesFilter!]
+  "The unique identifier of the Facility Type."
+  id: UuidOperationFilterInput
+  "The name of the Facility Type."
+  name: StringOperationFilterInput
+  "Whether the Facility Type is active."
+  isActive: BooleanOperationFilterInput
+  "The date and time the Facility Type was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Facility Type was last modified."
+  modifiedAt: DateTimeOperationFilterInput
+}
+
+input IntOperationFilterInput {
+  eq: Int @cost(weight: "10")
+  neq: Int @cost(weight: "10")
+  in: [Int] @cost(weight: "10")
+  nin: [Int] @cost(weight: "10")
+  gt: Int @cost(weight: "10")
+  ngt: Int @cost(weight: "10")
+  gte: Int @cost(weight: "10")
+  ngte: Int @cost(weight: "10")
+  lt: Int @cost(weight: "10")
+  nlt: Int @cost(weight: "10")
+  lte: Int @cost(weight: "10")
+  nlte: Int @cost(weight: "10")
+}
+
+"Holds the Line data for the Job Intake process."
+input IntakeLinePrm {
+  "The unique identifier of the existing Line."
+  id: UUID
+  "Whether or not the Line is externally placed."
+  externallyPlaced: Boolean!
+  "The name of the entity who placed the Line externally."
+  placedBy: String
+  "The name of the external Line."
+  name: String
+  "The date in which the external Line was inserted."
+  insertedOn: Instant
+}
+
+"Holds the location data for the Job Intake process."
+input IntakeLocationPrm {
+  "The Facility Location of the job."
+  facilityId: UUID!
+  "The Room within the Facility of the job."
+  roomId: UUID
+  "The name of the Room within the Facility of the job."
+  roomName: String
+}
+
+"The Medical Record info to attach to a Job."
+input IntakeMedicalRecordPrm {
+  "The unique identifier of the Medical Record."
+  id: UUID
+  "The NUMBER (should be unique) for the Medical Record."
+  number: String
+}
+
+"The date and time the job is scheduled to be attended to."
+input IntakeSchedulePrm {
+  "The DATE in which the Job should be executed."
+  date: LocalDate!
+  "The TIME in which the Job should be executed."
+  time: LocalTime
+}
+
+"Holds the Urgency data for the Job Intake process."
+input IntakeUrgencyPrm {
+  "Whether the job has STAT urgency."
+  isStat: Boolean!
+  "The reason behind the STAT urgency."
+  statReason: String
+  "Whether the job is on HOLD."
+  isOnHold: Boolean!
+  "The reason behind the HOLD."
+  holdReason: String
+}
+
+"The command to invite new users via email."
+input InviteUsersCmd {
+  "A list of email addresses of users to be invited."
+  emails: [String!]!
+  "The roles assigned to the invited users."
+  roles: [UUID!]!
+}
+
+"Filters the Jobs query by a Job's date\/time."
+input JobScheduleFilter {
+  and: [JobScheduleFilter!]
+  or: [JobScheduleFilter!]
+  "The DATE in which the Job should be executed."
+  date: DateOperationFilterInput
+  "The TIME in which the Job should be executed."
+  time: TimeSpanOperationFilterInput
+}
+
+"Sorting the Jobs Query by a Job's date\/time."
+input JobScheduleSorter {
+  "The DATE in which the Job should be executed."
+  date: SortEnumType @cost(weight: "10")
+  "The TIME in which the Job should be executed."
+  time: SortEnumType @cost(weight: "10")
+}
+
+input JobStatusOperationFilterInput {
+  eq: JobStatus @cost(weight: "10")
+  neq: JobStatus @cost(weight: "10")
+  in: [JobStatus!] @cost(weight: "10")
+  nin: [JobStatus!] @cost(weight: "10")
+}
+
+"Filters the Job Query."
+input JobsFilter {
+  and: [JobsFilter!]
+  or: [JobsFilter!]
+  "The unique identifier for the job."
+  id: UuidOperationFilterInput
+  "The unique identifier of the Purpose for the Job."
+  purposeId: UuidOperationFilterInput
+  "The unique identifier of the existing Line identified for the Job."
+  lineId: UuidOperationFilterInput
+  "The unique identifier of Medical Record identified for the Job."
+  medicalRecordId: UuidOperationFilterInput
+  "The Location of the Job."
+  location: LocationFilter
+  "The current status of the Job."
+  status: JobStatusOperationFilterInput
+  "The date and time the Job was CREATED."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Job was MODIFIED."
+  modifiedAt: DateTimeOperationFilterInput
+  "The date and time the Job status was changed at."
+  statusChangedAt: DateTimeOperationFilterInput
+  "The DATE the Job is scheduled for."
+  schedule: JobScheduleFilter
+  "The contact associated with the Job."
+  contact: StringOperationFilterInput
+  "The ordering provider associated with the Job."
+  orderingProvider: StringOperationFilterInput
+}
+
+"Sorting the Job Query."
+input JobsSorter {
+  "The current status of the job."
+  status: SortEnumType @cost(weight: "10")
+  "The date and time the job was created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date and time the job was modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+  "The date and time the job status was changed at."
+  statusChangedAt: SortEnumType @cost(weight: "10")
+  "The DATE the Job is scheduled for."
+  scheduled: JobScheduleSorter @cost(weight: "10")
+  "The contact associated with the job."
+  contact: SortEnumType @cost(weight: "10")
+  "The ordering provider associated with the job."
+  orderingProvider: SortEnumType @cost(weight: "10")
+}
+
+"Filters for the Line Follow Up Query."
+input LineFollowUpFilter {
+  and: [LineFollowUpFilter!]
+  or: [LineFollowUpFilter!]
+  "The unique identifier of the Job."
+  jobId: UuidOperationFilterInput
+  "The unique identifier of the Purpose."
+  purposeId: UuidOperationFilterInput
+  "The DATE of the scheduled Follow Up."
+  date: DateOperationFilterInput
+}
+
+"Sorting the Line Follow Up Query."
+input LineFollowUpSorter {
+  "The DATE of the scheduled Follow Up."
+  date: SortEnumType @cost(weight: "10")
+}
+
+"Filters for the Line Query."
+input LinesFilter {
+  and: [LinesFilter!]
+  or: [LinesFilter!]
+  "The unique identifier of the Line."
+  id: UuidOperationFilterInput
+  "The name of the Line."
+  name: StringOperationFilterInput
+  "The type of the Line."
+  type: StringOperationFilterInput
+  "The date the Line was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date the Line was last modified."
+  modifiedAt: DateTimeOperationFilterInput
+  "Whether the Line has an infection."
+  hasInfection: LocalDateFilterInput
+  "Whether the line is externally placed."
+  externallyPlaced: BooleanOperationFilterInput
+  "The Name of the person\/entity who placed the Line externally."
+  externallyPlacedBy: StringOperationFilterInput
+  "The Dwelling of the Line."
+  dwelling: NullableOfLineDwellingOperationFilterInput
+  "The date the Line was inserted."
+  insertedOn: DateOperationFilterInput
+  "The date the Line was removed."
+  removedOn: DateOperationFilterInput
+  "The amount of time (in Days) the Line was in the patient."
+  dwellTime: IntOperationFilterInput
+  "The Medical Record associated with the Line."
+  medicalRecordId: UuidOperationFilterInput
+  "The Location of the Line."
+  location: LocationFilter
+  "The Follow Up details of the Line."
+  followUp: LineFollowUpFilter
+}
+
+"Sorting the Lines Query."
+input LinesSorter {
+  "The name of the Line."
+  name: SortEnumType @cost(weight: "10")
+  "The type of the Line."
+  type: SortEnumType @cost(weight: "10")
+  "The Dwelling of the Line."
+  dwelling: SortEnumType @cost(weight: "10")
+  "The date the Line was inserted."
+  insertedOn: SortEnumType @cost(weight: "10")
+  "The date the Line was removed."
+  removedOn: SortEnumType @cost(weight: "10")
+  "The amount of time (in Days) the Line was in the patient."
+  dwellTime: SortEnumType @cost(weight: "10")
+  "The date the Line needs to have a Follow Up."
+  followUp: LineFollowUpSorter @cost(weight: "10")
+  "The date the Line was created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date the Line was last modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+  "Whether the Line has an infection."
+  hasInfection: SortEnumType @cost(weight: "10")
+  "Whether the line is externally placed."
+  externallyPlaced: SortEnumType @cost(weight: "10")
+  "The Name of the person\/entity who placed the Line externally."
+  externallyPlacedBy: SortEnumType @cost(weight: "10")
+}
+
+input LocalDateFilterInput {
+  and: [LocalDateFilterInput!]
+  or: [LocalDateFilterInput!]
+}
+
+"The Facility\/Room of an Encounter."
+input LocationFilter {
+  and: [LocationFilter!]
+  or: [LocationFilter!]
+  "The unique identifier for the Facility."
+  facilityId: UuidOperationFilterInput
+  "The unique identifier for the Room within the Facility."
+  roomId: UuidOperationFilterInput
+}
+
+"The Command that turns a Note into an Observation."
+input MakeNoteAnObservationCmd {
+  "The unique identifier of the Note."
+  id: UUID!
+  "The unique identifier of the Job that owns the Note."
+  jobId: UUID!
+  "The unique identifier of the Medical Record for the Observation."
+  medicalRecordId: UUID!
+}
+
+"Filters for Patient Medical Records."
+input MedicalRecordsFilter {
+  and: [MedicalRecordsFilter!]
+  or: [MedicalRecordsFilter!]
+  "The unique identifier of the Medical Record."
+  id: UuidOperationFilterInput
+  "The unique identifier of the Facility associated to the Medical Record."
+  facilityId: UuidOperationFilterInput
+  "The Medical Record Number (MRN)."
+  number: StringOperationFilterInput
+  "The first name of the Patient."
+  firstName: StringOperationFilterInput
+  "The last name of the Patient."
+  lastName: StringOperationFilterInput
+  "The birthday of the Patient."
+  birthday: DateOperationFilterInput
+  "The date of the first encounter with the Patient."
+  firstSeenOn: DateOperationFilterInput
+  "The date of last (most recent) encounter with the Patient."
+  lastSeenOn: DateOperationFilterInput
+  "The date the Record was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date the Record was last modified."
+  modifiedAt: DateTimeOperationFilterInput
+  "The Total # of Lines on this Record."
+  linesTotal: IntOperationFilterInput
+  "The IN\/Active # of Lines on this Record."
+  linesIn: IntOperationFilterInput
+  "Whether or not the Record is ACTIVE."
+  active: BooleanOperationFilterInput
+}
+
+"Sorting Patient Medical Records."
+input MedicalRecordsSorter {
+  "The Medical Record Number (MRN)."
+  number: SortEnumType @cost(weight: "10")
+  "The first name of the Patient."
+  firstName: SortEnumType @cost(weight: "10")
+  "The last name of the Patient."
+  lastName: SortEnumType @cost(weight: "10")
+  "The birthday of the Patient."
+  birthday: SortEnumType @cost(weight: "10")
+  "The date of the first encounter with the Patient."
+  firstSeenOn: SortEnumType @cost(weight: "10")
+  "The date of last (most recent) encounter with the Patient."
+  lastSeenOn: SortEnumType @cost(weight: "10")
+  "The date the Record was created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date the Record was last modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+  "The Total # of Lines on this Record."
+  linesTotal: SortEnumType @cost(weight: "10")
+  "The IN\/Active # of Lines on this Record."
+  linesIn: SortEnumType @cost(weight: "10")
+  "Whether or not the Record is ACTIVE."
+  active: SortEnumType @cost(weight: "10")
+}
+
+"The Command for modifying a Facility."
+input ModifyFacilityCmd {
+  "The unique identifier of the Facility."
+  id: UUID!
+  "The Name of the Facility."
+  name: String!
+  "The time zone for the Facility."
+  timeZone: String!
+  "The Address of the Facility."
+  address: AddressPrm
+  "The required Patient data for the Facility."
+  requiredData: [RequiredPatientData]
+  "The list of the Routine Assignments."
+  assignments: [RoutineAssignmentPrm]
+  "The list of Purpose Unique Identifiers that needs to be excluded."
+  purposeIds: [UUID]
+  "The list of Procedure Unique Identifiers that needs to be excluded."
+  procedureIds: [UUID]
+}
+
+"The Command to modify a Room."
+input ModifyFacilityRoomCmd {
+  "The unique identifier of the Room."
+  id: UUID!
+  "The name of the Room."
+  name: String!
+  "The list of Properties of the Room."
+  properties: [FacilityRoomPropertyPrm]
+}
+
+"The Command to modify a Room Property for a Facility Type."
+input ModifyFacilityRoomPropertyCmd {
+  "The unique identifier of the Room Property."
+  id: UUID!
+  "The unique identifier of the Facility Type."
+  facilityTypeId: UUID!
+  "The name of the Room Property."
+  name: String!
+  "Options for the Room Property."
+  options: [FacilityRoomPropertyOptionPrm]
+}
+
+"The Command that modifies a Medical Record."
+input ModifyMedicalRecordCmd {
+  "The unique identifier of the Medical Record."
+  id: UUID
+  "The First Name for the Medical Record."
+  firstName: String
+  "The Last Name for the Medical Record."
+  lastName: String
+  "The Birthday for the Medical Record."
+  birthday: LocalDate
+}
+
+"The command that modifies a user avatar."
+input ModifyMyAvatarCmd {
+  "The binary representations of the Avatar."
+  avatar: Upload
+}
+
+"The command that modifies the logged-in user's preference."
+input ModifyMyPreferenceCmd {
+  "The preferences of the user."
+  preferences: [UserPreference]
+}
+
+"The command that modifies a user profile."
+input ModifyMyProfileCmd {
+  "The first name of the user."
+  firstName: String!
+  "The last name of the user."
+  lastName: String!
+  "The phone number of the user."
+  phone: String!
+}
+
+"The command that modifies the logged-in user's status."
+input ModifyMyStatusCmd {
+  "The new status of the user."
+  status: UserAvailability
+  "An optional message describing the status change."
+  message: String
+}
+
+"The Command that modifies a Note for the Job."
+input ModifyNoteForJobCmd {
+  "The unique identifier of the Job."
+  jobId: UUID!
+  "The unique identifier of the Note."
+  id: UUID!
+  "The Text for the Note."
+  text: String!
+}
+
+"The Command to modify the definition of a Procedure."
+input ModifyProcedureCmd {
+  "The unique identifier of the Procedure."
+  id: UUID!
+  "The Name\/Descriptor of the Procedure to update."
+  name: String!
+  "Whether Performance Reporting is enabled for the Procedure."
+  enablePerformanceReporting: Boolean!
+  "The required Patient data fields for the Procedure."
+  requiredData: [RequiredPatientData]
+  "The fields that are part of the Procedure."
+  fields: [ModifyProcedureFieldPrm]
+}
+
+"The Parameters for a ProcedureField Option."
+input ModifyProcedureFieldOptionPrm {
+  "The unique identifier of the Option."
+  id: UUID
+  "The text for the Option."
+  text: String!
+  "Whether or not the Option is Archived."
+  archived: Boolean!
+}
+
+"The Parameters for a ProcedureField."
+input ModifyProcedureFieldPrm {
+  "The unique identifier of the Field."
+  id: UUID
+  "The Name\/Label of the Field."
+  name: String!
+  "Instructions for the Field."
+  instruction: String
+  "The Type of data the Field will hold."
+  type: ProcedureFieldType
+  "Whether or not the Field is Archived."
+  archived: Boolean!
+  "Whether the Field is required."
+  required: Boolean!
+  "Whether the Field allows multiple selections (only for 'List' types)."
+  allowMultiSelect: Boolean!
+  "The options available for fields of type LIST."
+  options: [ModifyProcedureFieldOptionPrm]
+}
+
+"The Command that modifies a Procedure for the Encounter."
+input ModifyProcedureForEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The unique identifier of the Procedure Instance (not the same as the ProcedureId)."
+  id: UUID!
+  "The list of Procedure Values."
+  values: [EncounterProcedureValuePrm]
+}
+
+"The Command to modify a Routine."
+input ModifyRoutineCmd {
+  "The unique identifier of the Routine."
+  id: UUID!
+  "The Name of the Routine."
+  name: String!
+  "The Description of the Routine."
+  description: String
+  "The unique identifier of the Job Purpose to be created by this Routine."
+  purposeId: UUID!
+  "Indicates the 'Rolling Interval' style Schedule in which the Routine will be executed."
+  rolling: RollingSchedulePrm
+  "Indicates the 'Recurrence' style Schedule in which the Routine will be executed."
+  recurrence: [RecurrenceSchedulePrm]
+  "The Procedure Triggers that START the Routine."
+  origins: [RoutineTriggerPrm]
+  "The Procedure Triggers that TERMINATE the Routine."
+  termini: [RoutineTriggerPrm]
+}
+
+"The command that modifies a user details."
+input ModifyUserCmd {
+  "The unique identifier of the user."
+  id: UUID!
+  "The first name of the user."
+  firstName: String!
+  "The last name of the user."
+  lastName: String!
+  "The email address of the user."
+  email: String!
+  "The phone number of the user."
+  phone: String!
+  "Indicates whether the user is enrolled in training."
+  inTraining: Boolean!
+  "A list of unique role identifiers assigned to the user."
+  roles: [UUID!]!
+}
+
+input NullableOfLineDwellingOperationFilterInput {
+  eq: LineDwelling @cost(weight: "10")
+  neq: LineDwelling @cost(weight: "10")
+  in: [LineDwelling] @cost(weight: "10")
+  nin: [LineDwelling] @cost(weight: "10")
+}
+
+"The Command that PINS a Note to it's Job."
+input PinNoteToJobCmd {
+  "The unique identifier of the Note."
+  id: UUID!
+  "The unique identifier of the Job that owns the Note."
+  jobId: UUID!
+}
+
+"Command that holds the Encounter."
+input PlaceEncounterOnHoldCmd {
+  "The unique identifier of the encounter."
+  encounterId: UUID!
+  "The Reason for encounter being Hold."
+  reason: String
+}
+
+"The Command that places a Line Externally."
+input PlaceLineExternallyCmd {
+  "The unique identifier of the Line."
+  id: UUID!
+  "The date in which the Line was placed."
+  placedOn: Instant!
+  "By whom the Line was placed."
+  placedBy: String
+}
+
+"The Command that places a Line Internally."
+input PlaceLineInternallyCmd {
+  "The unique identifier of the Line."
+  id: UUID!
+}
+
+"The Parameters of a Procedure Field."
+input ProcedureFieldPrm {
+  "The Name\/Label of the Field."
+  name: String!
+  "Instructions for the Field."
+  instruction: String
+  "The Type of data the Field will hold."
+  type: ProcedureFieldType
+  "Whether the field is Required."
+  required: Boolean! = false
+  "Whether the field allows multiple selections (for 'List' types only)."
+  allowMultiSelect: Boolean! = false
+  "The options available for fields of type LIST."
+  options: [String]
+}
+
+input ProcedureSettingOperationFilterInput {
+  eq: ProcedureSetting @cost(weight: "10")
+  neq: ProcedureSetting @cost(weight: "10")
+  in: [ProcedureSetting!] @cost(weight: "10")
+  nin: [ProcedureSetting!] @cost(weight: "10")
+}
+
+"Filters for the Procedures Query."
+input ProceduresFilter {
+  and: [ProceduresFilter!]
+  or: [ProceduresFilter!]
+  "The unique identifier of the Procedure."
+  id: UuidOperationFilterInput
+  "The Name of the Procedure."
+  name: StringOperationFilterInput
+  "The Settings of the Procedure."
+  settings: ProcedureSettingOperationFilterInput
+  "The required Patient data for the Procedure."
+  requiredData: RequiredPatientDataOperationFilterInput
+  "The date and time the Procedure was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Procedure was modified."
+  modifiedAt: DateTimeOperationFilterInput
+  "Whether the Procedure is Archived."
+  archived: BooleanOperationFilterInput
+  "The number of objects that reference this Procedure."
+  references: IntOperationFilterInput
+}
+
+"Filters the Job Purpose Query."
+input PurposesFilter {
+  and: [PurposesFilter!]
+  or: [PurposesFilter!]
+  "The unique identifier of the Purpose."
+  id: UuidOperationFilterInput
+  "The Name of the Purpose."
+  name: StringOperationFilterInput
+  "Whether the purpose is Archived."
+  archived: BooleanOperationFilterInput
+  "The date and time the Purpose was created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Purpose was last modified."
+  modifiedAt: DateTimeOperationFilterInput
+  "The number of objects that reference this Purpose."
+  references: IntOperationFilterInput
+}
+
+"The Command that RECORDS a Line Infection."
+input RecordLineInfectionCmd {
+  "The unique identifier of the Line."
+  id: UUID!
+  "The date the Line was infected."
+  infectedOn: LocalDate!
+}
+
+"The Parameters for the 'Recurrence' style Schedule in which the Routine will be executed."
+input RecurrenceSchedulePrm {
+  "The time for which the Routine will reoccur."
+  time: LocalTime!
+  "The days for which the Routine will reoccur.."
+  days: [IsoDayOfWeek]
+}
+
+"The Command that removes the hold from the Encounter."
+input RemoveHoldFromEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+}
+
+"The Command that removes a Note from it's Job."
+input RemoveNoteFromJobCmd {
+  "The unique identifier of the Job."
+  jobId: UUID!
+  "The unique identifier of the Note."
+  id: UUID!
+}
+
+"The Command that removes a Photo from it's Encounter."
+input RemovePhotoFromEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The unique identifier of the Photo."
+  id: UUID!
+}
+
+"The Command that removes a Procedure from it's Encounter."
+input RemoveProcedureFromEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+  "The unique identifier of the Procedure Instance (not the same as the ProcedureId)."
+  id: UUID!
+}
+
+"The Command for renaming a Facility Type."
+input RenameFacilityTypeCmd {
+  "The unique identifier of the Facility Type."
+  id: UUID!
+  "The name of the Facility Type."
+  name: String!
+}
+
+"The Command that renames an existing Job Purpose."
+input RenamePurposeCmd {
+  "The unique identifier of the Purpose to rename."
+  id: UUID!
+  "The new Name\/Descriptor of the Job Purpose."
+  name: String!
+}
+
+"Changes the Number of a Medical Record by its unique identifier."
+input RenumberMedicalRecordCmd {
+  "The unique identifier of the Medical Record."
+  id: UUID!
+  "The new Number for the Medical Record."
+  number: String!
+}
+
+"Command to request assistance for a specific encounter."
+input RequestAssistanceForEncounterCmd {
+  "The unique identifier of the encounter for which assistance is being requested."
+  encounterId: UUID!
+  "The reason for requesting assistance for the encounter."
+  reason: String
+}
+
+input RequiredPatientDataOperationFilterInput {
+  eq: RequiredPatientData @cost(weight: "10")
+  neq: RequiredPatientData @cost(weight: "10")
+  in: [RequiredPatientData!] @cost(weight: "10")
+  nin: [RequiredPatientData!] @cost(weight: "10")
+}
+
+"The command to resend a pending user invitation."
+input ResendUserInviteCmd {
+  "The unique identifier of the invitation to be resent."
+  inviteId: UUID!
+}
+
+"The Parameters for the Interval duration for a Routine."
+input RollingScheduleDurationPrm {
+  "The value of the rolling duration."
+  value: Int!
+  "The unit of the rolling duration."
+  unit: DurationUnit
+}
+
+"The Parameters for the 'Rolling Interval' style Schedule in which the Routine will be executed."
+input RollingSchedulePrm {
+  "The Interval in which the Routine should repeat."
+  interval: RollingScheduleDurationPrm
+  "The amount of time to Delay the start of the Routine."
+  delay: RollingScheduleDurationPrm
+}
+
+"The Parameters for the Facility Routine Assignment."
+input RoutineAssignmentPrm {
+  "The unique identifier of the Routine Assignment."
+  id: UUID
+  "The name of the Routine Assignment."
+  name: String!
+  "The unique identifier of the Routine Assignment."
+  routineId: UUID!
+  "The list of the Specs of the Routine Assignment."
+  specs: [RoutineAssignmentSpecPrm]
+}
+
+"Parameters for the Routine Assignment's specification, used when Mutating Routines."
+input RoutineAssignmentSpecPrm {
+  "The unique identifier of the Property."
+  propertyId: UUID!
+  "The unique identifier of the Property Value."
+  propertyValue: UUID!
+}
+
+"A trigger for Routine."
+input RoutineTriggerPrm {
+  "The unique identifier for the Procedure."
+  procedureId: UUID!
+  "The unique identifier for Property."
+  propertyId: UUID
+  "The property value"
+  propertyValue: String
+}
+
+"Filters the Routine Query."
+input RoutinesFilter {
+  and: [RoutinesFilter!]
+  or: [RoutinesFilter!]
+  "The unique identifier of the Routine."
+  id: UuidOperationFilterInput
+  "The unique identifier of the Job Purpose that will be created by the Routine."
+  purposeId: UuidOperationFilterInput
+  "The Name of the Routine."
+  name: StringOperationFilterInput
+  "The Description of the Routine."
+  description: StringOperationFilterInput
+  "Whether the Routine is active."
+  active: BooleanOperationFilterInput
+  "Whether the Routine is a Follow Up."
+  followUp: BooleanOperationFilterInput
+  "The number of Assignments to Facilities."
+  assignmentCount: IntOperationFilterInput
+  "The date and time the Routine was Created."
+  createdAt: DateTimeOperationFilterInput
+  "The date and time the Routine was last Modified."
+  modifiedAt: DateTimeOperationFilterInput
+}
+
+"Sorts the Routine Query Results."
+input RoutinesSorter {
+  "The Name of the Routine."
+  name: SortEnumType @cost(weight: "10")
+  "The Description of the Routine."
+  description: SortEnumType @cost(weight: "10")
+  "Whether the Routine is active."
+  isActive: SortEnumType @cost(weight: "10")
+  "The number of Assignments to Facilities."
+  assignmentCount: SortEnumType @cost(weight: "10")
+  "The date and time the Routine was Created."
+  createdAt: SortEnumType @cost(weight: "10")
+  "The date and time the Routine was last Modified."
+  modifiedAt: SortEnumType @cost(weight: "10")
+}
+
+"The Command for sorting a Facility."
+input SortFacilityCmd {
+  "The unique identifier of the Facility."
+  id: UUID!
+  "The Original Position of the Facility."
+  from: Int!
+  "The Current Position of the Facility."
+  to: Int!
+}
+
+"The Command for sorting a Room Property."
+input SortFacilityRoomPropertyCmd {
+  "The unique identifier of the Facility Type."
+  facilityTypeId: UUID!
+  "The unique identifier of the Room Property."
+  id: UUID!
+  "The Original Position of the Room Property."
+  from: Int!
+  "The Current Position of the Room Property."
+  to: Int!
+}
+
+"The Command for sorting a Facility Type."
+input SortFacilityTypeCmd {
+  "The unique identifier of the Facility Type."
+  id: UUID!
+  "The Original Position of the Facility Type."
+  from: Int!
+  "The Current Position of the Facility Type."
+  to: Int!
+}
+
+"Explicitly sorts a Procedure."
+input SortProcedureCmd {
+  "The unique identifier of the Procedure."
+  id: UUID!
+  "The Original Position of the Procedure."
+  from: Int!
+  "The Current Position of the Procedure."
+  to: Int!
+}
+
+"Explicitly sorts a Purpose."
+input SortPurposeCmd {
+  "The unique identifier of the Purpose."
+  id: UUID!
+  "The Original Position of the Purpose."
+  from: Int!
+  "The Current Position of the Purpose."
+  to: Int!
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+"The Command that submits the applied Procedures."
+input SubmitProceduresCmd {
+  "The unique identifier of the Encounter to submit the applied Procedures to."
+  encounterId: UUID!
+}
+
+input TimeSpanOperationFilterInput {
+  eq: TimeSpan @cost(weight: "10")
+  neq: TimeSpan @cost(weight: "10")
+  in: [TimeSpan] @cost(weight: "10")
+  nin: [TimeSpan] @cost(weight: "10")
+  gt: TimeSpan @cost(weight: "10")
+  ngt: TimeSpan @cost(weight: "10")
+  gte: TimeSpan @cost(weight: "10")
+  ngte: TimeSpan @cost(weight: "10")
+  lt: TimeSpan @cost(weight: "10")
+  nlt: TimeSpan @cost(weight: "10")
+  lte: TimeSpan @cost(weight: "10")
+  nlte: TimeSpan @cost(weight: "10")
+}
+
+"The Command for Unarchiving a Facility."
+input UnarchiveFacilityCmd {
+  "The unique identifier of the Facility to Unarchive."
+  id: UUID!
+}
+
+"Restores (from Archive) a Procedure by its unique identifier."
+input UnarchiveProcedureCmd {
+  "The unique identifier of the Procedure."
+  id: UUID!
+}
+
+"Unarchives a Purpose by its unique identifier."
+input UnarchivePurposeCmd {
+  "The unique identifier of the Purpose."
+  id: UUID!
+}
+
+"The Command that UNPINS a Note from it's Job."
+input UnpinNoteFromJobCmd {
+  "The unique identifier of the Note."
+  id: UUID!
+  "The unique identifier of the Job that owns the Note."
+  jobId: UUID!
+}
+
+input UuidOperationFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+  gt: UUID @cost(weight: "10")
+  ngt: UUID @cost(weight: "10")
+  gte: UUID @cost(weight: "10")
+  ngte: UUID @cost(weight: "10")
+  lt: UUID @cost(weight: "10")
+  nlt: UUID @cost(weight: "10")
+  lte: UUID @cost(weight: "10")
+  nlte: UUID @cost(weight: "10")
+}
+
+"The Command that withdraws the active user from the Encounter."
+input WithdrawMeFromEncounterCmd {
+  "The unique identifier of the Encounter."
+  encounterId: UUID!
+}
+
+"Represents the unit of time used to measure duration."
+enum DurationUnit {
+  "Duration is measured in minutes."
+  MINUTES
+  "Duration is measured in hours."
+  HOURS
+  "Duration is measured in days."
+  DAYS
+}
+
+"The type of Alert for an Encounter."
+enum EncounterAlertType {
+  "The Encounter has been put on Hold."
+  ON_HOLD
+  "The Encounter has been scheduled for a specific time."
+  APPOINTMENT_SCHEDULED
+  "An Attendee has requested help with this Encounter."
+  ASSISTANCE_REQUESTED
+}
+
+"The position of the assignee to a specific Encounter."
+enum EncounterAssigneePosition {
+  "The assignee is the primary clinician."
+  PRIMARY
+  "The assignee is a secondary\/supporting clinician."
+  ASSISTANT
+  "The assignee is in training."
+  TRAINEE
+}
+
+"The priority of the Encounter."
+enum EncounterPriority {
+  "The encounter is URGENT, highest priority."
+  STAT
+  "The encounter has a normal\/medium priority."
+  NORMAL
+  "The encounter has a low priority."
+  ROUTINE
+}
+
+"The Workflow Stage of the Encounter."
+enum EncounterStage {
+  "The encounter is waiting and has not been assigned to a clinician."
+  WAITING
+  "The encounter has been assigned to one or more clinicians but they are not attending to it yet."
+  ASSIGNED
+  "The patient is being attended to by the PRIMARY clinician."
+  ATTENDING
+  "The patient has been attended to and the procedure details need to be charted."
+  CHARTING
+  "The procedure details have been charted and the encounter can be closed out."
+  COMPLETED
+}
+
+"The Status of the job."
+enum JobStatus {
+  "The job has been scheduled."
+  SCHEDULED
+  "The job has an associated Encounter."
+  UNDERWAY
+  "The job has been completed."
+  COMPLETED
+  "The job has been canceled."
+  CANCELED
+}
+
+"The dwelling of the line."
+enum LineDwelling {
+  "Indicates the Line dwelling status is undetermined."
+  UNDETERMINED
+  "Indicates the Line is dwelling IN the patient."
+  IN
+  "Indicates the Line is no longer dwelling in the patient."
+  OUT
+}
+
+"The Type of Observation."
+enum MedicalRecordObservationType {
+  "The Observation is a Note."
+  NOTE
+  "The Observation is a Photo."
+  PHOTO
+}
+
+"The settings for a procedure field."
+enum ProcedureFieldSetting {
+  "Indicates the field is Requires a value."
+  REQUIRED
+  "Applicable to Fields of 'List' only. Allows for multiple options to be selected from that list."
+  MULTI_SELECT
+}
+
+"The type of data that a field can hold."
+enum ProcedureFieldType {
+  "A field that holds textual data."
+  TEXT
+  "A field that holds numeric data."
+  NUMBER
+  "A field that holds a boolean value."
+  TOGGLE
+  "A field that holds a list of options."
+  LIST
+}
+
+"The settings for a Procedure."
+enum ProcedureSetting {
+  "The procedure should be included in Performance Reporting."
+  PERFORMANCE_REPORTING
+}
+
+"The Types of a Procedure."
+enum ProcedureType {
+  "Indicates a standard procedure."
+  STANDARD
+  "Indicates the procedure is an Insertion."
+  INSERTION
+  "Indicates the procedure is a Removal."
+  REMOVAL
+}
+
+"The required Patient data fields."
+enum RequiredPatientData {
+  "The Medical Record Number of the patient."
+  MRN
+  "The FIRST name of the patient."
+  FIRST_NAME
+  "The LAST name of the patient."
+  LAST_NAME
+  "The Date of Birth of the patient."
+  DATE_OF_BIRTH
+  "The provider who ordered the Procedure."
+  ORDERING_PROVIDER
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"Represents a user's current availability."
+enum UserAvailability {
+  "The user is currently offline and unavailable."
+  OFFLINE
+  "The user is currently online and available."
+  FREE
+  "The user is currently online but unavailable."
+  BUSY
+  "The user is temporarily away but may return soon."
+  AWAY
+}
+
+"Represents a user's preference settings."
+enum UserPreference {
+  "The user prefers elapsed time format."
+  ELAPSED_TIME
+  "The user prefers military time format."
+  MILITARY_TIME
+  "The user prefers middle-endian date format."
+  MIDDLE_ENDIAN_DATE
+}
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query." slicingArgumentDefaultValue: Int "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `Date` scalar represents an ISO-8601 compliant date type."
+scalar Date
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"""
+Represents an instant on the global timeline, with nanosecond resolution.
+
+Allowed patterns:
+- `YYYY-MM-DDThh:mm:ss.sssssssss±hh:mm`
+
+Examples:
+- `2000-01-01T20:00:00.999999999Z`
+"""
+scalar Instant
+
+"""
+Equates the days of the week with their numerical value according to ISO-8601.
+ Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5, Saturday = 6, Sunday = 7.
+"""
+scalar IsoDayOfWeek
+
+scalar JSON
+
+"""
+LocalDate represents a date within the calendar, with no reference to a particular time zone or time of day.
+
+Allowed patterns:
+- `YYYY-MM-DD`
+
+Examples:
+- `2000-01-01`
+"""
+scalar LocalDate
+
+"""
+LocalTime represents a time of day, with no reference to a particular calendar, time zone, or date.
+
+Allowed patterns:
+- `hh:mm:ss.sssssssss`
+
+Examples:
+- `20:00:00.999`
+"""
+scalar LocalTime
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+"The `TimeSpan` scalar represents an ISO-8601 compliant duration type."
+scalar TimeSpan
+
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

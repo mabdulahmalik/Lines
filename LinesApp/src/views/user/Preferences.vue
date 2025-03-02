@@ -55,11 +55,9 @@ function handleSaveChanges() {
   if (relativeTime.value) {
     preferences.push(UserPreference.ElapsedTime);
   }
-  if (preferences.length) {
-    meStore.modifyMyPreference({
+  meStore.modifyMyPreference({
       preferences: preferences.length ? preferences : null,
     });
-  }
 }
 </script>
 <template>
@@ -127,7 +125,6 @@ function handleSaveChanges() {
           <fwb-button
             @click="handleSaveChanges"
             pill
-            :disabled="!timeNotation && !dateNotation && !relativeTime"
             class="bg-primary-600 hover:bg-brand-600"
           >
             Save Changes

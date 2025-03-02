@@ -43,10 +43,14 @@ function recordModalClosed() {
 
 // Modify record 
 const isMREditMode=ref(false);
-const handleEditChange = (val: boolean) => {
-  isMREditMode.value=val;
+const handleEditChange = (val: boolean) => {	
+  isMREditMode.value=val;		
 };
 
+const unsavedDetails=ref(false);
+const handleUnsavedDetails = (val: boolean) => {
+  unsavedDetails.value=val;
+};
 
 const handleSaveMedicalRecord = () => {
   modalViewRecordBodyRef.value?.modifyMedicalRecord();
@@ -78,6 +82,7 @@ defineExpose({
         :record="props.record"
         @width="setModalWidth"
         @close="setModalOpen(false)"
+        @unsaved-details="handleUnsavedDetails" 
         @isEditModeMedicalRecord="handleEditChange" 
       />
     </template>
@@ -85,7 +90,7 @@ defineExpose({
       <div class="p-4 lg:px-6 flex justify-end items-center gap-4 w-full">
         <fwb-button @click="closeModal" color="light" pill> Cancel</fwb-button>
         <fwb-button @click="handleSaveMedicalRecord" class="bg-primary-600 hover:bg-brand-600" pill
-        :disabled="isMREditMode"
+        :disabled="!unsavedDetails || isMREditMode"
           >Save</fwb-button
         >
       </div>

@@ -11,7 +11,12 @@ import { useProceduresStore } from '@/stores/data/settings/procedures';
 import { usePurposesStore } from '@/stores/data/settings/purposes';
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
-import { CreatePurposeCmd, Procedure, ProcedureSetting, Purpose } from '@/api/__generated__/graphql';
+import {
+  CreatePurposeCmd,
+  Procedure,
+  ProcedureType,
+  Purpose,
+} from '@/api/__generated__/graphql';
 import CreateProcedureModal from './modal/CreateProcedureModal.vue';
 import ViewProcedureModal from './modal/ViewProcedureModal.vue';
 import { useTabStore } from '@/stores/tab';
@@ -19,6 +24,7 @@ import ArchivePurposeModal from './modal/ArchivePurposeModal.vue';
 import DeletePurposeModal from './modal/DeletePurposeModal.vue';
 import RestorePurposeModal from './modal/RestorePurposeModal.vue';
 import ButtonGroupRadio from '@/components/form/ButtonGroupRadio.vue';
+import ButtonRadio from '@/components/form/ButtonRadio.vue';
 
 const proceduresStore = useProceduresStore();
 const purposesStore = usePurposesStore();
@@ -243,8 +249,6 @@ const sortProcedure = (e: any) => {
   });
 };
 
-
-
 const schemaAddProcedure = yup.object({
   procedureName: yup.string().required('This is a required field'),
 });
@@ -253,6 +257,9 @@ const { handleSubmit: handleSubmitAddProcedure } = useForm({
 });
 const { value: procedureName, errorMessage: procedureNameError } =
   useField<string>('procedureName');
+
+
+const procedureType = ref('standard');
 
 const procedureNameAsProp = ref('');
 function handleAddProcedure() {
@@ -438,7 +445,7 @@ const viewProcedureModalRef = ref<InstanceType<typeof ViewProcedureModal>>();
                       </div>
                     </t-h>
                     <t-h>Name</t-h>
-                    <t-h>Performace</t-h>
+                    <t-h>Type</t-h>
                     <t-h>No OF PROPERTIES</t-h>
                   </t-r>
                 </t-head>
@@ -464,9 +471,18 @@ const viewProcedureModalRef = ref<InstanceType<typeof ViewProcedureModal>>();
                           {{ item.name }}
                         </a>
                       </t-d>
-                      <t-d class="capitalize">{{
-                        item.settings.some((setting: string) => setting === ProcedureSetting.PerformanceReporting)
-                      }}</t-d>
+                      <t-d class="capitalize">
+                        <span
+                          v-if="item.type === ProcedureType.Insertion"
+                          class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+                          >Insertion</span
+                        >
+                        <span
+                          v-if="item.type == ProcedureType.Removal"
+                          class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-red-100 text-red-700"
+                          >Removal</span
+                        >
+                      </t-d>
                       <t-d>{{ item.fields.length }}</t-d>
                     </t-r>
                   </template>
@@ -570,6 +586,16 @@ const viewProcedureModalRef = ref<InstanceType<typeof ViewProcedureModal>>();
                 procedureNameError
               }}</span>
             </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-[#0F172A] dark:text-white"
+                >Procedure Type</label
+              >
+              <div class="flex flex-col gap-2">
+                <ButtonRadio v-model="procedureType" :value="ProcedureType.Standard" label="Standard"/>
+                <ButtonRadio v-model="procedureType" :value="ProcedureType.Insertion" label="Insertion"/>
+                <ButtonRadio v-model="procedureType" :value="ProcedureType.Removal" label="Removal"/>
+              </div>
+            </div>
           </div>
         </template>
         <template #footer>
@@ -582,7 +608,7 @@ const viewProcedureModalRef = ref<InstanceType<typeof ViewProcedureModal>>();
         </template>
       </Modal>
     </teleport>
-    <CreateProcedureModal ref="createProcedureModalRef" :name="procedureNameAsProp" />
+    <CreateProcedureModal ref="createProcedureModalRef" :name="procedureNameAsProp" :type="procedureType"/>
     <ViewProcedureModal
       ref="viewProcedureModalRef"
       :procedure="proceduresStore.selectedProcedure"

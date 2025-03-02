@@ -30,6 +30,8 @@ const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'width', val: string): void;
   (e: 'lineName', val: string): void;
+  (e: 'isLineNameDirty', val: boolean): void;
+  (e: 'isEditModeLineName', val: boolean): void;
 }>();
 const { isLineLoading: isLoading } = useLoaders();
 const modalStore = useModalStore();
@@ -74,6 +76,9 @@ watch(
 );
 const { value: lineNameEdit, errorMessage: lineNameEditError } = useField<string>('lineNameEdit');
 const isEditLineName = ref(false);
+watch(isEditLineName, (newValue) => {
+  emit('isEditModeLineName', newValue);
+});
 const handleClickLineNameEditIcon = () => {
   lineNameEdit.value = lineName.value!;
   isEditLineName.value = true;
@@ -89,6 +94,15 @@ const saveEditLineName = () => {
     emit('lineName', lineName.value);
   })();
 };
+
+const isLineNameDirty = computed(() => {
+  return (
+    (!!lineName.value && lineName.value.trim() !== (props.line.name || "").trim()) 
+  );
+});
+watch(isLineNameDirty, (newValue) => {
+  emit('isLineNameDirty', newValue);
+});
 
 // badges
 const formattedDwelling = computed(() => {

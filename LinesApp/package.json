@@ -7,8 +7,11 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "codegen": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config codegen.ts",
-    "lint": "eslint"
+    "codegen": "npm run schema-gen && npm run code-gen",
+    "lint": "eslint",
+    "serve": "cross-env PORT=443 serve dist",
+    "code-gen": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config codegen.ts",
+    "schema-gen": "dotnet run --project ../Platform/src/SOL.Gateway -- schema export --output ../../../LinesApp/schema.graphql"
   },
   "dependencies": {
     "@apollo/client": "^3.11.4",
@@ -64,6 +67,7 @@
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^5.4.14",
+    "vite-plugin-pwa": "^0.21.1",
     "vue-tsc": "^2.0.21"
   }
 }

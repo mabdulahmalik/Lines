@@ -6,7 +6,7 @@ import draggable from 'vuedraggable';
 import { FwbInput, FwbSelect, FwbButton } from 'flowbite-vue';
 import { ref, computed } from 'vue';
 import CustomCheckbox from '@/components/form/CustomCheckbox.vue';
-import { RequiredPatientData, CreateProcedureCmd, ProcedureFieldPrm } from '@/api/__generated__/graphql';
+import { RequiredPatientData, CreateProcedureCmd, ProcedureFieldPrm, ProcedureType } from '@/api/__generated__/graphql';
 import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import { useProceduresStore } from '@/stores/data/settings/procedures';
@@ -15,6 +15,7 @@ import ReadonlyRadio from '../partials/ReadonlyRadio.vue';
 
 const props = defineProps<{
   name: string;
+  type: string;
 }>();
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -35,18 +36,7 @@ interface PF {
 
 // Setting & Required Data
 const enablePerformanceReporting = ref(false);
-const isInsertion = ref(false);
-const isRemoval = ref(false);
 const selectedRequiredData = ref<RequiredPatientData[]>([]);
-const toggle = (selected: string) => {
-  if (selected === 'isInsertion') {
-    isInsertion.value = true;
-    isRemoval.value = false;
-  } else if (selected === 'isRemoval') {
-    isInsertion.value = false;
-    isRemoval.value = true;
-  }
-};
 
 // Right Panel
 const propertyTypesOptions = [
@@ -134,8 +124,7 @@ const submittedData = () => {
     const newProcedure: CreateProcedureCmd = {
       name: props.name,
       enablePerformanceReporting: enablePerformanceReporting.value,
-      isInsertion: isInsertion.value,
-      isRemoval: isRemoval.value,
+      type: props.type as ProcedureType,
       requiredData: [...selectedRequiredData.value],
       fields: values.procedureFields as ProcedureFieldPrm[],
     };
@@ -218,8 +207,6 @@ defineExpose({
         >
           <div class="pt-4 flex flex-col gap-5">
             <fwb-toggle v-model="enablePerformanceReporting" label="Performance Reporting" />
-            <fwb-toggle v-model="isInsertion" @change="toggle('isInsertion')" label="Insertion" />
-            <fwb-toggle v-model="isRemoval" @change="toggle('isRemoval')" label="Removal" />
           </div>
         </AccordionDefault>
       </div>

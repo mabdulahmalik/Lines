@@ -20,7 +20,7 @@ import ModalDrawer from '@/components/modal/ModalDrawer.vue';
 import { useBreadcrumbStore } from '@/stores/breadcrumb';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useInvitationsStore } from '@/stores/data/settings/users/invitations';
-import { UserAvailability,SortEnumType, User } from '@/api/__generated__/graphql';
+import { UserAvailability,SortEnumType, User, UserInvitation } from '@/api/__generated__/graphql';
 import { formatRelativeDate } from '@/utils/dateUtils';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/components/icons/index';
 import DotIndicator from '@/components/status/DotIndicator.vue';
@@ -75,7 +75,7 @@ const searchOptions = computed(() => {
   }
 
   if (selectedTab.value === 'Invited') {
-    return invitationsStore.invitations.flatMap(invite => {
+    return invitationsStore.invitations.flatMap((invite: UserInvitation) => {
       const invitedByUser = getInvitedByUser(invite.invitedBy);
       return [
         {
@@ -94,7 +94,7 @@ const searchOptions = computed(() => {
       { value: `${item.firstName || ''} ${item.lastName || ''}`, property: 'Name' },
       { value: item.email || '', property: 'Email' },
     ]),
-    ...invitationsStore.invitations.flatMap(invite => {
+    ...invitationsStore.invitations.flatMap((invite: UserInvitation) => {
       const invitedByUser = getInvitedByUser(invite.invitedBy);
       return [
         {

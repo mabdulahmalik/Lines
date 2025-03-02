@@ -3,25 +3,25 @@ import {
   CreateRoutineCmd,
   Routine,
   ModifyRoutineCmd,
-  RoutineSetting,
 } from '@/api/__generated__/graphql';
 import AccordionDefault from '@/components/accordion/AccordionDefault.vue';
 import { IconArrowNarrowDown, IconLightBulb, IconXClose } from '@/components/icons/index';
-import { FwbSelect, FwbButton, FwbToggle } from 'flowbite-vue';
+import { FwbSelect, FwbButton } from 'flowbite-vue';
 import { ref, computed, onMounted, toRaw, watch } from 'vue';
-import { formatRelativeDate } from '@/utils/dateUtils';
 import { usePurposesStore } from '@/stores/data/settings/purposes';
 import { useRoutinesStore } from '@/stores/data/settings/routines';
 import DescriptionPannel from './partials/DescriptionPannel.vue';
 import ProcedureStepForm from './partials/ProcedureStepForm.vue';
 import RollingInterval from './partials/RollingInterval.vue';
 import RecurringEvents from './partials/RecurringEvents.vue';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   isCreate: boolean;
   routine?: Routine;
   name?: string;
   description?: string;
+  followUp?: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -45,7 +45,7 @@ function changeDescription(desc: string) {
   description.value = desc;
 }
 
-const isFollowUp = ref(props.routine?.settings?.includes(RoutineSetting.FollowUp) || false);
+// const isFollowUp = ref(props.routine?.settings?.includes(RoutineSetting.FollowUp) || false);
 
 //  Right panel
 
@@ -205,7 +205,7 @@ function submittedData() {
         name: props.name,
         description: description.value ? description.value : null,
         purposeId: selectedPurpose.value,
-        isFollowUp: isFollowUp.value,
+        isFollowUp: props.followUp,
         origins: toRaw(origins.value),
         rolling: activeSchedulingTab.value === 'rolling' ? toRaw(rolling.value) : null,
         recurrence: activeSchedulingTab.value === 'recurring' ? toRaw(recurrence.value) : null,
@@ -220,7 +220,6 @@ function submittedData() {
         name: props.name,
         description: description.value ? description.value : null,
         purposeId: selectedPurpose.value,
-        isFollowUp: isFollowUp.value,
         origins: toRaw(origins.value),
         rolling: activeSchedulingTab.value === 'rolling' ? toRaw(rolling.value) : null,
         recurrence: activeSchedulingTab.value === 'recurring' ? toRaw(recurrence.value) : null,
@@ -251,31 +250,19 @@ defineExpose({
       <div class="px-4">
         <!-- Description Accordian  -->
         <DescriptionPannel :description="description" @description-updated="changeDescription" />
-
-        <!--  Settings  -->
-        <AccordionDefault
-          id="procedure_settings"
-          active
-          title="Settings"
-          class="pb-4 border-slate-300"
-        >
-          <div class="pt-4 flex flex-col gap-5">
-            <fwb-toggle v-model="isFollowUp" label="Follow Up" />
-          </div>
-        </AccordionDefault>
       </div>
       <hr class="border-slate-300" />
       <div v-if="props.routine?.createdAt" class="p-4 flex flex-col gap-2">
         <div class="text-xs font-medium text-slate-500">
           Updated:
           {{
-            formatRelativeDate(
+            DateTimeFormatter.formatDatetime(
               props.routine.modifiedAt ? props.routine.modifiedAt : props.routine.createdAt
             )
           }}
         </div>
         <div class="text-xs font-medium text-slate-500">
-          Created: {{ formatRelativeDate(props.routine.createdAt) }}
+          Created: {{ DateTimeFormatter.formatDatetime(props.routine.createdAt) }}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { useModalStore } from '@/stores/modal';
 import { ref, onUnmounted, onMounted, watch } from 'vue';
 import { FwbInput, FwbButton } from 'flowbite-vue';
 import { Dropdown, DropdownMenu, DropdownItem } from '@/components/dropdown/index';
-import { Procedure } from '@/api/__generated__/graphql';
+import { Procedure, ProcedureType } from '@/api/__generated__/graphql';
 import {
   IconEdit03,
   IconExpand01,
@@ -130,6 +130,19 @@ defineExpose({
     @close="proceduresStore.clearSelectedProcedure()"
   >
     <template #header>
+      <!-- Removal/insertion badge mobile -->
+      <div
+        v-if="props.procedure.type === ProcedureType.Insertion"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-green-700 bg-green-100"
+      >
+        Insertion
+      </div>
+      <div
+        v-else-if="props.procedure.type === ProcedureType.Removal"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-red-700 bg-red-100"
+      >
+        Removal
+      </div>
       <div class="p-4 lg:px-6 flex justify-between min-h-[72px]">
         <div class="flex items-center">
           <!-- Mobile close button -->
@@ -207,6 +220,17 @@ defineExpose({
 
         <!-- Icon Buttons Desktop only -->
         <div class="hidden lg:flex items-center gap-2 lg:gap-4">
+          <!--Insertion/removal badge -->
+          <span
+            v-if="props.procedure.type === ProcedureType.Insertion"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+            >Insertion</span
+          >
+          <span
+            v-else-if="props.procedure.type === ProcedureType.Removal"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-red-100 text-red-700"
+            >Removal</span
+          >
           <!-- dropdown -->
           <Dropdown align-to-end close-inside class="rounded-lg">
             <template #trigger>

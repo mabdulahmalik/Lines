@@ -14,6 +14,7 @@ import DrawerHeaderEditName from '@/views/common/DrawerHeaderEditName.vue';
 const props = defineProps<{
   name: string;
   description: string;
+  followUp: boolean;
 }>();
 
 const modalStore = useModalStore();
@@ -21,9 +22,11 @@ const modalStore = useModalStore();
 // Routine Name
 const routineName = ref('');
 const routineDescription = ref('');
+const followUp = ref(false)
 onMounted(() => {
   routineName.value = props.name;
   routineDescription.value = props.description;
+  followUp.value = props.followUp;
 });
 
 watch(
@@ -37,6 +40,13 @@ watch(
   () => props.description,
   (newValue) => {
     routineDescription.value = newValue;
+  }
+);
+
+watch(
+  () => props.followUp,
+  (newValue) => {
+    followUp.value = newValue;
   }
 );
 function changeName(val: string) {
@@ -103,6 +113,13 @@ defineExpose({
         Inactive
       </div>
 
+      <div
+        v-if="followUp"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-green-700 bg-green-100"
+      >
+        Follow up
+      </div>
+
       <div class="p-4 lg:px-6 flex justify-between min-h-[72px]">
         <div class="flex items-center">
           <!-- Mobile close button -->
@@ -130,6 +147,11 @@ defineExpose({
             :class="true ? 'bg-[#FCE8F3] text-[#99154B]' : 'text-blue-700 bg-blue-100'"
             >Inactive</span
           >
+          <!-- is follow up -->
+          <span
+            v-if="followUp"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+            >Follow up</span>
           <!-- Expand -->
           <fwb-button v-if="!fullWidth" @click="setModalWidth('full')" color="light" pill square>
             <IconExpand01 />
@@ -147,6 +169,7 @@ defineExpose({
         :is-create="true"
         :name="routineName"
         :description="routineDescription"
+        :follow-up="followUp"
         @close="setModalOpen(false)"
         @complete="handleComplete"
       />

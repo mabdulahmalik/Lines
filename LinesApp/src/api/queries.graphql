@@ -170,7 +170,7 @@ query GetJobs($skip: Int, $take: Int, $where: JobsFilter, $order: [JobsSorter!])
         createdBy
         id
         text
-        treatment
+        pinned
       }
       origin {
         encounterId
@@ -275,6 +275,7 @@ query GetProcedures($skip: Int, $take: Int, $where: ProceduresFilter) {
       id
       modifiedAt
       name
+      type
       references
       requiredData
       settings
@@ -354,11 +355,11 @@ query GetRoutines($skip: Int, $take: Int, $where: RoutinesFilter, $order: [Routi
       createdAt
       description
       id
-      isActive
+      active
       modifiedAt
       name
       purposeId
-      settings
+      followUp
       termini {
         procedureId
         propertyId
@@ -389,8 +390,8 @@ query GetRoutines($skip: Int, $take: Int, $where: RoutinesFilter, $order: [Routi
   }
 }
 
-query GetUsers($skip: Int, $take: Int, $where: UsersFilter) {
-  users(skip: $skip, take: $take, where: $where) {
+query GetUsers($skip: Int, $take: Int) {
+  users(skip: $skip, take: $take) {
     pageInfo {
       hasNextPage
       hasPreviousPage
@@ -414,17 +415,14 @@ query GetUsers($skip: Int, $take: Int, $where: UsersFilter) {
         message
         status
       }
-      roles {
-        id
-        name
-      }
+      roles
     }
     totalCount
   }
 }
 
-query GetInvitation($skip: Int, $take: Int, $where: InvitationFilter, $order: [InvitationSorter!]) {
-  invitations(skip: $skip, take: $take, where: $where, order: $order) {
+query GetInvitation($skip: Int, $take: Int) {
+  userInvitations(skip: $skip, take: $take) {
     pageInfo {
       hasNextPage
       hasPreviousPage
@@ -474,10 +472,7 @@ query GetMe {
       message
       status
     }
-    roles {
-      id
-      name
-    }
+    roles
   }
 }
 

@@ -15,7 +15,7 @@ import {
 import { FwbButton, FwbInput } from 'flowbite-vue';
 import { ref, onMounted, computed, watch } from 'vue';
 import index from '@/views/common/activityFeed/linesFeed/index.vue';
-import { formatRelativeDate, formatDateByDMY } from '@/utils/dateUtils';
+import { formatDateByDMY } from '@/utils/dateUtils';
 import AccordionDefault from '@/components/accordion/AccordionDefault.vue';
 import { useFacilitiesStore } from '@/stores/data/facilities';
 import { useForm, useField } from 'vee-validate';
@@ -40,16 +40,20 @@ import CustomCheckbox from '@/components/form/CustomCheckbox.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useActivitiesStore } from '@/stores/data/common/activities';
+import DateTimeFormatter, { DateTimeFormatMode } from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   line: Line;
   job?: Job;
   lineName: string;
+  isLineNameDirty?:boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'width', val: string): void;
   (e: 'close'): void;
+  (e: 'unsaved-details', val: boolean): void;
+  (e: 'isEditModeMRLocation', val: boolean): void;
 }>();
 
 const { isLineLoading: isLoading } = useLoaders();
@@ -120,6 +124,7 @@ const getPurposeName = (purposeId: any) => {
   return purpose ? purpose.name : '';
 };
 
+
 // Left Panel
 
 // Sort Asc Desc
@@ -148,7 +153,7 @@ const filteredUsers = computed(() => {
   }
   return activityUsers.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase().trim();
-    return fullName.includes(trimmedQuery);
+    return fullName.includes(trimmedQuery);   
   });
 });
 
@@ -363,7 +368,6 @@ function handleEditIconMedicalRecord() {
   firstNameEdit.value = firstName.value;
   lastNameEdit.value = lastName.value;
   birthDateEdit.value = birthDate.value;
-
   isEditMedicalRecord.value = true;
 }
 function handleEditMedicalRecord() {
@@ -372,12 +376,33 @@ function handleEditMedicalRecord() {
     firstName.value = firstNameEdit.value;
     lastName.value = lastNameEdit.value;
     birthDate.value = birthDateEdit.value;
-
     isEditMedicalRecord.value = false;
   })();
 }
 
+const isDetailsDirty = computed(() => {
+  return (
+    facility.value !== props.line.location?.facilityId ||
+    room.value !== props.line.location?.roomId ||
+    (!!mrn.value && mrn.value !== medicalRecord.value?.number) ||
+    (!!firstName.value && firstName.value.trim() !== (medicalRecord.value?.firstName || "").trim()) ||
+    (!!lastName.value && lastName.value.trim() !== (medicalRecord.value?.lastName || "").trim()) ||
+    (!!birthDate.value && birthDate.value !== medicalRecord.value?.birthday)
+  );
+});
+watch(isDetailsDirty, (newValue) => {
+  emit('unsaved-details', newValue);
+});
+
 const saveLinesRevision = () => {
+  const medicalRecord = {
+      birthday: birthDate.value? birthDate.value : null,
+      firstName: firstName.value? firstName.value : null,
+      id: selectedMedicalRecordId.value ? selectedMedicalRecordId.value : null,
+      lastName: lastName.value? lastName.value : null,
+      number: mrn.value? mrn.value : null,
+  };
+  const hasMedicalRecordData = Object.values(medicalRecord).some(val => val !== null);
   const lineRevision: EnactLineRevisionPrc = {
     id: props.line.id,
     location: {
@@ -385,18 +410,20 @@ const saveLinesRevision = () => {
       roomId: room.value,
       roomName: getRoomNameById(room.value),
     },
-    medicalRecord:  {
-      birthday: birthDate.value? birthDate.value : null,
-      firstName: firstName.value? firstName.value : null,
-      id: selectedMedicalRecordId.value ? selectedMedicalRecordId.value : null,
-      lastName: lastName.value? lastName.value : null,
-      number: mrn.value? mrn.value : null,
-    } ,
+    medicalRecord: hasMedicalRecordData ? medicalRecord : null,
     name: props.lineName,
   };
-  linesStore.enactListRevision(lineRevision);
-  // console.log('lineRevision:', lineRevision);
+  if(isDetailsDirty.value || props.isLineNameDirty){
+    linesStore.enactListRevision(lineRevision);
+  }
 };
+
+// Edit Mode
+watch([isEditMedicalRecord, isEditLocation], () => {
+  const shouldEmitTrue = isEditMedicalRecord.value || isEditLocation.value;
+  emit('isEditModeMRLocation', shouldEmitTrue);
+});
+
 defineExpose({
   saveLinesRevision,
 });
@@ -443,7 +470,7 @@ defineExpose({
                 {{ badgeFiltersCount }}
                 </div>
               </template>
-              </fwb-button>
+              </fwb-button>  
               </template>
               <DropdownMenu class="w-80">
                 <div class="p-2"> 
@@ -453,7 +480,7 @@ defineExpose({
                 </template>
                 </fwb-input>
               </div>
-                <DropdownText class="py-2 mb-1 border-y border-slate-200 bg-slate-100 text-slate-500"> 
+                <DropdownText class="py-2 mb-1 border-y border-slate-200 bg-slate-50 text-slate-500"> 
                   Users
                 </DropdownText>
               <div class="max-h-60 min-h-36 overflow-y-auto custom-scroll px-1">
@@ -686,7 +713,7 @@ defineExpose({
           <div class="flex items-end gap-2">
             <label class="w-1/2 text-sm font-medium text-slate-500">Date Infected</label>
             <div class="text-sm font-medium text-slate-900">
-              {{ formatDateByDMY(props.line.infectedOn) }}
+              {{ DateTimeFormatter.formatDatetime(props.line.infectedOn, DateTimeFormatMode.Limited)}}
             </div>
           </div>
         </div>
@@ -709,7 +736,7 @@ defineExpose({
           <div class="flex items-center gap-2">
             <label class="w-1/2 text-xs font-medium text-slate-500">Insertion Date</label>
             <div class="text-sm font-medium text-slate-900">
-              {{ formatDateByDMY(props.line?.insertedOn) }}
+              {{ DateTimeFormatter.formatDatetime(props.line?.insertedOn, DateTimeFormatMode.Limited) }}
             </div>
           </div>
 
@@ -889,11 +916,11 @@ defineExpose({
         <div class="text-xs font-medium text-slate-500">
           Updated:
           {{
-            formatRelativeDate(props.line.modifiedAt ? props.line.modifiedAt : props.line.createdAt)
+            DateTimeFormatter.formatDatetime(props.line.modifiedAt ? props.line.modifiedAt : props.line.createdAt)
           }}
         </div>
         <div class="text-xs font-medium text-slate-500">
-          Created: {{ formatRelativeDate(props.line.createdAt) }}
+          Created: {{ DateTimeFormatter.formatDatetime(props.line.createdAt) }}
         </div>
       </div>
     </div>
@@ -932,12 +959,14 @@ defineExpose({
       <teleport to="body">
       <Modal ref="filterModalRef" title="Filter" :z_index="55">
          <template #body>
+          <div class="p-2">
               <fwb-input v-model="userSearchQuery"   placeholder="Search for" class="w-full p-2">
                 <template #prefix>
                   <IconSearchOutline color="#475569"/>
                 </template>
               </fwb-input>
-              <div class="p-2 mb-1 border-y border-slate-200 bg-slate-100 text-slate-500"> 
+            </div>
+              <div class="p-2 mb-1 border-y border-slate-200 bg-slate-50 text-slate-500"> 
                 Users
               </div>
               <div class="p-1 max-h-60 min-h-36 overflow-y-auto custom-scroll px-2">

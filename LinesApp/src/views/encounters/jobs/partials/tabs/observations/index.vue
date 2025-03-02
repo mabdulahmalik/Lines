@@ -8,6 +8,7 @@ import { useJobsStore } from '@/stores/data/encounters/jobs';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useMedicalRecordsStore } from '@/stores/data/encounters/medicalRecords';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   job: Job;
@@ -55,18 +56,6 @@ watch(
   }
 );
 
-const formatDate = (date: Date): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
-};
-
 function deleteNote(id: string) {
   if (props.job.id && id) {
     jobsStore.removeNoteFromJob({ id: id, jobId: props.job.id });
@@ -104,7 +93,7 @@ function getUserForAvatar(id: string) {
           <div class="flex items-start justify-between">
             <div>
               <div class="text-slate-500 font-medium text-xs">
-                {{ formatDate(new Date(observation?.createdAt)) }}
+                {{ DateTimeFormatter.formatDatetime(observation?.createdAt) }}
               </div>
               <div class="text-slate-900 font-semibold text-sm">
                 {{ getUserName(observation?.createdBy) }}

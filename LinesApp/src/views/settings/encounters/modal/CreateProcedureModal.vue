@@ -12,9 +12,11 @@ import {
   IconArrowLeft,
   IconShrink,
 } from '@/components/icons/index';
+import { ProcedureType } from '@/api/__generated__/graphql';
 
 const props = defineProps<{
   name: string;
+  type: string;
 }>();
 const modalStore = useModalStore();
 
@@ -104,6 +106,19 @@ defineExpose({
     hide_header_close_on_mobile
   >
     <template #header>
+      <!-- Removal/insertion badge mobile -->
+      <div
+        v-if="props.type === ProcedureType.Insertion"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-green-700 bg-green-100"
+      >
+        Insertion
+      </div>
+      <div
+        v-else-if="props.type === ProcedureType.Removal"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-red-700 bg-red-100"
+      >
+        Removal
+      </div>
       <div class="p-4 lg:px-6 flex justify-between min-h-[72px]">
         <div class="flex items-center">
           <!-- Mobile close button -->
@@ -159,6 +174,17 @@ defineExpose({
 
         <!-- Icon Buttons Desktop only -->
         <div class="hidden lg:flex items-center gap-2 lg:gap-4">
+          <!--Insertion/removal badge -->
+          <span
+            v-if="props.type === ProcedureType.Insertion"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+            >Insertion</span
+          >
+          <span
+            v-else-if="props.type === ProcedureType.Removal"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-red-100 text-red-700"
+            >Removal</span
+          >
           <!-- Expand -->
           <fwb-button v-if="!fullWidth" @click="setModalWidth('full')" color="light" pill square>
             <IconExpand01 />
@@ -171,7 +197,7 @@ defineExpose({
       </div>
     </template>
     <template #body class="bg-red-200">
-      <CreateProcedureModalBody ref="CreateProcedureModalBodyRef" :name="procedureName" @close="setModalOpen(false)"/>
+      <CreateProcedureModalBody ref="CreateProcedureModalBodyRef" :name="procedureName" :type="props.type" @close="setModalOpen(false)"/>
     </template>
     <template #footer>
       <div class="p-4 lg:px-6 flex justify-end items-center gap-4 w-full">

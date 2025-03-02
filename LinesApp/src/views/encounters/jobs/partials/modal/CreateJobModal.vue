@@ -788,9 +788,14 @@ defineExpose({
   border-color: #e11d47;
   background-color: inherit;
 }
-:deep(textarea),
-:deep(input),
-:deep(select) {
+:deep(textarea.bg-gray-50),
+:deep(input.bg-gray-50),
+:deep(select.bg-gray-50) {
+  background-color: white;
+}
+
+/* fwb input */
+:deep(div.flex.relative.items-center.bg-gray-50.border.border-gray-300:has(input)) {
   background-color: white;
 }
 </style>

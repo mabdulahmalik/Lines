@@ -67,7 +67,7 @@ export const useRoutinesStore = defineStore('routines', () => {
         if (routine.id === payload.id) {
           return {
             ...routine,
-            isActive: payload.active,
+            active: payload.active,
           };
         }
         return routine;
@@ -172,7 +172,7 @@ export const useRoutinesStore = defineStore('routines', () => {
     id: null,
     name: '',
     description: '',
-    isActive: false,
+    active: false,
     purposeId: null,
     createdAt: null,
     modifiedAt: null,
@@ -181,14 +181,14 @@ export const useRoutinesStore = defineStore('routines', () => {
     rolling: null,
     termini: [],
     assignmentCount: null,
-    settings: [],
+    followUp: false,
   });
   function clearSelectedRoutine() {
     selectedRoutine.value = {
       id: null,
       name: '',
       description: '',
-      isActive: false,
+      active: false,
       purposeId: null,
       createdAt: null,
       modifiedAt: null,
@@ -197,7 +197,7 @@ export const useRoutinesStore = defineStore('routines', () => {
       rolling: null,
       termini: [],
       assignmentCount: null,
-      settings: [],
+      followUp: false,
     };
   }
 

@@ -8,13 +8,14 @@ import {
   IconShrink,
   IconUserX02,
   IconUserCheck02,
+  IconEdit03,
 } from '@/components/icons/index';
 import { User } from '@/api/__generated__/graphql';
 import { ref } from 'vue';
-import EditUserName from '../EditUserName.vue';
 import { Dropdown, DropdownMenu, DropdownItem } from '@/components/dropdown/index';
 import DeactivateUserModal from './DeactivateUserModal.vue';
 import ActivateUserModal from './ActivateUserModal.vue';
+import EditUserNameModal from './EditUserNameModal.vue';
 
 const props = defineProps<{
   fName: string;
@@ -49,8 +50,13 @@ const changeName = (val: { fName: string; lName: string }) => {
   emit('name-updated', val);
 };
 
+const handleClickNameEditIcon = () => {
+  editUserNameModalRef.value?.setModalOpen(true);
+};
+
 const deactivateUserModalRef = ref<InstanceType<typeof DeactivateUserModal>>();
 const activateUserModalRef = ref<InstanceType<typeof ActivateUserModal>>();
+const editUserNameModalRef = ref<InstanceType<typeof EditUserNameModal>>();
 const deactivateUser = () => {
   deactivateUserModalRef.value?.setModalOpen(true);
 };
@@ -74,7 +80,19 @@ const activateUser = () => {
         <IconArrowLeft width="24" height="24" class="text-[#334155]" />
         <span class="sr-only">Close modal</span>
       </fwb-button>
-      <EditUserName :fName="props.fName" :lName="props.lName" @name-updated="changeName" />
+      <!-- <EditUserName :fName="props.fName" :lName="props.lName" @name-updated="changeName" /> -->
+      <div class="flex items-center gap-3">
+        <h2 class="text-lg lg:text-2xl font-semibold">{{ fName }} {{ lName }}</h2>
+        <fwb-button
+          @click.stop="handleClickNameEditIcon"
+          color="light"
+          pill
+          square
+          class="border-transparent"
+        >
+          <IconEdit03 />
+        </fwb-button>
+      </div>
     </div>
     <div class="flex items-center gap-2 lg:gap-4">
       <!-- dropdown -->
@@ -122,4 +140,5 @@ const activateUser = () => {
   </div>
   <DeactivateUserModal ref="deactivateUserModalRef" :user="props.user" />
   <ActivateUserModal ref="activateUserModalRef" :user="props.user" />
+  <EditUserNameModal ref="editUserNameModalRef" :fName="fName" :lName="lName" @name-updated="changeName"/>
 </template>

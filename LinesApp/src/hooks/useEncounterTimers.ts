@@ -1,5 +1,6 @@
 import { Encounter, EncounterAlertType, EncounterStage, Job, JobStatus } from '@/api/__generated__/graphql';
-import { calculateDuration, calculateElapsedTime, formatMinutesToDuration, formatRelativeDate } from '@/utils/dateUtils';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
+import { calculateDuration, calculateElapsedTime, formatMinutesToDuration } from '@/utils/dateUtils';
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 
 const INTERVAL_DURATION = 60000;
@@ -47,8 +48,8 @@ export function useEncounterTimers(props: { encounter: (Encounter | undefined), 
   }
 
   function updateRelativeTime(): void {
-    relativeTimeJob.value = formatRelativeDate(props.job?.createdAt);
-    relativeTimeEnc.value = formatRelativeDate(props.encounter?.createdAt);
+    relativeTimeJob.value = DateTimeFormatter.formatDatetime(props.encounter?.createdAt);
+    relativeTimeEnc.value = DateTimeFormatter.formatDatetime(props.encounter?.createdAt);
   }
 
   function updateAttendingDuration(): void {

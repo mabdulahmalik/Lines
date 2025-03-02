@@ -18,10 +18,6 @@ const closeModal = () => {
   modalRef.value?.setModalOpen(false);
 };
 
-const handleModalClosed = () => {
-  closeModal();
-};
-
 const confirmArchive = () => {
   emit('archivedField', props.procedureField);
   closeModal();
@@ -36,7 +32,7 @@ defineExpose({
 </script>
 
 <template>
-  <Modal ref="modalRef" max_width="xl" set_margins @close="handleModalClosed" title="Archive Procedure Field">
+  <Modal ref="modalRef" max_width="xl" set_margins title="Archive Procedure Field">
     <!-- Body -->
     <template #body>
       <div class="flex flex-col gap-3 p-1">

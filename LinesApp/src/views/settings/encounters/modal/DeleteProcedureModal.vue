@@ -26,10 +26,6 @@ const closeModal = () => {
   modalRef.value?.setModalOpen(false);
 };
 
-const handleModalClosed = () => {
-  closeModal();
-};
-
 const confirmDelete = () => {
   proceduresStore.deleteProcedure({ id: props.procedure.id });
   closeModal();
@@ -45,7 +41,7 @@ defineExpose({
 </script>
 
 <template>
-  <Modal ref="modalRef" size="lg" @close="handleModalClosed" title="Delete Procedure">
+  <Modal ref="modalRef" size="lg" title="Delete Procedure">
     <!-- Body -->
     <template #body>
       <div class="p-4 lg:p-6">

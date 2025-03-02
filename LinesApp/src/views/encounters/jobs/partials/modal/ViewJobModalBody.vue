@@ -13,7 +13,7 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { EnactEncounterRevisionPrc, Encounter, EncounterStage, Job, JobStatus, RequiredPatientData, FacilityRoom, User } from '@/api/__generated__/graphql';
 import { useFacilitiesStore } from '@/stores/data/facilities';
-import { formatDateByDMY, formatRelativeDate } from '@/utils/dateUtils';
+import { formatDateByDMY } from '@/utils/dateUtils';
 import { useMedicalRecordsStore } from '@/stores/data/encounters/medicalRecords';
 import { useEncountersStore } from '@/stores/data/encounters';
 import StatusBadge from '@/components/badge/StatusBadge.vue';
@@ -27,6 +27,7 @@ import { useProceduresStore } from '@/stores/data/settings/procedures';
 import SkeletonItem from '@/components/skeletons/SkeletonItem.vue';
 import { useLoaders } from '@/hooks/useLoaders';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   job: Job;
@@ -499,8 +500,8 @@ watch(
 
 const isDetailsDirty = computed(() => {
   return (
-    (orderingProvider.value !== props.job.orderingProvider && orderingProvider.value !== '') ||
-    (contact.value !== props.job.contact && contact.value !== '') ||
+    (orderingProvider.value !== props.job.orderingProvider) ||
+    (contact.value !== props.job.contact) ||
     facility.value !== props.job.location?.facilityId ||
     room.value !== props.job.location?.roomId ||
     (!!mrn.value && mrn.value !== medicalRecord.value?.number) ||
@@ -519,6 +520,14 @@ async function saveProgress() {
 }
 
 async function enactEncounterRevision() {
+  const medicalRecord = {
+      id: selectedMedicalRecordId.value ? selectedMedicalRecordId.value : null,
+      number: mrn.value? mrn.value : null,
+      firstName: firstName.value? firstName.value : null,
+      lastName: lastName.value? lastName.value : null,
+      birthday: birthDate.value? birthDate.value : null,
+  };
+  const hasMedicalRecordData = Object.values(medicalRecord).some(val => val !== null);
   if (props.encounter) {
     const encRevision: EnactEncounterRevisionPrc = {
       encounterId: props.encounter.id,
@@ -530,13 +539,7 @@ async function enactEncounterRevision() {
         roomId: existingRoomId(room.value) ? room.value : null,
         roomName: existingRoomId(room.value) ? null : room.value,
       },
-      medicalRecord: {
-        id: selectedMedicalRecordId.value ?? null,
-        number: mrn.value,
-        firstName: firstName.value,
-        lastName: lastName.value,
-        birthday: birthDate.value,
-      },
+      medicalRecord: hasMedicalRecordData ? medicalRecord : null,
     };
     await encountersStore.enactEncounterRevision(encRevision);
   }
@@ -1052,11 +1055,11 @@ defineExpose({
         <div class="text-xs font-medium text-slate-500">
           Updated:
           {{
-            formatRelativeDate(props.job.modifiedAt ? props.job.modifiedAt : props.job.createdAt)
+            DateTimeFormatter.formatDatetime(props.job.modifiedAt ? props.job.modifiedAt : props.job.createdAt)
           }}
         </div>
         <div class="text-xs font-medium text-slate-500">
-          Created: {{ formatRelativeDate(props.job.createdAt) }}
+          Created: {{ DateTimeFormatter.formatDatetime(props.job.createdAt) }}
         </div>
       </div>
     </div>

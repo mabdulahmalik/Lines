@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useModalStore } from '@/stores/modal';
-import { formatRelativeDate } from '@/utils/dateUtils';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { Activity, User } from '@/api/__generated__/graphql';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   activity: Activity
@@ -32,7 +32,7 @@ function getUserForAvatar(id: string) {
     </div>
     <!-- Content -->
     <div class="flex flex-col w-full">
-      <span class="text-xs text-slate-500 font-medium">{{ formatRelativeDate(props.activity.timestamp) }}</span>
+      <span class="text-xs text-slate-500 font-medium">{{ DateTimeFormatter.formatDatetime(props.activity.timestamp) }}</span>
       <div class="text-sm text-slate-800 font-medium flex flex-wrap gap-1">
         <span> {{getUsername(props.activity.userId)}}</span>
         <slot name="action"></slot>

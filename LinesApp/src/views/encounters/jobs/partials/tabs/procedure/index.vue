@@ -18,8 +18,7 @@ import {
   EncounterStage,
   ModifyProcedureForEncounterCmd,
   ProcedureFieldSetting,
-  ProcedureSetting,
-  RoutineSetting,
+  ProcedureType,
 } from '@/api/__generated__/graphql';
 import { useEncountersStore } from '@/stores/data/encounters';
 import ButtonCheckbox from '@/components/form/ButtonCheckbox.vue';
@@ -190,7 +189,7 @@ function changeSelectedProcedure(encProc: EncounterProcedure, index: number) {
         value: field?.type === 'TOGGLE' ? 'off' : '',
       })) || [],
   };
-  if (selectedProcedure?.settings?.includes(ProcedureSetting.Insertion)) {
+  if (selectedProcedure?.type === ProcedureType.Insertion) {
     procedureWithLines.value[index] = {
       id: encProc.id,
       lineName: '',
@@ -198,7 +197,7 @@ function changeSelectedProcedure(encProc: EncounterProcedure, index: number) {
       confirmLine: false,
       removalLineId: '',
     };
-  } else if (selectedProcedure?.settings?.includes(ProcedureSetting.Removal)) {
+  } else if (selectedProcedure?.type === ProcedureType.Removal) {
     procedureWithLines.value[index] = {
       id: encProc.id,
       lineName: '',
@@ -212,13 +211,13 @@ function changeSelectedProcedure(encProc: EncounterProcedure, index: number) {
 function isRemovalProcedure(encProc: EncounterProcedure) {
   const selectedProcedure =
     proceduresStore.procedures.find((p) => p.id === encProc.procedureId) || null;
-  return selectedProcedure?.settings?.includes(ProcedureSetting.Removal) || false;
+  return selectedProcedure?.type === ProcedureType.Removal || false;
 }
 
 function isInsertionProcedure(encProc: EncounterProcedure) {
   const selectedProcedure =
     proceduresStore.procedures.find((p) => p.id === encProc.procedureId) || null;
-  return selectedProcedure?.settings?.includes(ProcedureSetting.Insertion) || false;
+  return selectedProcedure?.type === ProcedureType.Insertion || false;
 }
 
 function getFieldNameById(fieldId: string): string {
@@ -324,18 +323,31 @@ function handleCancelDelete() {
   conformationModalRef.value?.setModalOpen(false);
 }
 
+const proceduresToBeDeleted = ref<string[]>([]);
+
 function handleConfirmDelete() {
   if (deleteEncProcedureId.value && props.encounter) {
-    encountersStore.removeProcedureFromEncounter({
-      encounterId: props.encounter.id,
-      id: deleteEncProcedureId.value,
-    });
+    proceduresToBeDeleted.value.push(deleteEncProcedureId.value)
     conformationModalRef.value?.setModalOpen(false);
     deleteEncProcedureId.value = '';
     deleteProcedureId.value = '';
+    console.log(proceduresToBeDeleted.value)
   }
 }
 
+const isEncProcedureRemoved = (id: string) => {
+  return proceduresToBeDeleted.value.includes(id);
+};
+function getIndexPlusOne(oldIndex: number){
+  return encounterProcedures.value.slice(0, oldIndex).filter(p => !isEncProcedureRemoved(p.id)).length + 1
+}
+
+function restoreProcedure(id: string) {
+  const index = proceduresToBeDeleted.value.indexOf(id);
+  if (index > -1) {
+    proceduresToBeDeleted.value.splice(index, 1);
+  }
+}
 const errors = reactive<{ [key: number]: { [key: string]: string } }>({});
 function clearFieldError(index: number, fieldId: string) {
   if (errors[index] && errors[index][fieldId]) {
@@ -384,7 +396,7 @@ function validateLines() {
     const lineName = procedureWithLines.value[index].lineName;
     if (
       procedure.id === '' &&
-      selectedProcedure?.settings?.includes(ProcedureSetting.Insertion) &&
+      selectedProcedure?.type === ProcedureType.Insertion &&
       lineName === ''
     ) {
       lineErrors[index] = 'Line name is required';
@@ -429,7 +441,7 @@ async function saveProgress(): Promise<boolean> {
       const routineIds = routinesStore.routines
         .filter(
           (x) =>
-            x.settings?.includes(RoutineSetting.FollowUp) &&
+            x.followUp &&
             x.origin?.some((o) => o?.procedureId == procedure.procedureId)
         )
         .map((x) => x.id);
@@ -466,6 +478,16 @@ async function saveProgress(): Promise<boolean> {
       await encountersStore.modifyProcedureForEncounter(updatedProcedure);
     }
   }
+
+  if(proceduresToBeDeleted.value.length > 0){
+    for (const encProcedureId of proceduresToBeDeleted.value){
+      console.log(encProcedureId)
+      await encountersStore.removeProcedureFromEncounter({
+        encounterId: encounterId,
+        id: encProcedureId,
+      });
+    }
+  }
   return true;
 }
 
@@ -485,7 +507,7 @@ function getRemovalLineId(procedureId: string) {
 function getRoutineAssignment(encProc: EncounterProcedure) {
   const routineId = routinesStore.routines.find(
     (x) =>
-      x.settings?.includes(RoutineSetting.FollowUp) &&
+      x.followUp &&
       x.origin?.some((o) => o?.procedureId == encProc.procedureId)
   )?.id;
   return facilitiesStore
@@ -496,7 +518,7 @@ function getRoutineAssignment(encProc: EncounterProcedure) {
 function getRoutineNextSchedule(encProc: EncounterProcedure) {
   const routine = routinesStore.routines.find(
     (x) =>
-      x.settings?.includes(RoutineSetting.FollowUp) &&
+      x.followUp &&
       x.origin?.some((o) => o?.procedureId === encProc.procedureId)
   );
 
@@ -604,6 +626,9 @@ function isOptionInUse(field: EncounterProcedureValue, optionId: string): boolea
 }
 
 const isProceduresUnsaved = computed(() =>{
+  if(proceduresToBeDeleted.value.length > 0){
+    return true;
+  }
   for (const procedure of encounterProcedures.value) {
     if (!procedure.id && procedure.procedureId) {
       return true
@@ -633,9 +658,17 @@ defineExpose({
         class="flex pb-5 border-b border-slate-300"
         :key="index"
       >
-        <div class="flex items-start self-stretch w-full">
+        <div v-if="proceduresToBeDeleted.includes(encProc.id)" class="flex items-center justify-between  self-stretch w-full bg-slate-100 rounded-md px-4 py-2 ">
+          <label class="text-sm font-semibold text-gray-900">{{
+            getProcedureNameById(encProc.procedureId)
+          }}</label>
+          <div @click="restoreProcedure(encProc.id)" class="text-sm text-brand-700 font-medium cursor-pointer">
+            Restore
+          </div>
+        </div>
+        <div v-else class="flex items-start self-stretch w-full">
           <div class="flex flex-col h-full gap-2">
-            <fwb-badge class="w-9 h-9">{{ index + 1 }}</fwb-badge>
+            <fwb-badge class="w-9 h-9">{{ getIndexPlusOne(index) }}</fwb-badge>
             <div class="w-[1px] bg-gray-200 flex-1 self-center -ml-1"></div>
           </div>
           <div class="-mt-1 flex-1">

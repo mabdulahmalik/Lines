@@ -4,7 +4,7 @@ import client from '@/api';
 import { provideApolloClient } from '@vue/apollo-composable';
 import {
   CancelUserInviteCmd,
-  Invitation,
+  UserInvitation,
   InviteUsersCmd,
   ResendUserInviteCmd,
   useCancelUserInviteMutation,
@@ -12,6 +12,7 @@ import {
   useGetInvitationQuery,
   useInviteUsersMutation,
   useResendUserInviteMutation,
+  useBroadcastSubscription,
 } from '@/api/__generated__/graphql';
 import { useToast } from 'vue-toastification';
 
@@ -23,13 +24,32 @@ export const useInvitationsStore = defineStore('invitations', () => {
   const currentCorrelationId = ref<string | null>(null);
   const isLoading = ref(true);
 
-  const invitations = ref<Invitation[]>([]);
+  const invitations = ref<UserInvitation[]>([]);
 
   const { onResult } = useGetInvitationQuery();
 
   onResult((result: any) => {
-    invitations.value = result?.data?.invitations?.items || [];
+    invitations.value = result?.data?.userInvitations?.items || [];
     isLoading.value = result.loading;
+  });
+
+  const { onResult: handleBroadcast } = useBroadcastSubscription();
+  handleBroadcast((result) => {
+    if (!result.data?.broadcast?.payload) return;
+    const broadcast = result.data.broadcast;
+    const payload = JSON.parse(result.data.broadcast.payload);
+
+    if (broadcast.eventName === 'UserInvitationsSent') {
+      getInvitations()((result: any) => {
+        invitations.value = result?.data?.userInvitations?.items || [];
+      });
+    } else if (broadcast.eventName === 'UserInvitationResent') {
+      toast.success(`Invite has been resent.`);
+    } else if (broadcast.eventName === 'UserInvitationRevoked') {
+      getInvitations()((result: any) => {
+        invitations.value = result?.data?.userInvitations?.items || [];
+      });
+    }
   });
 
   const { onResult: handleDirectSubscription } = useDirectSubscription();
@@ -49,6 +69,13 @@ export const useInvitationsStore = defineStore('invitations', () => {
     }
   });
 
+  const getInvitations = () => {
+    const { onResult } = useGetInvitationQuery(null, {
+      fetchPolicy: 'network-only',
+    });
+    return onResult;
+  };
+
   // Mutations
 
   const inviteUsers = async (payload: InviteUsersCmd) => {
@@ -60,7 +87,7 @@ export const useInvitationsStore = defineStore('invitations', () => {
       currentCorrelationId.value = correlationId;
     }
   };
-  
+
   const cancelUserInvite = async (payload: CancelUserInviteCmd) => {
     const { mutate } = useCancelUserInviteMutation();
     var result = await mutate({ command: payload });

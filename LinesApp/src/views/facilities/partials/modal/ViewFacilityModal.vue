@@ -25,7 +25,7 @@ import { usePurposesStore } from '@/stores/data/settings/purposes';
 import { useModalStore } from '@/stores/modal';
 import { useStatesStore } from '@/stores/data/location/states';
 import { useTimezonesStore } from '@/stores/data/location/timezones';
-import { formatRelativeDate } from '@/utils/dateUtils';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const modalStore = useModalStore();
 const facilitiesStore = useFacilitiesStore();
@@ -532,13 +532,13 @@ const handleSaveForms = () => {
             <div class="text-xs font-medium text-slate-500">
               Updated:
               {{
-                formatRelativeDate(
+                DateTimeFormatter.formatDatetime(
                   props.facility.modifiedAt ? props.facility.modifiedAt : props.facility.createdAt
                 )
               }}
             </div>
             <div class="text-xs font-medium text-slate-500">
-              Created: {{ formatRelativeDate(props.facility.createdAt) }}
+              Created: {{ DateTimeFormatter.formatDatetime(props.facility.createdAt) }}
             </div>
           </div>
         </div>

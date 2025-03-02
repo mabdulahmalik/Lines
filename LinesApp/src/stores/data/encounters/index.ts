@@ -12,7 +12,6 @@ import {
   DeescalateEncounterCmd,
   EnactEncounterRevisionPrc,
   Encounter,
-  EncounterAlertType,
   EscalateEncounterCmd,
   ModifyProcedureForEncounterCmd,
   PlaceEncounterOnHoldCmd,

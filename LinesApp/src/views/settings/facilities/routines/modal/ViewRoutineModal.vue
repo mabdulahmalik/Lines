@@ -2,7 +2,7 @@
 import ModalDrawer from '@/components/modal/ModalDrawer.vue';
 import Modal from '@/components/modal/Modal.vue';
 import { useModalStore } from '@/stores/modal';
-import { ref, onUnmounted, onMounted, watch } from 'vue';
+import { ref, onUnmounted, onMounted, watch, computed } from 'vue';
 import { FwbButton, FwbInput } from 'flowbite-vue';
 import { Dropdown, DropdownMenu, DropdownItem } from '@/components/dropdown/index';
 import RoutinesModalBody from './RoutinesModalBody.vue';
@@ -43,6 +43,8 @@ watch(
 function changeName(val: string) {
   routineName.value = val;
 }
+
+const isFollowUp = computed(()=> props.routine.followUp ?? false);
 
 // submit forms data on save
 const RoutineModalBodyRef = ref<InstanceType<typeof RoutinesModalBody>>();
@@ -130,9 +132,16 @@ defineExpose({
       <!-- Mobile status badge -->
       <div
         class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center capitalize"
-        :class="routine.isActive ? 'bg-[#FCE8F3] text-[#99154B]' : 'text-blue-700 bg-blue-100'"
+        :class="routine.active ? 'text-blue-700 bg-blue-100' : 'bg-[#FCE8F3] text-[#99154B]'"
       >
-      {{ routine.isActive ? 'Active' : 'Inactive' }}
+      {{ routine.active ? 'Active' : 'Inactive' }}
+      </div>
+
+      <div
+        v-if="isFollowUp"
+        class="lg:hidden w-100 p-2 font-semibold flex justify-center items-center text-center text-green-700 bg-green-100"
+      >
+        Follow up
       </div>
 
       <div class="p-4 lg:px-6 flex justify-between min-h-[72px]">
@@ -179,10 +188,15 @@ defineExpose({
           <!-- status -->
           <span
             class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 capitalize"
-            :class="props.routine.isActive ? 'text-blue-700 bg-blue-100' : 'bg-[#FCE8F3] text-[#99154B]' "
-            >{{ props.routine.isActive ? 'Active' : 'Inactive' }}</span
+            :class="props.routine.active ? 'text-blue-700 bg-blue-100' : 'bg-[#FCE8F3] text-[#99154B]' "
+            >{{ props.routine.active ? 'Active' : 'Inactive' }}</span
           >
-
+          <!-- is follow up -->
+          <span
+            v-if="isFollowUp"
+            class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+            >Follow up</span
+          >
           <!-- dropdown -->
           <Dropdown align-to-end class="rounded-lg">
             <template #trigger>
@@ -218,6 +232,7 @@ defineExpose({
         :is-create="false"
         :name="routineName"
         :routine="props.routine"
+        :follow-up="isFollowUp"
         @close="setModalOpen(false)"
         @complete="handleComplete"
       />

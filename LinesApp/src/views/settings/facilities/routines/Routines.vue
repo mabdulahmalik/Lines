@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import Modal from '@/components/modal/Modal.vue';
-import { FwbInput, FwbButton, FwbTextarea, FwbToggle, FwbTooltip  } from 'flowbite-vue';
+import { FwbInput, FwbButton, FwbTextarea, FwbToggle, FwbTooltip } from 'flowbite-vue';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/components/icons/index';
 import { BaseTable, THead, TBody, TR, TD, TH } from '@/components/table/index';
 import ViewRoutineModal from './modal/ViewRoutineModal.vue';
@@ -10,6 +10,7 @@ import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { useRoutinesStore } from '@/stores/data/settings/routines';
 import { Routine } from '@/api/__generated__/graphql';
+import ButtonCheckbox from '@/components/form/ButtonCheckbox.vue';
 
 const routinesStore = useRoutinesStore();
 
@@ -54,13 +55,19 @@ const {
 // Create Routine modal drawer
 const createRoutineModalComRef = ref<InstanceType<typeof CreateRoutineModal>>();
 const routineDescription = ref('');
+const checkboxValue = ref<string[]>([]);
 const routineNameAsProp = ref('');
 const routineDescriptionAsProp = ref('');
+const followUpAsProp = ref(false);
+
+const isFollowUp = computed(() => checkboxValue.value.includes('follow_up'));
+
 function handleAddRoutine() {
   handleSubmitAddRoutine(async () => {
     isCreateRoutine.value = true;
     routineNameAsProp.value = routineName.value;
     routineDescriptionAsProp.value = routineDescription.value;
+    followUpAsProp.value = isFollowUp.value;
     const newRoutine = {
       name: routineName.value,
       description: routineDescription.value,
@@ -68,6 +75,7 @@ function handleAddRoutine() {
     console.log(newRoutine);
     resetRoutineName();
     routineDescription.value = '';
+    checkboxValue.value = [];
     createRoutineModalComRef.value?.setModalOpen(true);
     addRoutineModalRef.value?.setModalOpen(false);
   })();
@@ -87,7 +95,7 @@ const handleClickRoutine = (routine: Routine): void => {
 
 // Toggle routine status
 function onToggleChange(routine: any) {
-  if (!routine.isActive) {
+  if (!routine.active) {
     routinesStore.activateRoutine({ id: routine.id });
     return;
   }
@@ -145,23 +153,30 @@ function onToggleChange(routine: any) {
           <t-body v-if="routines.length > 0">
             <t-r v-for="(routine, index) in routines" :key="index" class="hover:bg-slate-50">
               <t-d class="font-semibold text-brand-600">
-                <a @click="handleClickRoutine(routine)" href="#">
-                  {{ routine.name }}
-                </a>
+                <div class="flex items-center gap-2">
+                  <a @click="handleClickRoutine(routine)" href="#">
+                    {{ routine.name }}
+                  </a>
+                  <span
+                    v-if="routine.followUp"
+                    class="text-xs leading-[18px] font-medium rounded-full py-0.5 px-2.5 bg-green-100 text-green-700"
+                    >Follow up</span
+                  >
+                </div>
               </t-d>
               <t-d>
                 <div class="flex justify-end items-center">
                   <fwb-tooltip>
                     <template #trigger>
                       <fwb-toggle
-                        :model-value="routine.isActive || false"
+                        :model-value="routine.active || false"
                         @change="onToggleChange(routine)"
                         color="purple"
                       />
                     </template>
                     <template #content>
                       <span class="text-sm font-medium">
-                        <template v-if="routine.isActive"> De-activate</template>
+                        <template v-if="routine.active"> De-activate</template>
                         <template v-else> Activate</template>
                       </span>
                     </template>
@@ -208,6 +223,9 @@ function onToggleChange(routine: any) {
                 placeholder="specify the Routine description here"
               />
             </div>
+            <div>
+              <ButtonCheckbox v-model="checkboxValue" label="Is a follow-up" value="follow_up" />
+            </div>
           </div>
         </template>
         <template #footer>
@@ -225,6 +243,7 @@ function onToggleChange(routine: any) {
       ref="createRoutineModalComRef"
       :name="routineNameAsProp"
       :description="routineDescriptionAsProp"
+      :follow-up="followUpAsProp"
     />
     <!-- View/Edit Routine modal drawer componet -->
     <ViewRoutineModal ref="viewRoutineModalComRef" :routine="routinesStore.selectedRoutine" />

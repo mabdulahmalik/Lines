@@ -52,6 +52,27 @@ watch(
   }
 );
 
+// Edit mode
+
+const isNameEditMode=ref(false);
+const isMRLocationEditMode=ref(false);
+const handleEditModeName = (val: boolean) => {
+  isNameEditMode.value=val;
+};
+const handleEditModeChange = (val: boolean) => {
+  isMRLocationEditMode.value=val;
+};
+
+const isLineNameDirty=ref(false);
+const unsavedDetails=ref(false);
+const handleLineNameDirty = (val: boolean) => {
+  isLineNameDirty.value=val;
+};
+
+const handleUnsavedDetails = (val: boolean) => {
+  unsavedDetails.value=val;
+};
+
 // Submit Line data on save
 const handleSaveLinesRevision = () => {
   modalViewLineBodyRef.value?.saveLinesRevision();
@@ -80,6 +101,8 @@ defineExpose({
         @close="closeModal"
         @width="setModalWidth"
         @lineName="lineNameEdited"
+        @isLineNameDirty="handleLineNameDirty"
+        @isEditModeLineName="handleEditModeName"
       />
     </template>
     <template #body>
@@ -87,15 +110,19 @@ defineExpose({
         ref="modalViewLineBodyRef"
         :line="props.line"
         :lineName="lineName"
+        :isLineNameDirty="isLineNameDirty"
         @width="setModalWidth"
         @close="setModalOpen(false)"
         class="lg:mb-0 mb-[46px]"
+        @unsaved-details="handleUnsavedDetails" 
+        @isEditModeMRLocation="handleEditModeChange"
       />
     </template>
     <template #footer>
       <div class="p-4 lg:px-6 flex justify-end items-center gap-4 w-full">
         <fwb-button @click="closeModal" color="light" pill> Cancel</fwb-button>
         <fwb-button @click="handleSaveLinesRevision" class="bg-primary-600 hover:bg-brand-600" pill
+          :disabled="!isLineNameDirty && !unsavedDetails || isNameEditMode || isMRLocationEditMode"
           >Save</fwb-button
         >
       </div>

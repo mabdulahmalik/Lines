@@ -6,7 +6,7 @@ import { IconFilterLines, IconCalendar,  IconChevronUp, IconArrowNarrowUp,
 IconArrowNarrowDown, IconSearchOutline, } from '@/components/icons/index';
 import { FwbButton, FwbInput } from 'flowbite-vue';
 import { ref, computed, watch } from 'vue';
-import { formatRelativeDate, formatDateByDMY } from '@/utils/dateUtils';
+import { formatDateByDMY } from '@/utils/dateUtils';
 import AccordionDefault from '@/components/accordion/AccordionDefault.vue';
 import AccordionHeader from '@/views/encounters/jobs/partials/AccordionHeader.vue';
 import { useMedicalRecordsStore } from '@/stores/data/encounters/medicalRecords';
@@ -30,7 +30,7 @@ import CustomCheckbox from '@/components/form/CustomCheckbox.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useActivitiesStore } from '@/stores/data/common/activities';
-
+import DateTimeFormatter, { DateTimeFormatMode } from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   record: MedicalRecord;
@@ -39,6 +39,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'width', val: string): void;
   (e: 'close'): void;
+  (e: 'unsaved-details', val: boolean): void;
   (e: 'isEditModeMedicalRecord', val: boolean): void;
 }>();
 const { isRecordLoading: isLoading } = useLoaders();
@@ -193,15 +194,14 @@ const { value: birthDateEdit, errorMessage: birthDateEditError } =
   useField<string>('birthDateEdit');
 
 const isEditMedicalRecord = ref(false);
-watch(isEditMedicalRecord, (newValue) => {
-  emit('isEditModeMedicalRecord', newValue);
+watch(isEditMedicalRecord, (newValue) => {		
+  emit('isEditModeMedicalRecord', newValue);		
 });
 
 function handleEditIconMedicalRecord() {
   firstNameEdit.value = firstName.value;
   lastNameEdit.value = lastName.value;
   birthDateEdit.value = birthDate.value;
-
   isEditMedicalRecord.value = true;
 }
 function handleEditMedicalRecord() {
@@ -209,19 +209,31 @@ function handleEditMedicalRecord() {
     firstName.value = firstNameEdit.value;
     lastName.value = lastNameEdit.value;
     birthDate.value = birthDateEdit.value;
-
     isEditMedicalRecord.value = false;
   })();
 }
 
+const isDetailsDirty = computed(() => {
+  return (
+    (!!firstName.value && firstName.value.trim() !== medicalRecord.value?.firstName?.trim()) ||
+    (!!lastName.value && lastName.value.trim() !== medicalRecord.value?.lastName?.trim()) ||
+    (!!birthDate.value && birthDate.value !== medicalRecord.value?.birthday)
+  );
+});
+watch(isDetailsDirty, (newValue) => {
+  emit('unsaved-details', newValue);
+});
+
 // Modify record
 const modifyMedicalRecord = () => {
-  medicalRecordsStore.modifyMedicalRecord({
-    id: selectedMedicalRecordId.value,
-    birthday: birthDate.value,
-    firstName: firstName.value,
-    lastName: lastName.value,
-  });
+  if(isDetailsDirty.value){
+    medicalRecordsStore.modifyMedicalRecord({
+      id: selectedMedicalRecordId.value ? selectedMedicalRecordId.value : null,
+      birthday: birthDate.value? birthDate.value : null,
+      firstName: firstName.value? firstName.value : null,
+      lastName: lastName.value? lastName.value : null,
+    });
+  }
 };
 
 defineExpose({
@@ -358,7 +370,7 @@ defineExpose({
                   </template>
                   </fwb-input>
                 </div>
-                  <DropdownText class="py-2 mb-1 border-y border-slate-200 bg-slate-100 text-slate-500"> 
+                  <DropdownText class="py-2 mb-1 border-y border-slate-200 bg-slate-50 text-slate-500"> 
                     Users
                   </DropdownText>
                 <div class="max-h-60 min-h-36 overflow-y-auto custom-scroll px-1">
@@ -637,14 +649,14 @@ defineExpose({
           <div class="flex items-center gap-2">
             <label class="w-1/2 text-xs font-medium text-slate-500">First Seen</label>
             <div class="text-sm font-medium text-slate-900">
-              {{ formatDateByDMY(props.record?.firstSeenOn) }}
+              {{ DateTimeFormatter.formatDatetime(props.record?.firstSeenOn, DateTimeFormatMode.Limited) }}
             </div>
           </div>
 
           <div class="flex items-center gap-2">
             <label class="w-1/2 text-xs font-medium text-slate-500">Last Seen</label>
             <div class="text-sm font-medium text-slate-900">
-              {{ formatDateByDMY(props.record?.lastSeenOn) }}
+              {{ DateTimeFormatter.formatDatetime(props.record?.lastSeenOn, DateTimeFormatMode.Limited) }}
             </div>
           </div>
           <!-- Follow up -->
@@ -669,13 +681,13 @@ defineExpose({
         <div class="text-xs font-medium text-slate-500">
           Updated:
           {{
-            formatRelativeDate(
+            DateTimeFormatter.formatDatetime(
               props.record.modifiedAt ? props.record.modifiedAt : props.record.createdAt
             )
           }}
         </div>
         <div class="text-xs font-medium text-slate-500">
-          Created: {{ formatRelativeDate(props.record.createdAt) }}
+          Created: {{ DateTimeFormatter.formatDatetime(props.record.createdAt) }}
         </div>
       </div>
     </div>
@@ -714,12 +726,14 @@ defineExpose({
       <teleport to="body">
       <Modal ref="filterModalRef" title="Filter" :z_index="55">
          <template #body>
+           <div class="p-2">
               <fwb-input v-model="userSearchQuery"   placeholder="Search for" class="w-full p-2">
                 <template #prefix>
                   <IconSearchOutline color="#475569"/>
                 </template>
               </fwb-input>
-              <div class="p-2 mb-1 border-y border-slate-200 bg-slate-100 text-slate-500"> 
+            </div>
+              <div class="p-2 mb-1 border-y border-slate-200 bg-slate-50 text-slate-500"> 
                 Users
               </div>
               <div class="p-1 max-h-60 min-h-36 overflow-y-auto custom-scroll px-2">

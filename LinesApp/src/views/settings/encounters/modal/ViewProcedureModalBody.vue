@@ -16,13 +16,13 @@ import {
   ProcedureFieldSetting,
   ProcedureFieldOption,
   ProcedureSetting,
+  ProcedureType,
 } from '@/api/__generated__/graphql';
 import { useForm, useFieldArray } from 'vee-validate';
 import * as yup from 'yup';
 import ReadonlyCheckbox from '../partials/ReadonlyCheckbox.vue';
 import ReadonlyRadio from '../partials/ReadonlyRadio.vue';
 import { useProceduresStore } from '@/stores/data/settings/procedures';
-import { formatRelativeDate } from '@/utils/dateUtils';
 import DeleteProcedureFieldModal from './DeleteProcedureFieldModal.vue';
 import ArchiveProcedureFieldModal from './ArchiveProcedureFieldModal.vue';
 import RestoreProcedureFieldModal from './RestoreProcedureFieldModal.vue';
@@ -30,6 +30,7 @@ import DeleteProcedureFieldOptionModal from './DeleteProcedureFieldOptionModal.v
 import ArchiveProcedureFieldOptionModal from './ArchiveProcedureFieldOptionModal.vue';
 import RestoreProcedureFieldOptionModal from './RestoreProcedureFieldOptionModal.vue';
 import { IconToggle, IconNumber, IconList, IconText } from '@/components/icons/index';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   name: string;
@@ -64,25 +65,13 @@ const enablePerformanceReporting = ref(false);
 const isInsertion = ref(false);
 const isRemoval = ref(false);
 const selectedRequiredData = ref<RequiredPatientData[]>([]);
-const toggleInsertion = () => {
-  if (isRemoval.value) {
-    isRemoval.value = false;
-  }
-};
-const toggleRemoval = () => {
-  if (isInsertion.value) {
-    isInsertion.value = false;
-  }
-};
 onMounted(() => {
   enablePerformanceReporting.value =
     props.procedure.settings?.some(
       (setting: string | null) => setting === ProcedureSetting.PerformanceReporting
     ) || false;
-  isInsertion.value =
-    props.procedure.settings?.some((setting: string | null) => setting === ProcedureSetting.Insertion) || false;
-  isRemoval.value =
-    props.procedure.settings?.some((setting: string | null) => setting === ProcedureSetting.Removal) || false;
+  isInsertion.value = props.procedure.type === ProcedureType.Insertion;
+  isRemoval.value = props.procedure.type === ProcedureType.Removal;
   if (props.procedure.requiredData) {
     selectedRequiredData.value = props.procedure.requiredData.filter(
       (item): item is RequiredPatientData => item !== null
@@ -191,8 +180,6 @@ const submittedData = () => {
       id: props.procedure.id,
       name: props.name,
       enablePerformanceReporting: enablePerformanceReporting.value,
-      isInsertion: isInsertion.value,
-      isRemoval: isRemoval.value,
       requiredData: [...selectedRequiredData.value],
       fields: values.procedureFields as ModifyProcedureFieldPrm[],
     };
@@ -440,18 +427,6 @@ defineExpose({
               label="Performance Reporting"
               :disabled="isProcedureArchived"
             />
-            <fwb-toggle
-              v-model="isInsertion"
-              @change="toggleInsertion"
-              label="Insertion"
-              :disabled="isProcedureArchived"
-            />
-            <fwb-toggle
-              v-model="isRemoval"
-              @change="toggleRemoval"
-              label="Removal"
-              :disabled="isProcedureArchived"
-            />
           </div>
         </AccordionDefault>
       </div>
@@ -460,13 +435,13 @@ defineExpose({
         <div class="text-xs font-medium text-slate-500">
           Updated:
           {{
-            formatRelativeDate(
+            DateTimeFormatter.formatDatetime(
               props.procedure.modifiedAt ? props.procedure.modifiedAt : props.procedure.createdAt
             )
           }}
         </div>
         <div class="text-xs font-medium text-slate-500">
-          Created: {{ formatRelativeDate(props.procedure.createdAt) }}
+          Created: {{ DateTimeFormatter.formatDatetime(props.procedure.createdAt) }}
         </div>
       </div>
     </div>

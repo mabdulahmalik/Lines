@@ -19,10 +19,6 @@ const closeModal = () => {
   modalRef.value?.setModalOpen(false);
 };
 
-const handleModalClosed = () => {
-  closeModal();
-};
-
 const confirmArchive = () => {
   purposesStore.archivePurpose({ id: props.purpose.id });
   closeModal();
@@ -37,7 +33,7 @@ defineExpose({
 </script>
 
 <template>
-  <Modal ref="modalRef" max_width="xl" set_margins @close="handleModalClosed">
+  <Modal ref="modalRef" max_width="xl" set_margins>
     <!-- Header -->
     <template #header>
       <h3 class="text-base lg:text-xl font-semibold text-gray-900">Delete Purpose</h3>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { FwbButton } from 'flowbite-vue';
 import Modal from '@/components/modal/Modal.vue';
 import { useMeStore } from '@/stores/data/settings/users/me';
@@ -16,6 +16,11 @@ const meStore = useMeStore();
 // Refs
 const modalRef = ref<InstanceType<typeof Modal>>();
 const cropperRef = ref<InstanceType<any> | null>(null);
+
+const isMobile = computed(() => {
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+});
+
 
 // Methods
 const closeModal = () => {
@@ -62,8 +67,22 @@ defineExpose({
     <!-- Body -->
     <template #body>
       <div class="flex flex-col gap-3 p-1">
-        <vue-cropper v-if="imageUrl" ref="cropperRef" :src="imageUrl" alt="Source Image" :aspect-ratio="1"
-          :view-mode="1" :drag-mode="'move'" :auto-crop-area="1" :background="false" :rotatable="true" />
+        <vue-cropper 
+          v-if="imageUrl" 
+          ref="cropperRef" 
+          :src="imageUrl" 
+          alt="Source Image" 
+          :aspect-ratio="1" 
+          :view-mode="1"
+          :drag-mode="'move'" 
+          :auto-crop-area="1" 
+          :background="false" 
+          :rotatable="true"
+        />
+        <!-- Help text for zooming -->
+        <p class="text-sm text-gray-500 text-center">
+          {{ isMobile ? 'Pinch to zoom in or out on the image.' : 'Use the mouse scroll wheel to zoom in or out on the image.' }}
+        </p>
       </div>
     </template>
 
@@ -82,5 +101,9 @@ defineExpose({
 vue-cropper {
   max-width: 100%;
   height: 5000px;
+}
+:deep(.cropper-view-box),
+:deep(.cropper-face) {
+  border-radius: 50% !important;
 }
 </style>

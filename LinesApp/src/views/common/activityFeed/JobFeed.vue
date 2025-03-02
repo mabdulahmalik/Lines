@@ -11,8 +11,8 @@ import { useActivitiesStore } from '@/stores/data/common/activities';
 import { computed } from 'vue';
 import { useProceduresStore } from '@/stores/data/settings/procedures';
 import { useUsersStore } from '@/stores/data/settings/users';
-import { formatDatetime } from '@/utils/dateUtils';
 import { IconHand,IconAnnotationAlert, IconClipborodCheck, IconCheck,IconFilePlus02,IconPauseCircle ,IconArrowNarrowRight,IconArrowNarrowDownRight} from '@/components/icons';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   job?: Job;
@@ -22,8 +22,6 @@ const props = defineProps<{
 const activitiesStore = useActivitiesStore();
 const proceduresStore = useProceduresStore();
 const usersStore = useUsersStore();
-
-const formatDate = (datetime: string): string => formatDatetime(datetime, 'MMM D, YYYY h:mm A');
 
 const activities = computed(() => {
   return activitiesStore.activities
@@ -78,7 +76,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> created  </span>the job
@@ -95,7 +93,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500">  modified  </span>the job
@@ -107,7 +105,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> rescheduled the </span> Job
@@ -141,7 +139,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Encounter priority has been set to <span class="font-semibold">STAT</span> 
@@ -159,7 +157,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Encounter priority has been set to <span class="font-semibold">Normal</span> 
@@ -178,7 +176,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> changed to </span> On Hold
@@ -197,7 +195,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> requested </span>Assistance
@@ -216,7 +214,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> cancelled the  </span>Assistance
@@ -235,7 +233,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
            Hold <span class="text-slate-500"> removed </span>from  the Encounter
@@ -248,7 +246,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Clinician <span class="text-slate-500">  assigned </span> to job
@@ -260,7 +258,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Clinician <span class="text-slate-500"> withdrawn </span> from job
@@ -273,7 +271,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Photo <span class="text-slate-500"> attached </span> to job
@@ -285,7 +283,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Photo <span class="text-slate-500"> removed </span>  from job
@@ -297,7 +295,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
          <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
            <span class="font-bold">{{ getProcedureName(activity.metadata.Procedures[0].ProcedureId) }} </span>  was added to
@@ -310,7 +308,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
            <span class="font-bold">{{ getProcedureName(activity.metadata.Procedure.ProcedureId) }} </span> in the job
@@ -322,7 +320,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
            <span class="font-bold">{{ getProcedureName(activity.metadata.Procedures[0].ProcedureId) }} </span>  was removed
@@ -335,7 +333,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> added a </span> Note
@@ -347,7 +345,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> modified  a </span> Note
@@ -359,7 +357,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> Removed  a </span> Note
@@ -384,7 +382,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} made changes to <span class="font-semibold"> Medical Record</span> 
@@ -396,7 +394,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> assigned </span> the new <span class="font-semibold">Medical Record</span>
@@ -408,7 +406,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Location was <span class="text-slate-500"> changed for </span> the Job
@@ -428,7 +426,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Encounter status has been set to <span class="font-semibold">  On Hold </span>
@@ -446,7 +444,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Encounter status has been set to <span class="font-semibold">Attending</span>
@@ -464,7 +462,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Encounter status has been set to <span class="font-semibold">Waiting</span> 
@@ -482,7 +480,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-300"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Job status has been set to <span class="font-semibold">Canceled</span> 
@@ -499,7 +497,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }}
@@ -517,7 +515,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }}
@@ -535,7 +533,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }} <span class="text-slate-500"> started </span>  Attending
@@ -552,7 +550,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }}
@@ -570,7 +568,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }}
@@ -588,7 +586,7 @@ const getUsername = (id: string) => {
         </fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             {{ getUsername(activity.userId) }}
@@ -617,7 +615,7 @@ const getUsername = (id: string) => {
         <fwb-timeline-point class="bg-slate-400"></fwb-timeline-point>
         <fwb-timeline-content class="ps-1.5">
           <fwb-timeline-time class="text-slate-500">
-            <span class="font-medium">{{ formatDate(activity.timestamp) }}</span>
+            <span class="font-medium">{{ DateTimeFormatter.formatDatetime(activity.timestamp) }}</span>
           </fwb-timeline-time>
           <div class="text-sm font-medium">
             Activity: {{ activity.aggregateType }} - {{ activity.activityType }} -

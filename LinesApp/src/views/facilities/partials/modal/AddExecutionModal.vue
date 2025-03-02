@@ -32,7 +32,7 @@ const routines = computed(() => routinesStore.routines);
 
 const routineOptions = computed(() =>
   routines.value
-    .filter((r) => r.isActive)
+    .filter((r) => r.active)
     .map((r) => ({
       value: r.id,
       name: r.name!,

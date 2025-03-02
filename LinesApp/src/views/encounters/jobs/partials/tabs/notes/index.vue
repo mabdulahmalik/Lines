@@ -17,6 +17,7 @@ import { useJobsStore } from '@/stores/data/encounters/jobs';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useMedicalRecordsStore } from '@/stores/data/encounters/medicalRecords';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import DateTimeFormatter from '@/utils/dateTimeFormatter';
 
 const props = defineProps<{
   job: Job;
@@ -48,8 +49,8 @@ const notes = ref(
         ) ?? false,
     }))
     .sort((a, b) => {
-      if (a.treatment === 'PINNED' && b.treatment !== 'PINNED') return -1;
-      if (a.treatment !== 'PINNED' && b.treatment === 'PINNED') return 1;
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
       return new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime();
     })
 );
@@ -66,8 +67,8 @@ watch(
           ) ?? false,
       }))
       .sort((a, b) => {
-        if (a.treatment === 'PINNED' && b.treatment !== 'PINNED') return -1;
-        if (a.treatment !== 'PINNED' && b.treatment === 'PINNED') return 1;
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
         return (
           new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime()
         );
@@ -75,18 +76,6 @@ watch(
   },
   { immediate: true, deep: true }
 );
-
-const formatDate = (date: Date): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
-};
 
 const note = ref('');
 const isEditing = ref(false);
@@ -121,7 +110,7 @@ function addOrEditNote() {
 const pinnedUnpinNotes = (id: string) => {
   const note = notes.value.find((n) => n.id === id);
   if (note && props.job.id) {
-    if (note.treatment === 'PINNED') {
+    if (note.pinned) {
       jobsStore.unpinNoteFromJob({ id, jobId: props.job.id });
     } else {
       jobsStore.pinNoteToJob({ id, jobId: props.job.id });
@@ -188,7 +177,8 @@ function getUserForAvatar(id: string) {
           <fwb-input
             v-model="note"
             @enter=""
-            class="flex-1 bg-white"
+            class="flex-1"
+            block-classes="flex-1 bg-white"
             placeholder="Write text here ..."
           />
           <fwb-button
@@ -220,14 +210,14 @@ function getUserForAvatar(id: string) {
       >
         <div
           class="flex w-full px-2"
-          :class="{ 'bg-[#FDFDEA] py-2 rounded-xl': note.treatment === 'PINNED' }"
+          :class="{ 'bg-[#FDFDEA] py-2 rounded-xl': note.pinned }"
         >
           <user-avatar :user="getUserForAvatar(note.createdBy)" rounded size="sm" class="mr-3" />
           <div class="flex flex-col flex-1">
             <div class="flex items-start justify-between">
               <div>
                 <div class="text-slate-500 font-medium text-xs">
-                  {{ formatDate(new Date(note.createdAt)) }}
+                  {{ DateTimeFormatter.formatDatetime(note.createdAt) }}
                 </div>
                 <div class="text-slate-900 font-semibold text-sm">
                   {{ getUserName(note.createdBy) }}
@@ -261,7 +251,7 @@ function getUserForAvatar(id: string) {
                   square
                   size="sm"
                 >
-                  <template v-if="note.treatment === 'PINNED'">
+                  <template v-if="note.pinned">
                     <IconUnpin />
                   </template>
                   <template v-else>
@@ -302,3 +292,9 @@ function getUserForAvatar(id: string) {
     </template>
   </div>
 </template>
+
+<style scoped>
+:deep(div.flex.relative.items-center.bg-gray-50.border.border-gray-300:has(input)) {
+  background-color: white;
+}
+</style>

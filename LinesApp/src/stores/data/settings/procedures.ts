@@ -198,6 +198,7 @@ export const useProceduresStore = defineStore('procedures', () => {
   const selectedProcedure = ref<Procedure>({
     id: null,
     name: '',
+    type: null,
     fields: null,
     requiredData: null,
     settings: null,
@@ -210,6 +211,7 @@ export const useProceduresStore = defineStore('procedures', () => {
     selectedProcedure.value = {
       id: null,
       name: '',
+      type: null,
       fields: null,
       requiredData: null,
       settings: null,

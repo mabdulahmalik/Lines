@@ -42,6 +42,7 @@ export const useMeStore = defineStore('me', () => {
     }
     const broadcast = result.data.broadcast;
     const payload = JSON.parse(result.data.broadcast.payload);
+
     if (
       broadcast.eventName === 'ObjectModified' &&
       payload?.id &&
@@ -67,6 +68,11 @@ export const useMeStore = defineStore('me', () => {
       if (errors.length > 0) {
         console.error(errors);
       }
+    } else if (
+      result.data.direct.eventName === 'UserPreferenceChanged'
+    ) {
+      toast.success(`Preferences Successfully Updated.`);
+      getMe();
     }
   });
 
