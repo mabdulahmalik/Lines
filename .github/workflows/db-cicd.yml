@@ -49,16 +49,16 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Debug SqlPackage Path
-        run: |
-          echo "SqlPackage location:"
-          where SqlPackage  
+      # - name: Debug SqlPackage Path
+      #   run: |
+      #     echo "SqlPackage location:"
+      #     where SqlPackage  
 
-      - name: Add SqlPackage to PATH
-        run: echo "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\" >> $GITHUB_PATH
+      # - name: Add SqlPackage to PATH
+      #   run: echo "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\" >> $GITHUB_PATH
 
-      - name: Verify SqlPackage
-        run: SqlPackage /?      
+      # - name: Verify SqlPackage
+      #   run: SqlPackage /?      
 
       - name: Deploy Database
         uses: Azure/sql-action@v2.3
