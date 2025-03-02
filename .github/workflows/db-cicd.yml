@@ -34,7 +34,7 @@ jobs:
           path: staging
 
   deploy-db:
-    runs-on: self-hosted
+    runs-on: windows-latest #self-hosted
     needs: build-db
     environment: dbaverificationscript
     steps:
