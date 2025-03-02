@@ -38,30 +38,27 @@
 # CMD ["http-server", "-p", "8080"]
 
 
+FROM node:18-alpine
 
-# First stage: Build with .NET SDK and Node.js
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
-WORKDIR /app
+# Install .NET SDK dependencies
+RUN apk add --no-cache \
+    icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib \
+    && apk add --no-cache --virtual .build-deps \
+    curl bash icu krb5-libs libssl1.1 zlib \
+    && curl -O https://dot.net/v1/dotnet-install.sh \
+    && chmod +x dotnet-install.sh \
+    && ./dotnet-install.sh -c 8.0 \
+    && rm -rf dotnet-install.sh
 
-# Copy platform source code required for schema generation
-COPY ../Platform/src/SOL.Gateway ./Platform/src/SOL.Gateway
-COPY ../Platform/src/SOL.Gateway/SOL.Gateway.csproj ./Platform/src/SOL.Gateway/
-RUN dotnet restore ./Platform/src/SOL.Gateway/SOL.Gateway.csproj
+ENV PATH="/root/.dotnet:${PATH}"
 
-# Build the .NET project to generate schema
-RUN dotnet run --project ./Platform/src/SOL.Gateway -- schema export --output ./schema.graphql
-
-# Second stage: Node.js for frontend
-FROM node:18-alpine AS frontend
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install --frozen-lockfile
 
-# Copy schema from the previous stage
-COPY --from=builder /app/schema.graphql ./schema.graphql
-
 COPY . .
-RUN npm run build
+RUN npm run codegen  # Now it should find the `dotnet` command
 
 CMD ["npm", "run", "start"]
+
