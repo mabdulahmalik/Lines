@@ -62,14 +62,20 @@ jobs:
         working-directory: LinesApp
         run: |
           if [ -f "package-lock.json" ]; then
-            npm ci || npm install
+            npm ci || (rm -rf node_modules package-lock.json && npm install)
           else
             npm install
           fi
-          
+
       - name: Generate GraphQL Types
         working-directory: LinesApp
-        run: npm run codegen 
+        run: |
+          if [ -f "codegen.ts" ]; then
+            npm run codegen
+          else
+            echo "⚠️ Codegen config is missing!"
+            exit 1
+          fi
 
       - name: Build Frontend
         working-directory: LinesApp
