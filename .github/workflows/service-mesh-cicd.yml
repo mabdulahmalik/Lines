@@ -9,7 +9,7 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'  
   PROJECT_PATH: Platform/src/SOL.ServiceMesh/SOL.ServiceMesh.csproj
-  DOCKERFILE_PATH: Platform/src/SOL.ServiceMesh
+  DOCKERFILE_PATH: Platform/src/SOL.ServiceMesh/Dockerfile
   PROJECT_PATH_SOL: Platform/src/SOL.ServiceMesh
   BUILD_OUTPUT_PATH: Platform/src/SOL.ServiceMesh/publish
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }}
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.PROJECT_PATH_SOL }}
           docker tag ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker Image to ACR
