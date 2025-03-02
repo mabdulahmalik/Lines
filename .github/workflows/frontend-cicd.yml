@@ -10,7 +10,6 @@ env:
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: sol-gateway
   DOCKERFILE_PATH: Platform/src/SOL.Gateway/Dockerfile
-  BUILD_CONTEXT: Platform/src/
   NODE_VERSION: 18 # Matches Node version in the Dockerfile
 
 jobs:
@@ -29,7 +28,7 @@ jobs:
         run: |
           docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
                        -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-                       -f ${{ env.DOCKERFILE_PATH }} ${{ env.BUILD_CONTEXT }}
+                       -f ${{ env.DOCKERFILE_PATH }} .
 
       - name: Push Docker Image to ACR
         run: |
