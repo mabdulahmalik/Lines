@@ -42,9 +42,9 @@ FROM node:18-alpine
 
 # Install .NET SDK dependencies
 RUN apk add --no-cache \
-    icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib \
+    icu-libs krb5-libs libgcc libintl libssl3 libstdc++ zlib \
     && apk add --no-cache --virtual .build-deps \
-    curl bash icu krb5-libs libssl1.1 zlib \
+    curl bash icu krb5-libs libssl3 zlib \
     && curl -O https://dot.net/v1/dotnet-install.sh \
     && chmod +x dotnet-install.sh \
     && ./dotnet-install.sh -c 8.0 \
