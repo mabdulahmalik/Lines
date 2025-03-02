@@ -4,7 +4,7 @@ WORKDIR /src
 COPY . .
 
 WORKDIR /src/SOL.ServiceMesh
-RUN dotnet restore SOL.ServiceMesh.csproj
+RUN dotnet restore
 
 RUN dotnet publish -c Release -o /app
 
