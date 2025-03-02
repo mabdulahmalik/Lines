@@ -15,35 +15,6 @@ env:
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
 
 jobs:
-  # build-frontend:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 🛎️ Checkout Code
-  #       uses: actions/checkout@v4
-
-  #     - name: 🏗️ Set up Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #         cache: npm
-  #         cache-dependency-path: ${{ env.FRONTEND_PATH }}/package-lock.json
-
-  #     - name: 📦 Install Dependencies
-  #       working-directory: ${{ env.FRONTEND_PATH }}
-  #       run: npm install
-
-  #     - name: 🔧 Generate GraphQL Types
-  #       working-directory: ${{ env.FRONTEND_PATH }}
-  #       run: npx graphql-codegen --config codegen.ts || echo "Skipping GraphQL code generation"
-
-  #     - name: 🔍 Run Lint Check
-  #       working-directory: ${{ env.FRONTEND_PATH }}
-  #       run: npm run lint || echo "Linting failed, skipping for now"
-
-  #     - name: 🏗️ Build Frontend
-  #       working-directory: ${{ env.FRONTEND_PATH }}
-  #       run: npm run build
-
   build-and-push-docker:
     runs-on: ubuntu-latest
     # needs: build-frontend
