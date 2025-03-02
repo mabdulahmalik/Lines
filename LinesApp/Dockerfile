@@ -2,21 +2,17 @@
 FROM node:18-alpine AS build-stage
 
 # Set working directory
+WORKDIR /app
+
+# Copy only the LinesApp directory into /app
+COPY LinesApp /app
+
+# Move into the LinesApp directory
 WORKDIR /app/LinesApp
 
-# Copy package.json and package-lock.json for caching
-COPY LinesApp/package*.json ./
-
-# Install dependencies
+# Now continue with npm commands
 RUN npm install --frozen-lockfile
-
-# Copy the entire application code
-COPY LinesApp . 
-
-# Generate GraphQL types if required
-RUN npm run codegen 
-
-# Build the Vue application
+RUN npm run codegen
 RUN npm run build
 
 # Stage 2: Serve the app using a lightweight HTTP server
