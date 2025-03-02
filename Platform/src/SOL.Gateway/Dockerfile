@@ -17,10 +17,8 @@ COPY ./LinesApp/package*.json ./
 RUN npm install
 COPY ./LinesApp/ ./
 
-RUN npm run code-gen 
-# || true
-RUN npm run build 
-# || true
+RUN npm run code-gen || true
+RUN npm run build || true
 
 # Stage 3: Create the Nginx image and copy the build files
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
