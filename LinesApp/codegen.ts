@@ -2,8 +2,8 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   overwrite: true,
-  // schema: process.env.GQL_SCHEMA_PATH,
-  schema: "http://localhost:5051/graphql/",
+  schema: process.env.GQL_SCHEMA_PATH,  // need ./schema.graphql to build the frontend
+  // schema: "http://localhost:5051/graphql/",
   documents: "src/**/*.graphql",
   ignoreNoDocuments: true,
   generates: {
