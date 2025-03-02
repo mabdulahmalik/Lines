@@ -50,37 +50,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: LinesApp/package-lock.json 
-
-      - name: Install Dependencies
-        working-directory: LinesApp
-        run: |
-          if [ -f "package-lock.json" ]; then
-            npm ci || (rm -rf node_modules package-lock.json && npm install)
-          else
-            npm install
-          fi
-
-      - name: Generate GraphQL Types
-        working-directory: LinesApp
-        run: |
-          if [ -f "codegen.ts" ]; then
-            npm run codegen
-          else
-            echo "⚠️ Codegen config is missing!"
-            exit 1
-          fi
-
-      - name: Build Frontend
-        working-directory: LinesApp
-        run: npm run build
-
+        
       - name: 🔑 Log in to Azure Container Registry
         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 

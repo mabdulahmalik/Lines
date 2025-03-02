@@ -2,19 +2,19 @@
 FROM node:18-alpine AS build-stage
 
 # Set working directory
-WORKDIR /app
+WORKDIR /app/LinesApp
 
 # Copy package.json and package-lock.json for caching
-COPY package*.json ./
+COPY LinesApp/package*.json ./
 
 # Install dependencies
 RUN npm install --frozen-lockfile
 
 # Copy the entire application code
-COPY . .
+COPY LinesApp . 
 
-# # Generate GraphQL types if required
-# RUN npm run codegen
+# Generate GraphQL types if required
+RUN npm run codegen 
 
 # Build the Vue application
 RUN npm run build
@@ -29,7 +29,7 @@ RUN npm install -g http-server
 WORKDIR /app
 
 # Copy built files from the build stage
-COPY --from=build-stage /app/dist .
+COPY --from=build-stage /app/LinesApp/dist .
 
 # Expose port 8080
 EXPOSE 8080
