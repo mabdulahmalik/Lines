@@ -1,4 +1,4 @@
-name: Platform Service CI/CD
+name: Service Mesh CI/CD
 
 on:
   pull_request:
