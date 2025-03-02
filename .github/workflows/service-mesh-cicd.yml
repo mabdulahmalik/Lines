@@ -10,7 +10,7 @@ env:
   DOTNET_VERSION: '8.0.x'  
   PROJECT_PATH: Platform/src/SOL.ServiceMesh/SOL.ServiceMesh.csproj
   DOCKERFILE_PATH: Platform/src/SOL.ServiceMesh/Dockerfile
-  PROJECT_PATH_SOL: Platform/src/SOL.ServiceMesh
+  PROJECT_PATH_SOL: Platform/
   BUILD_OUTPUT_PATH: Platform/src/SOL.ServiceMesh/publish
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: service-mesh
