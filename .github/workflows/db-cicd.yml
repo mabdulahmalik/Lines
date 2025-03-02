@@ -52,6 +52,9 @@ jobs:
       - name: Add SqlPackage to PATH
         run: echo "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\" >> $GITHUB_PATH
 
+      - name: Verify SqlPackage
+        run: SqlPackage /?      
+
       - name: Deploy Database
         uses: Azure/sql-action@v2.3
         with:
