@@ -51,11 +51,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # - name: Download Build Artifacts
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: frontend-dist
-      #     path: ${{ env.FRONTEND_PATH }}/dist
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        working-directory: LinesApp
+        run: npm ci
+
+      - name: Generate GraphQL Types
+        working-directory: LinesApp
+        run: npm run codegen 
+
+      - name: Build Frontend
+        working-directory: LinesApp
+        run: npm run build
 
       - name: 🔑 Log in to Azure Container Registry
         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login ${{ env.AZURE_CONTAINER_REGISTRY }} -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
