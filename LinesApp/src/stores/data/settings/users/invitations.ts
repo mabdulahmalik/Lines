@@ -37,7 +37,7 @@ export const useInvitationsStore = defineStore('invitations', () => {
   handleBroadcast((result) => {
     if (!result.data?.broadcast?.payload) return;
     const broadcast = result.data.broadcast;
-    const payload = JSON.parse(result.data.broadcast.payload);
+    // const payload = JSON.parse(result.data.broadcast.payload);
 
     if (broadcast.eventName === 'UserInvitationsSent') {
       getInvitations()((result: any) => {
@@ -70,7 +70,7 @@ export const useInvitationsStore = defineStore('invitations', () => {
   });
 
   const getInvitations = () => {
-    const { onResult } = useGetInvitationQuery(null, {
+    const { onResult } = useGetInvitationQuery({skip: null, take: null}, {
       fetchPolicy: 'network-only',
     });
     return onResult;

@@ -1,0 +1,61 @@
+{
+    "runtime": "Net80",
+    "documentGenerator": {
+      "fromDocument": {
+        "url": "https://raw.githubusercontent.com/p2-inc/phasetwo-docs/main/openapi.yaml"
+      }
+    },
+    "codeGenerators": {
+        "openApiToCSharpClient": {
+            "className": "Phase2AdminClient",
+            "namespace": "SOL.IdP.Phase2",
+            "output": "Phase2Admin.cs",
+            "generateDtoTypes": true,
+            "generateClientClasses": true,
+            "generateClientInterfaces": true,
+            "operationGenerationMode": "SingleClientFromOperationId",
+            "operationNameGenerator": "MultipleClientsFromPathSegments",
+            "generateOptionalParameters": true,
+            "wrapResponses": false,
+            "wrapResponseMethods": "",
+            "generateResponseClasses": false,
+            "responseClass": "",
+            "responseArrayType": "System.Collections.Generic.ICollection",
+            "responseDictionaryType": "System.Collections.Generic.IDictionary",
+            "parameterArrayType": "System.Collections.Generic.IEnumerable",
+            "parameterDictionaryType": "System.Collections.Generic.IDictionary",
+            "clientBaseClass": null,
+            "configurationClass": null,
+            "generateExceptionClass": true,
+            "exceptionClass": "Phase2AdminException",
+            "injectHttpClient": true,
+            "disposeHttpClient": false,
+            "protectedMethods": "",
+            "useHttpClientCreationMethod": false,
+            "useHttpRequestMessageCreationMethod": false,
+            "wrapDtoExceptions": true,
+            "clientClassAccessModifier": "public",
+            "useBaseUrl": true,
+            "generateBaseUrlProperty": false,
+            "generateSyncMethods": false,
+            "httpClientType": "System.Net.Http.HttpClient",
+            "parameterDateTimeFormat": "s",
+            "generateUpdateJsonSerializerSettingsMethod": true,
+            "useRequestAndResponseSerializationSettings": false,
+            "serializeTypeInformation": false,
+            "queryNullValue": "",
+            "exposeJsonSerializerSettings": false,
+
+             
+            "generatePrepareRequestAndProcessResponseAsAsyncMethods": false,            
+            "typeAccessModifier": "public",
+            "generateContractsOutput": false,
+            "contractsNamespace": null,
+            "contractsOutputFilePath": null,
+            "generateJsonMethods": true,
+            "enforceFlagEnums": false,
+            "responseIEnumerableType": "System.Collections.Generic.ICollection",
+            "exportXmlComments": true
+        }
+    }
+}

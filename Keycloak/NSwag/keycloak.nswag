@@ -1,0 +1,61 @@
+{
+    "runtime": "Net80",
+    "documentGenerator": {
+      "fromDocument": {
+        "url": "https://www.keycloak.org/docs-api/latest/rest-api/openapi.json"
+      }
+    },
+    "codeGenerators": {
+        "openApiToCSharpClient": {
+            "className": "KeycloakAdminClient",
+            "namespace": "SOL.IdP.Keycloak",
+            "output": "KeycloakAdmin.cs",
+            "generateDtoTypes": true,
+            "generateClientClasses": true,
+            "generateClientInterfaces": true,
+            "operationGenerationMode": "SingleClientFromOperationId",
+            "operationNameGenerator": "MultipleClientsFromPathSegments",
+            "generateOptionalParameters": true,
+            "wrapResponses": false,
+            "wrapResponseMethods": "",
+            "generateResponseClasses": false,
+            "responseClass": "",
+            "responseArrayType": "System.Collections.Generic.ICollection",
+            "responseDictionaryType": "System.Collections.Generic.IDictionary",
+            "parameterArrayType": "System.Collections.Generic.IEnumerable",
+            "parameterDictionaryType": "System.Collections.Generic.IDictionary",
+            "clientBaseClass": null,
+            "configurationClass": null,
+            "generateExceptionClass": true,
+            "exceptionClass": "KeycloakAdminException",
+            "injectHttpClient": true,
+            "disposeHttpClient": false,
+            "protectedMethods": "",
+            "useHttpClientCreationMethod": false,
+            "useHttpRequestMessageCreationMethod": false,
+            "wrapDtoExceptions": true,
+            "clientClassAccessModifier": "public",
+            "useBaseUrl": false,
+            "generateBaseUrlProperty": false,
+            "generateSyncMethods": false,
+            "httpClientType": "System.Net.Http.HttpClient",
+            "parameterDateTimeFormat": "s",
+            "generateUpdateJsonSerializerSettingsMethod": true,
+            "useRequestAndResponseSerializationSettings": false,
+            "serializeTypeInformation": false,
+            "queryNullValue": "",
+            "exposeJsonSerializerSettings": false,
+
+             
+            "generatePrepareRequestAndProcessResponseAsAsyncMethods": false,            
+            "typeAccessModifier": "public",
+            "generateContractsOutput": false,
+            "contractsNamespace": null,
+            "contractsOutputFilePath": null,
+            "generateJsonMethods": true,
+            "enforceFlagEnums": false,
+            "responseIEnumerableType": "System.Collections.Generic.ICollection",
+            "exportXmlComments": true
+        }
+    }
+}

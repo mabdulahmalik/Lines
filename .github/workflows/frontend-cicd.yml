@@ -10,7 +10,6 @@ env:
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: sol-gateway
   DOCKERFILE_PATH: Platform/src/SOL.Gateway/Dockerfile
-  NODE_VERSION: 18 # Matches Node version in the Dockerfile
 
 jobs:
   docker:
