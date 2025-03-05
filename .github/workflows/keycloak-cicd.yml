@@ -1,4 +1,4 @@
-name: Frontend CI/CD
+name: Keycloak CI/CD
 
 on:
   workflow_dispatch:
