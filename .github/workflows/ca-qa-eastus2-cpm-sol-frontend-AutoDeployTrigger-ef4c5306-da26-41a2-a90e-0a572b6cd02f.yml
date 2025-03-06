@@ -1,0 +1,48 @@
+name: Trigger auto deployment for ca-qa-eastus2-cpm-sol-frontend
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/ca-qa-eastus2-cpm-sol-frontend-AutoDeployTrigger-ef4c5306-da26-41a2-a90e-0a572b6cd02f.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.CAQAEASTUS2CPMSOLFRONTEND_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.CAQAEASTUS2CPMSOLFRONTEND_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.CAQAEASTUS2CPMSOLFRONTEND_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}/Keycloak/Docker
+          _dockerfilePathKey_: _dockerfilePath_
+          registryUrl: crsharedeastus2cpmprdtsol.azurecr.io
+          registryUsername: ${{ secrets.CAQAEASTUS2CPMSOLFRONTEND_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.CAQAEASTUS2CPMSOLFRONTEND_REGISTRY_PASSWORD }}
+          containerAppName: ca-qa-eastus2-cpm-sol-frontend
+          resourceGroup: rg-qa-eastus2-cpm-prdt-sol
+          imageToBuild: crsharedeastus2cpmprdtsol.azurecr.io/ca-qa-eastus2-cpm-sol-frontend:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
