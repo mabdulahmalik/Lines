@@ -6,7 +6,7 @@ on:
 env:
   AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_CONTAINER_REGISTRY }}
   IMAGE_NAME: keycloak
-  DOCKERFILE_PATH: Keycloak/Docker/Dockerfile
+  DOCKERCONTEXT_PATH: Keycloak/Docker/
 
 jobs:
   docker:
@@ -24,7 +24,7 @@ jobs:
         run: |
           docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
                        -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-                       -f ${{ env.DOCKERFILE_PATH }} .
+                       ${{ env.DOCKERCONTEXT_PATH }}
 
       - name: Push Docker Image to ACR
         run: |
