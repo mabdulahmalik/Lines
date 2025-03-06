@@ -108,6 +108,7 @@ import IconUserList from "./IconUserList.vue"
 import IconSecurityPassword from "./IconSecurityPassword.vue"
 import IconUserCheck02 from "./IconUserCheck02.vue"
 import IconUserX02 from "./IconUserX02.vue"
+import IconPencilEdit02 from "./IconPencilEdit02.vue"
        
    
 export {
@@ -221,4 +222,5 @@ export {
     IconSecurityPassword,
     IconUserX02,
     IconUserCheck02,
+    IconPencilEdit02,
 }

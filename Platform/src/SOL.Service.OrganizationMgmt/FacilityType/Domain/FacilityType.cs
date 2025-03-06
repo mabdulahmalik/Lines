@@ -32,7 +32,7 @@ public class FacilityType : AggregateRoot, ISortable
     public void Rename(string name)
     {
         Guard.Argument(name).NotNull().NotEmpty();
-
+        
         Name = name;
         RaiseEventModified();
     }    
@@ -49,21 +49,27 @@ public class FacilityType : AggregateRoot, ISortable
         RaiseEvent(new FacilityTypeActivationChanged(Id, false));
     }
 
-    public void AddProperty(RoomProperty property)
+    public void AddProperty(string name, int sortOrder, params RoomPropertyOption[] options)
     {
-        Guard.Argument(property).NotNull();
+        Guard.Argument(name).NotNull().NotEmpty();
 
+        var property = new RoomProperty(name, sortOrder);
+        
+        if(options.Any())
+            property.SetOptions(options);
+        
         _properties.Add(property);
         RaiseEvent(new RoomPropertyAdded(Id, property));
     }
 
-    public void ModifyProperty(Guid propertyId, string name, params RoomPropertyOption[] options)
+    public void ModifyProperty(Guid propertyId, string name, int sortOrder, params RoomPropertyOption[] options)
     {
         Guard.Argument(propertyId).NotDefault();
         Guard.Argument(name).NotNull().NotEmpty();
 
         var property = _properties.Single(x => x.Id == propertyId);
         property.Rename(name);
+        property.Resort(sortOrder);
         
         if(options.Any())
             property.SetOptions(options);
@@ -90,5 +96,15 @@ public class FacilityType : AggregateRoot, ISortable
         _properties.ForEach(x => x.Resort(++i));
         
         RaiseEvent(new RoomPropertySorted(Id, id, from, to));
+    }
+
+    public void RemoveProperty(Guid propertyId)
+    {
+        Guard.Argument(propertyId).NotDefault();
+        
+        var property = _properties.Single(x => x.Id == propertyId);
+        _properties.Remove(property);
+        
+        RaiseEvent(new RoomPropertyRemoved(Id, property));
     }
 }

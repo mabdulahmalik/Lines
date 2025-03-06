@@ -17,15 +17,28 @@ COPY ./LinesApp/package*.json ./
 RUN npm install
 COPY ./LinesApp/ ./
 
-RUN npm run code-gen || true
-RUN npm run build || true
+ARG VITE_API_URL
+ARG VITE_WS_API_URL
+ARG VITE_REPORT_SERVICE_URL
 
-# Stage 3: Create the Nginx image and copy the build files
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_WS_API_URL=${VITE_WS_API_URL}
+ENV VITE_REPORT_SERVICE_URL=${VITE_REPORT_SERVICE_URL}
+
+RUN npm run code-gen || true
+RUN mkdir -p dist && (npm run build || true) && \
+    echo "Contents of dist directory:" && \
+    ls -la dist
+
+# Stage 3: Create the ASP.NET Core runtime image and copy the build files
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 WORKDIR /app
 COPY --from=build /app .
+
+RUN mkdir -p ./wwwroot
 COPY --from=build-stage /app/dist ./wwwroot
+RUN ls -la ./wwwroot || true
 
 EXPOSE 80
 EXPOSE 443

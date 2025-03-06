@@ -13,7 +13,7 @@ import {
 import ModalReview from '@/components/modal/ModalReview.vue';
 import { useModalStore } from '@/stores/modal';
 import { IconCheck } from '@/components/icons';
-import { Encounter, EncounterAlertType, EncounterStage, Job, JobStatus } from '@/api/__generated__/graphql';
+import { Encounter, EncounterAlertType, EncounterStage, Job, JobStatus, UserAvailability } from '@/api/__generated__/graphql';
 import { useJobsStore } from '@/stores/data/encounters/jobs';
 import { useEncountersStore } from '@/stores/data/encounters';
 import ProgressBar from '../ProgressBar.vue';
@@ -25,6 +25,8 @@ import RescheduleJobModal from './RescheduleJobModal.vue';
 import dayjs from 'dayjs';
 import SkeletonItem from '@/components/skeletons/SkeletonItem.vue';
 import { useLoaders } from '@/hooks/useLoaders';
+import { useMeStore } from '@/stores/data/settings/users/me';
+import { usePurposesStore } from '@/stores/data/settings/purposes';
 
 const props = defineProps<{
   job: Job;
@@ -40,6 +42,8 @@ const { isJobLoading: isLoading } = useLoaders();
 const jobsStore = useJobsStore();
 const encountersStore = useEncountersStore();
 const modalStore = useModalStore();
+const meStore = useMeStore();
+const purposesStore = usePurposesStore();
 
 const { holdElapsedTime } = useEncounterTimers(props);
 
@@ -86,6 +90,14 @@ function handleChartLater() {
   setModalOpen(false);
   modalViewJobBodyRef.value?.saveProgress();
   setChartingModalOpen(false);
+  meStore.modifyMyStatus({
+    status: UserAvailability.Free,
+    message: `Finished a ${getPurposeNameById(props.job.purposeId)}.`,
+  });
+}
+function getPurposeNameById(id: string): string {
+  const purpose = purposesStore.purposes.find((p) => p.id === id);
+  return purpose?.name ?? '';
 }
 
 function handleCompleteJob() {

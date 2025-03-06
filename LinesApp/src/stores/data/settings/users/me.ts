@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
 import { defineStore } from 'pinia';
 import client from '@/api';
 import { provideApolloClient } from '@vue/apollo-composable';
@@ -26,12 +26,12 @@ export const useMeStore = defineStore('me', () => {
   const currentCorrelationId = ref<string | null>(null);
   const isLoading = ref(true);
 
-  const me = ref<User>();
+  const me = ref<User | null>(null);
 
-  const { onResult, refetch } = useGetMeQuery();
+  const { onResult } = useGetMeQuery();
 
   onResult((result: any) => {
-    me.value = result?.data?.me || [];
+    me.value = result?.data?.me || {};
     isLoading.value = result.loading;
   });
 
@@ -50,6 +50,17 @@ export const useMeStore = defineStore('me', () => {
       payload?.id === me.value?.id
     ) {
       getMe();
+    } else if (broadcast.eventName === 'UserStatusChanged' && payload.userId === me.value?.id) {
+      if (me.value) {
+        me.value = {
+          ...toRaw(me.value),
+          status: {
+            status: payload.status,
+            message: payload.message,
+            changedAt: payload.changedAt,
+          },
+        };
+      }
     }
   });
 
@@ -68,16 +79,14 @@ export const useMeStore = defineStore('me', () => {
       if (errors.length > 0) {
         console.error(errors);
       }
-    } else if (
-      result.data.direct.eventName === 'UserPreferenceChanged'
-    ) {
+    } else if (result.data.direct.eventName === 'UserPreferenceChanged') {
       toast.success(`Preferences Successfully Updated.`);
       getMe();
     }
   });
 
   const getMe = () => {
-    const { onResult } = useGetMeQuery({fetchPolicy: 'network-only'});
+    const { onResult } = useGetMeQuery({ fetchPolicy: 'network-only' });
     return onResult;
   };
 
@@ -91,7 +100,6 @@ export const useMeStore = defineStore('me', () => {
       console.log('correlationId', correlationId);
       currentCorrelationId.value = correlationId;
     }
-    await refetch();
   };
 
   const modifyMyPreference = async (payload: ModifyMyPreferenceCmd) => {
@@ -103,7 +111,6 @@ export const useMeStore = defineStore('me', () => {
       console.log('correlationId', correlationId);
       currentCorrelationId.value = correlationId;
     }
-    await refetch();
   };
 
   const modifyMyProfile = async (payload: ModifyMyProfileCmd) => {

@@ -4,26 +4,20 @@ import client from '@/api';
 import { provideApolloClient } from '@vue/apollo-composable';
 import {
   ActivateFacilityTypeCmd,
-  CreateFacilityRoomPropertyCmd,
   CreateFacilityTypeCmd,
   DeactivateFacilityTypeCmd,
   FacilityType,
   FacilityRoomProperty,
-  ModifyFacilityRoomPropertyCmd,
-  RenameFacilityTypeCmd,
   useActivateFacilityTypeMutation,
-  useAddFacilityRoomPropertyMutation,
   useBroadcastSubscription,
   useCreateFacilityTypeMutation,
   useDeactivateFacilityTypeMutation,
   useDirectSubscription,
   useGetFacilityTypesQuery,
-  useModifyFacilityRoomPropertyMutation,
-  useRenameFacilityTypeMutation,
-  SortFacilityRoomPropertyCmd,
-  useSortFacilityRoomPropertyMutation,
   SortFacilityTypeCmd,
   useSortFacilityTypeMutation,
+  ModifyFacilityTypeCmd,
+  useModifyFacilityTypeMutation,
 } from '@/api/__generated__/graphql';
 
 import { useToast } from 'vue-toastification';
@@ -176,11 +170,11 @@ export const useFacilityTypesStore = defineStore('facilityTypes', () => {
     }
   };
 
-  const renameFacilityType = async (payload: RenameFacilityTypeCmd) => {
-    const { mutate } = useRenameFacilityTypeMutation();
+  const modifyFacilityType = async (payload: ModifyFacilityTypeCmd) => {
+    const { mutate } = useModifyFacilityTypeMutation();
 
     var result = await mutate({ command: payload });
-    const correlationId = result?.data?.renameFacilityType?.correlationId ?? null;
+    const correlationId = result?.data?.modifyFacilityType?.correlationId ?? null;
 
     if (correlationId) {
       console.log('correlationId', correlationId);
@@ -212,36 +206,6 @@ export const useFacilityTypesStore = defineStore('facilityTypes', () => {
     }
   };
 
-  const addRoomProperty = async (payload: CreateFacilityRoomPropertyCmd) => {
-    const { mutate } = useAddFacilityRoomPropertyMutation();
-
-    var result = await mutate({ command: payload });
-    const correlationId = result?.data?.addFacilityRoomProperty?.correlationId ?? null;
-
-    if (correlationId) {
-      console.log('correlationId', correlationId);
-      currentCorrelationId.value = correlationId;
-    }
-  };
-
-  const modifyRoomProperty = async (payload: ModifyFacilityRoomPropertyCmd) => {
-    const { mutate } = useModifyFacilityRoomPropertyMutation();
-
-    var result = await mutate({ command: payload });
-    const correlationId = result?.data?.modifyFacilityRoomProperty?.correlationId ?? null;
-
-    if (correlationId) {
-      console.log('correlationId', correlationId);
-      currentCorrelationId.value = correlationId;
-    }
-  };
-  
-  const sortRoomProperty = async (payload: SortFacilityRoomPropertyCmd) => {
-    const { mutate } = useSortFacilityRoomPropertyMutation();
-    await mutate({ command: payload });
-  }
-  
-  // sorted Facility Types
   const sortFacilityType = async (payload: SortFacilityTypeCmd) => {
     const { mutate } = useSortFacilityTypeMutation();
 
@@ -291,16 +255,13 @@ export const useFacilityTypesStore = defineStore('facilityTypes', () => {
     facilityTypes,
     roomProperties,
     createFacilityType,
-    renameFacilityType,
     activateFacilityType,
     deactivateFacilityType,
-    addRoomProperty,
-    modifyRoomProperty,
     selectedFacilityType,
     clearSelectedFacilityType,
     selectedRoomProperty,
     clearSelectedRoomProperty,
-    sortRoomProperty,
-    sortFacilityType
+    sortFacilityType,
+    modifyFacilityType,
   };
 });

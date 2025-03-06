@@ -22,7 +22,7 @@ public class CreateFacilityRoomCmdType : InputObjectType<CreateFacilityRoom>
 
         descriptor
             .Field(x => x.Properties)
-            .Type<ListType<FacilityRoomPropertyPrmType>>()
+            .Type<ListType<FacilityRoomPropertyValuePrmType>>()
             .Name("properties")
             .Description("The properties of the Facility.");
     }

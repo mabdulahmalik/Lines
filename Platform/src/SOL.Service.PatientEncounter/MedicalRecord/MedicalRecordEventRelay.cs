@@ -16,11 +16,15 @@ public class MedicalRecordEventRelay : Profile
             .ForMember(x => x.Observations,
                 y => y.MapFrom(z => z.Observations
                     .Select(obs => new SE.MedicalRecordObservation { ObjectId = obs.ObjectId, Timestamp = obs.Timestamp, Type = obs.Type })));
-        
+
         CreateMap<MedicalRecordObservationsRemoved, SE.MedicalRecordObservationsRemoved>()
             .ForMember(x => x.Id, x => x.MapFrom(y => y.MedicalRecordId))
             .ForMember(x => x.Observations,
                 y => y.MapFrom(z => z.Observations
                     .Select(obs => new SE.MedicalRecordObservation { ObjectId = obs.ObjectId, Timestamp = obs.Timestamp, Type = obs.Type })));
+
+        CreateMap<MedicalRecordRenumbered, SE.MedicalRecordRenumbered>()
+            .ForMember(x => x.Id, x => x.MapFrom(y => y.MedicalRecordId))
+            .ForMember(x => x.Number, x => x.MapFrom(y => y.Number));
     }
 }

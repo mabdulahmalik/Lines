@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { User, UserAvailability } from '@/api/__generated__/graphql';
 import { FwbAvatar } from 'flowbite-vue';
-import { AvatarSize } from 'flowbite-vue/components/FwbAvatar/types.js';
 import { computed } from 'vue';
+
+type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const props = withDefaults(
   defineProps<{
@@ -46,5 +47,18 @@ const availabilityStatus = computed(() => {
     :rounded="rounded"
     :size="size"
     v-bind="showStatus ? { status: availabilityStatus } : {}"
+    class="user_avatar"
   />
 </template>
+
+<style scoped>
+.user_avatar :deep(.absolute.bg-yellow-400) {
+  background-color: #E11D47;
+}
+.user_avatar :deep(.absolute.bg-gray-400) {
+  background-color: #E3A008;
+}
+.user_avatar :deep(.absolute.bg-red-400) {
+  background-color: #64748B;
+}
+</style>

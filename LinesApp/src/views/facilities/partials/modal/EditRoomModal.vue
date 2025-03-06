@@ -10,8 +10,8 @@ import {
   FacilityRoomPropertyOption,
   FacilityRoom,
   ModifyFacilityRoomCmd,
-  FacilityRoomPropertyPrm,
   Facility,
+  FacilityRoomPropertyValuePrm,
 } from '@/api/__generated__/graphql';
 import Multiselect from 'vue-multiselect';
 import 'vue-multiselect/dist/vue-multiselect.css';
@@ -112,7 +112,7 @@ function handleEditRoom() {
       id: props.room.id,
       name: editRoomName.value,
       properties: clonedProperties.filter(
-        (property: FacilityRoomPropertyPrm) => property && property.optionId
+        (property: FacilityRoomPropertyValuePrm) => property && property.optionId
       ),
     };
     facilitiesStore.modifyRoom(newEditRoom);

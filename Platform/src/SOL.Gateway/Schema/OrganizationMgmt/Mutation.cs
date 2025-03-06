@@ -15,11 +15,11 @@ public class MutationFacilitiesExtension : ObjectTypeExtension<Mutation>
             .ResolveWith<MutationResolver<CreateFacilityType>>(x => x.Mutate(default!, default!, default!, default!));
 
         descriptor
-            .Field("renameFacilityType")
-            .Description("Renames a Facility Type.")
+            .Field("modifyFacilityType")
+            .Description("Modify a Facility Type.")
             .Type<MutationResponseType>()
-            .Argument("command", a => a.Type<RenameFacilityTypeCmdType>())
-            .ResolveWith<MutationResolver<RenameFacilityType>>(x => x.Mutate(default!, default!, default!, default!));
+            .Argument("command", a => a.Type<ModifyFacilityTypeCmdType>())
+            .ResolveWith<MutationResolver<ModifyFacilityType>>(x => x.Mutate(default!, default!, default!, default!));
         
         descriptor
             .Field("sortFacilityType")
@@ -27,28 +27,7 @@ public class MutationFacilitiesExtension : ObjectTypeExtension<Mutation>
             .Type<MutationResponseType>()
             .Argument("command", a => a.Type<SortFacilityTypeCmdType>())
             .ResolveWith<MutationResolver<SortFacilityType>>(x => x.Mutate(default!, default!, default!, default!));        
-
-        descriptor
-            .Field("addFacilityRoomProperty")
-            .Description("Adds a Room Property to Facility Type.")
-            .Type<MutationResponseType>()
-            .Argument("command", a => a.Type<CreateFacilityRoomPropertyCmdType>())
-            .ResolveWith<MutationResolver<CreateFacilityRoomProperty>>(x => x.Mutate(default!, default!, default!, default!));
-
-        descriptor
-            .Field("modifyFacilityRoomProperty")
-            .Description("Modifies a Room Property for Facility Type.")
-            .Type<MutationResponseType>()
-            .Argument("command", a => a.Type<ModifyFacilityRoomPropertyCmdType>())
-            .ResolveWith<MutationResolver<ModifyFacilityRoomProperty>>(x => x.Mutate(default!, default!, default!, default!));
         
-        descriptor
-            .Field("sortFacilityRoomProperty")
-            .Description("Sorts a Room Property for Facility Type.")
-            .Type<MutationResponseType>()
-            .Argument("command", a => a.Type<SortFacilityRoomPropertyCmdType>())
-            .ResolveWith<MutationResolver<SortFacilityRoomProperty>>(x => x.Mutate(default!, default!, default!, default!));        
-
         descriptor
             .Field("activateFacilityType")
             .Description("Activates a Facility Type.")

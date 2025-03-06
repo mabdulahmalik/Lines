@@ -44,8 +44,8 @@ public class MedicalRecord : AggregateRoot, ITrackableAggregate
         Guard.Argument(number).NotEmpty().NotWhiteSpace();
         
         Number = number;
-        
-        RaiseEventModified();
+
+        RaiseEvent(new MedicalRecordRenumbered(Id, Number));
     }
 
     public void Modify(string? firstName, string? lastName, LocalDate? birthday) 

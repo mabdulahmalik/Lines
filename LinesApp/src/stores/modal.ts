@@ -16,6 +16,11 @@ export const useModalStore = defineStore('modal', () => {
   const isFacilitiesModalExpended = ref(false);
   const isFacilitiesModalAutoExpended = ref(false);
 
+  const isFacilityTypeModalExpended = ref(false);
+  const isFacilityTypeModalAutoExpended = ref(false);
+  const isFacilityTypeSidebarOpen = ref(true);
+  const isRoomPropertySidebarOpen = ref(true);
+
   const isEncounterActitityOpen = ref(true);
   const isEncounterSidebarOpen = ref(true);
 
@@ -45,6 +50,10 @@ export const useModalStore = defineStore('modal', () => {
     isJobModalAutoExpended,
     isFacilitiesModalExpended,
     isFacilitiesModalAutoExpended,
+    isFacilityTypeModalExpended,
+    isFacilityTypeModalAutoExpended,
+    isFacilityTypeSidebarOpen,
+    isRoomPropertySidebarOpen,
     globalModal,
     isGlobalModalOpen,
     openGlobalModal,

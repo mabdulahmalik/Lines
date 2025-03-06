@@ -77,11 +77,16 @@ public class EncounterEventRelay : Profile
             .ForMember(x => x.AlertedAt, y => y.MapFrom(z => z.Alert.AlertedAt))
             .ForMember(x => x.Type, y => y.MapFrom(z => z.Alert.Type))
             .ForMember(x => x.Text, y => y.MapFrom(z => z.Alert.Text))
-            .ForMember(x => x.AlertedBy, y => y.MapFrom(z=> z.Alert.AlertedBy));        
+            .ForMember(x => x.AlertedBy, y => y.MapFrom(z=> z.Alert.AlertedBy));
 
         CreateMap<EncounterAlertedRemoved, SE.EncounterAlertRemoved>()
             .ForMember(x => x.EncounterId, x => x.MapFrom(y => y.EncounterId))
-            .ForMember(x => x.Type, y => y.MapFrom(z => z.Type));        
+            .ForMember(x => x.Type, y => y.MapFrom(z => z.Type));
+
+        CreateMap<EncounterRoomChanged, SE.EncounterRoomChanged>()
+            .ForMember(x => x.EncounterId, x => x.MapFrom(y => y.EncounterId))
+            .ForMember(x => x.JobId, y => y.MapFrom(z => z.JobId))
+            .ForMember(x => x.RoomId, y => y.MapFrom(z => z.RoomId));
     }
 }
 

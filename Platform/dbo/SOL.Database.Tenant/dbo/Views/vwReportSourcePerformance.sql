@@ -31,5 +31,6 @@ FROM
 
 WHERE
     (p.[Settings] & 128) <> 0
+    AND ea.[WithdrawnAt] IS NULL
     AND es.[Completed] IS NOT NULL
 GO

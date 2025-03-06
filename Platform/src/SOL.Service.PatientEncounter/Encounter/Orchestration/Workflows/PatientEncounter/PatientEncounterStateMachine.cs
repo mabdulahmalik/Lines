@@ -4,6 +4,7 @@ using SOL.Messaging.Contracts.PatientEncounter;
 using SOL.Service.PatientEncounter.Encounter.Domain;
 using SOL.Service.PatientEncounter.Encounter.Orchestration.Workflows.PatientEncounter.Activities;
 using EncounterProgressed = SOL.Messaging.Contracts.PatientEncounter.EncounterProgressed;
+using EncounterRoomChanged = SOL.Messaging.Contracts.PatientEncounter.EncounterRoomChanged;
 
 
 namespace SOL.Service.PatientEncounter.Encounter.Orchestration.Workflows.PatientEncounter;

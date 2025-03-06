@@ -58,17 +58,19 @@ public class Line : AggregateRoot, ITrackableAggregate
         
         if (Name == null || !Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
             Name = name;
-            RaiseEventModified();
+            RaiseEvent(new LineRenamed(this));
         }
         
         if (MedicalRecordId != medicalRecordId) {
-            MedicalRecordId = medicalRecordId;
-            RaiseEventModified();
+            var oldMedicalRecordId = MedicalRecordId;
+
+            MedicalRecordId = medicalRecordId; 
+            RaiseEvent(new LineMedicalRecordModified(Id, MedicalRecordId, oldMedicalRecordId));
         }
         
         if (FacilityRoomId != facilityRoomId) {
             _facilityRoomIds.Add(facilityRoomId);
-            RaiseEventModified();
+            RaiseEvent(new LineFacilityRoomChanged(Id, FacilityRoomId));
         }
     }
     

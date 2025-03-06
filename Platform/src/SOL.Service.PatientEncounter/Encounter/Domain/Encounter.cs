@@ -26,7 +26,7 @@ public class Encounter : AggregateRoot, ITrackableAggregate
     public Guid FacilityRoomId  { get; private set; }
     public EncounterPriority Priority => _priority.Current.Value;
     public EncounterStage Stage => _stage.Current.Value;
-    public IReadOnlyList<Assignment> Assignments => _assignments;
+    public IReadOnlyList<Assignment> Assignments => _assignments.Where(x => !x.WithdrawnAt.HasValue).ToList();
     public IReadOnlyList<Procedure> Procedures => _procedures;
     public IReadOnlyList<Photo> Photos => _photos;
     public IReadOnlyList<Alert> Alerts => _alerts;

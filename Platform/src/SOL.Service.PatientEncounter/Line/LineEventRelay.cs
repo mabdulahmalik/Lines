@@ -19,9 +19,22 @@ public class LineEventRelay : Profile
             .ForMember(x => x.ExternallyPlaced, y => y.MapFrom(z => z.ExternallyPlaced))
             .ForMember(x => x.PlacedBy, y => y.MapFrom(z => z.PlacedBy))
             .ForMember(x => x.PlacedOn, y => y.MapFrom(z => z.PlacedOn));
-        
+
         CreateMap<LineRemoved, SE.LineRemoved>()
             .ForMember(x => x.Id, x => x.MapFrom(y => y.Id))
             .ForMember(x => x.RemovedOn, y => y.MapFrom(z => z.RemovedOn));
+
+        CreateMap<LineRenamed, SE.LineRenamed>()
+            .ForMember(x => x.Id, x => x.MapFrom(y => y.Id))
+            .ForMember(x => x.Name, y => y.MapFrom(z => z.Name));
+
+        CreateMap<LineMedicalRecordModified, SE.LineMedicalRecordModified>()
+            .ForMember(x => x.LineId, x => x.MapFrom(y => y.LineId))
+            .ForMember(x => x.MedicalRecordId, y => y.MapFrom(z => z.MedicalRecordId))
+            .ForMember(x => x.OldMedicalRecordId, y => y.MapFrom(z => z.OldMedicalRecordId));
+
+        CreateMap<LineFacilityRoomChanged, SE.LineFacilityRoomChanged>()
+            .ForMember(x => x.LineId, x => x.MapFrom(y => y.LineId))
+            .ForMember(x => x.FacilityRoomId, y => y.MapFrom(z => z.FacilityRoomId));
     }
 }

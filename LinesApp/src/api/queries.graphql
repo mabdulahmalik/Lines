@@ -128,15 +128,12 @@ query GetFacilityTypes($skip: Int, $take: Int, $where: FacilityTypesFilter) {
       isActive
       modifiedAt
       name
-      __typename
       properties {
         id
         name
-        __typename
         options {
           id
           text
-          __typename
         }
       }
     }

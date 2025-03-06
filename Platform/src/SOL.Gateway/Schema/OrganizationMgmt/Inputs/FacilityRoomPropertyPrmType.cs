@@ -1,4 +1,4 @@
-using SOL.Messaging.Contracts.OrganizationMgmt;
+﻿using SOL.Messaging.Contracts.OrganizationMgmt;
 
 namespace SOL.Gateway.Schema.OrganizationMgmt;
 
@@ -8,16 +8,22 @@ public class FacilityRoomPropertyPrmType : InputObjectType<FacilityRoomProperty>
     {
         descriptor
             .Name("FacilityRoomPropertyPrm")
-            .Description("The Room Property Parameters, used in Facility Room mutations.");
+            .Description("The Parameters to modify a Room Property for a Facility Type.");
 
         descriptor
-            .Field(x => x.PropertyId)
-            .Name("propertyId")
-            .Description("The unique identifier of the Property.");
+            .Field(x => x.Id)
+            .Name("id")
+            .Description("The unique identifier of the Room Property.");
 
         descriptor
-            .Field(x => x.OptionId)
-            .Name("optionId")
-            .Description("The unique identifier of the Property Value");
+            .Field(x => x.Name)
+            .Name("name")
+            .Description("The name of the Room Property.");
+
+        descriptor
+            .Field(x => x.Options)
+            .Name("options")
+            .Description("Options for the Room Property.")
+            .Type<ListType<FacilityRoomPropertyOptionPrmType>>();
     }
 }

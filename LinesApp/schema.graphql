@@ -623,16 +623,10 @@ type Mutation {
   discardNoteAsObservation(command: DiscardNoteAsObservationCmd): MutationResponse @cost(weight: "10")
   "Creates a new Facility Type."
   createFacilityType(command: CreateFacilityTypeCmd): MutationResponse @cost(weight: "10")
-  "Renames a Facility Type."
-  renameFacilityType(command: RenameFacilityTypeCmd): MutationResponse @cost(weight: "10")
+  "Modify a Facility Type."
+  modifyFacilityType(command: ModifyFacilityTypeCmd): MutationResponse @cost(weight: "10")
   "Changes the Sort Order of a Facility Type."
   sortFacilityType(command: SortFacilityTypeCmd): MutationResponse @cost(weight: "10")
-  "Adds a Room Property to Facility Type."
-  addFacilityRoomProperty(command: CreateFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
-  "Modifies a Room Property for Facility Type."
-  modifyFacilityRoomProperty(command: ModifyFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
-  "Sorts a Room Property for Facility Type."
-  sortFacilityRoomProperty(command: SortFacilityRoomPropertyCmd): MutationResponse @cost(weight: "10")
   "Activates a Facility Type."
   activateFacilityType(command: ActivateFacilityTypeCmd): MutationResponse @cost(weight: "10")
   "Deactivates a Facility Type."
@@ -1223,17 +1217,7 @@ input CreateFacilityRoomCmd {
   "The unique identifier of the Facility."
   facilityId: UUID!
   "The properties of the Facility."
-  properties: [FacilityRoomPropertyPrm]
-}
-
-"The Command for creating a Room Property for a Facility Type."
-input CreateFacilityRoomPropertyCmd {
-  "The unique identifier of the Facility Type."
-  facilityTypeId: UUID!
-  "The Name of the room property."
-  name: String!
-  "Options for the room property."
-  options: [String]
+  properties: [FacilityRoomPropertyValuePrm]
 }
 
 "The Command for creating a Facility Type."
@@ -1566,8 +1550,18 @@ input FacilityRoomPropertyOptionPrm {
   text: String!
 }
 
-"The Room Property Parameters, used in Facility Room mutations."
+"The Parameters to modify a Room Property for a Facility Type."
 input FacilityRoomPropertyPrm {
+  "The unique identifier of the Room Property."
+  id: UUID
+  "The name of the Room Property."
+  name: String!
+  "Options for the Room Property."
+  options: [FacilityRoomPropertyOptionPrm]
+}
+
+"The Room Property Parameters, used in Facility Room mutations."
+input FacilityRoomPropertyValuePrm {
   "The unique identifier of the Property."
   propertyId: UUID!
   "The unique identifier of the Property Value"
@@ -1956,19 +1950,19 @@ input ModifyFacilityRoomCmd {
   "The name of the Room."
   name: String!
   "The list of Properties of the Room."
-  properties: [FacilityRoomPropertyPrm]
+  properties: [FacilityRoomPropertyValuePrm]
 }
 
-"The Command to modify a Room Property for a Facility Type."
-input ModifyFacilityRoomPropertyCmd {
-  "The unique identifier of the Room Property."
-  id: UUID!
+"The Command for modifying a Facility Type."
+input ModifyFacilityTypeCmd {
   "The unique identifier of the Facility Type."
-  facilityTypeId: UUID!
-  "The name of the Room Property."
+  id: UUID!
+  "The name of the Facility Type."
   name: String!
-  "Options for the Room Property."
-  options: [FacilityRoomPropertyOptionPrm]
+  "Whether or not the Facility Type is active."
+  active: Boolean!
+  "The name of the Facility Type."
+  properties: [FacilityRoomPropertyPrm]
 }
 
 "The Command that modifies a Medical Record."
@@ -2263,14 +2257,6 @@ input RemoveProcedureFromEncounterCmd {
   id: UUID!
 }
 
-"The Command for renaming a Facility Type."
-input RenameFacilityTypeCmd {
-  "The unique identifier of the Facility Type."
-  id: UUID!
-  "The name of the Facility Type."
-  name: String!
-}
-
 "The Command that renames an existing Job Purpose."
 input RenamePurposeCmd {
   "The unique identifier of the Purpose to rename."
@@ -2401,18 +2387,6 @@ input SortFacilityCmd {
   "The Original Position of the Facility."
   from: Int!
   "The Current Position of the Facility."
-  to: Int!
-}
-
-"The Command for sorting a Room Property."
-input SortFacilityRoomPropertyCmd {
-  "The unique identifier of the Facility Type."
-  facilityTypeId: UUID!
-  "The unique identifier of the Room Property."
-  id: UUID!
-  "The Original Position of the Room Property."
-  from: Int!
-  "The Current Position of the Room Property."
   to: Int!
 }
 

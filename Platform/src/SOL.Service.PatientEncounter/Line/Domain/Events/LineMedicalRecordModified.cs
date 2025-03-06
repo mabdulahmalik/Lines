@@ -6,12 +6,14 @@ namespace SOL.Service.PatientEncounter.Line.Domain;
 [TrackableActivity(nameof(LineMedicalRecordModified))]
 public record LineMedicalRecordModified : IMessage
 {
-        internal LineMedicalRecordModified(Guid id, Guid medicalRecordId)
-        {
-            LineId = id;
-            MedicalRecordId = medicalRecordId;
-        }
-
-        public Guid LineId { get; }
-        public Guid MedicalRecordId { get; }
+    internal LineMedicalRecordModified(Guid id, Guid? medicalRecordId, Guid? oldMedicalRecordId)
+    {
+        LineId = id;
+        MedicalRecordId = medicalRecordId;
+        OldMedicalRecordId = oldMedicalRecordId;
     }
+
+    public Guid LineId { get; }
+    public Guid? MedicalRecordId { get; }
+    public Guid? OldMedicalRecordId { get; }
+}

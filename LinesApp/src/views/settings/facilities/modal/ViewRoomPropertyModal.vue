@@ -4,21 +4,27 @@ import { FwbButton } from 'flowbite-vue';
 import ModalDrawer from '@/components/modal/ModalDrawer.vue';
 import ViewRoomPropertyModalBody from './ViewRoomPropertyModalBody.vue';
 import {
-  IconExpand01,
-  IconDotHorizontal,
-  IconTrash01,
   IconArrowLeft,
-  IconShrink,
+  IconExpandWindows,
+  IconShrinkWindows,
+  IconShowSidebar,
+  IconHideSidebar,
 } from '@/components/icons/index';
 import { useModalStore } from '@/stores/modal';
-import { Dropdown, DropdownMenu, DropdownItem } from '@/components/dropdown/index';
 import { useFacilityTypesStore } from '@/stores/data/settings/facilityTypes';
 import DrawerHeaderEditName from '@/views/common/DrawerHeaderEditName.vue';
+import { FacilityRoomProperty } from '@/api/__generated__/graphql';
 
 const props = defineProps<{
-  roomProperty: any;
+  roomProperty: FacilityRoomProperty;
+  facilityName: string;
 }>();
 
+// Emits
+const emit = defineEmits<{
+  (e: 'width', val: string): void;
+  (e: 'property-modified', val: FacilityRoomProperty): void;
+}>();
 
 const facilityTypesStore = useFacilityTypesStore();
 const modalStore = useModalStore();
@@ -56,6 +62,10 @@ function handelModifyRoomProperty() {
   ViewRoomPropertyModalBodyRef.value?.submittedData();
 }
 
+function propertyModified(rp: FacilityRoomProperty){
+  emit('property-modified', rp)
+}
+
 // Room Properties Modal width
 const fullWidth = ref(false);
 const modalWidth = ref('5xl');
@@ -69,6 +79,16 @@ const setModalWidth = (val: string) => {
     modalStore.isModalDrawerExpended = false;
   }
 };
+
+function handleModalClosed() {
+  facilityTypesStore.clearSelectedRoomProperty()
+  // reset facility modal width if auto expended
+  if (modalStore.isFacilityTypeModalAutoExpended) {
+    emit('width', '5xl');
+    modalStore.isFacilityTypeModalExpended = false;
+    modalStore.isFacilityTypeModalAutoExpended = false;
+  }
+}
 defineExpose({
   setModalOpen,
 });
@@ -84,8 +104,7 @@ onUnmounted(() => {
     :z_index="46"
     :max_width="modalWidth"
     hide_header_close_on_mobile
-    @close="facilityTypesStore.clearSelectedRoomProperty()"
-
+    @close="handleModalClosed"
   >
     <template #header>
       <div class="p-4 lg:px-6 flex justify-between min-h-[72px]">
@@ -106,29 +125,51 @@ onUnmounted(() => {
           <DrawerHeaderEditName :name="roomPropertyName" @name-updated="changeName" />
         </div>
         <!-- Icon Buttons Desktop only -->
-        <div class="hidden lg:flex items-center gap-2 lg:gap-4">
-          <!-- dropdown -->
-          <Dropdown align-to-end class="rounded-lg">
-            <template #trigger>
-              <fwb-button color="light" pill square>
-                <IconDotHorizontal />
-              </fwb-button>
-            </template>
-            <DropdownMenu>
-              <DropdownItem class="!text-radical-red-700">
-                <IconTrash01 class="mr-2" />
-                Delete/ Archive
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-
+        <div class="hidden lg:flex items-center gap-2">
           <!-- Expand -->
-          <fwb-button v-if="!fullWidth" @click="setModalWidth('full')" color="light" pill square>
-            <IconExpand01 />
+          <fwb-button
+            v-if="!fullWidth"
+            @click="setModalWidth('full')"
+            color="light"
+            pill
+            square
+            class="bg-white border-white focus:ring-0"
+          >
+            <IconExpandWindows width="22" height="22" />
           </fwb-button>
           <!-- Shrink -->
-          <fwb-button v-if="fullWidth" @click="setModalWidth('5xl')" color="light" pill square>
-            <IconShrink />
+
+          <fwb-button
+            v-if="fullWidth"
+            @click="setModalWidth('5xl')"
+            color="light"
+            pill
+            square
+            class="bg-white border-white focus:ring-0"
+          >
+            <IconShrinkWindows width="22" height="22" />
+          </fwb-button>
+          <!-- Hide Sidebar -->
+          <fwb-button
+            v-if="modalStore.isRoomPropertySidebarOpen"
+            @click="modalStore.isRoomPropertySidebarOpen = false"
+            color="light"
+            pill
+            square
+            class="bg-white border-white focus:ring-0"
+          >
+            <IconHideSidebar />
+          </fwb-button>
+          <!-- Show Sidebar -->
+          <fwb-button
+            v-else
+            @click="modalStore.isRoomPropertySidebarOpen = true"
+            color="light"
+            pill
+            square
+            class="bg-white border-white focus:ring-0"
+          >
+            <IconShowSidebar />
           </fwb-button>
         </div>
       </div>
@@ -136,9 +177,11 @@ onUnmounted(() => {
     <template #body class="bg-red-200">
       <ViewRoomPropertyModalBody
         ref="ViewRoomPropertyModalBodyRef"
+        :facility-name="props.facilityName"
         :name="roomPropertyName"
         :roomProperty="props.roomProperty"
         @close="setModalOpen(false)"
+        @property-modified="propertyModified"
       />
     </template>
     <template #footer>

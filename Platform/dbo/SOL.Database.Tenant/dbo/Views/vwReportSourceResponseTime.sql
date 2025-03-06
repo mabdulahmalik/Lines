@@ -23,5 +23,6 @@ FROM
     INNER JOIN [org].[Facility] f ON(r.[FacilityId] = f.[Id])
 WHERE
     (p.[Settings] & 128) <> 0
+    AND ea.[WithdrawnAt] IS NULL
     AND es.[Completed] IS NOT NULL
 GO

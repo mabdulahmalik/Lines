@@ -6,5 +6,5 @@ public record ModifyFacilityRoom : IMessage
 {
     public Guid Id { get; set; }
     public string Name { get; init; }
-    public List<FacilityRoomProperty> Properties { get; init; } = new();
+    public List<FacilityRoomPropertyValue> Properties { get; init; } = new();
 }

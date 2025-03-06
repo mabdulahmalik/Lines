@@ -12,13 +12,13 @@ const props = defineProps<{
 const modalStore = useModalStore();
 const usersStore = useUsersStore();
 
-const getUsername = (id: string) => {
-  const user = usersStore.users.find((x) => x.id === id);
-  if(user){
-    return user.firstName + ' ' + user.lastName;
-  }
-  return '';
-};
+// const getUsername = (id: string) => {
+//   const user = usersStore.users.find((x) => x.id === id);
+//   if(user){
+//     return user.firstName + ' ' + user.lastName;
+//   }
+//   return '';
+// };
 function getUserForAvatar(id: string) {
   return usersStore.users.find((user) => user.id === id) as User;
 }
@@ -34,7 +34,7 @@ function getUserForAvatar(id: string) {
     <div class="flex flex-col w-full">
       <span class="text-xs text-slate-500 font-medium">{{ DateTimeFormatter.formatDatetime(props.activity.timestamp) }}</span>
       <div class="text-sm text-slate-800 font-medium flex flex-wrap gap-1">
-        <span> {{getUsername(props.activity.userId)}}</span>
+        <!-- <span> {{getUsername(props.activity.userId)}}</span> -->
         <slot name="action"></slot>
       </div>
       <!-- Details Data -->

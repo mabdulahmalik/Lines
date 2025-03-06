@@ -5,24 +5,26 @@ namespace SOL.Gateway;
 
 public class DataBootstrap : BackgroundService
 {
-    private readonly IPhase2AdminClient _phase2AdminClient;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<DataBootstrap> _logger;
 
-    public DataBootstrap(IPhase2AdminClient phase2AdminClient, ILogger<DataBootstrap> logger)
+    public DataBootstrap(IServiceProvider serviceProvider, ILogger<DataBootstrap> logger)
     {
-        _phase2AdminClient = phase2AdminClient;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Preparing to bootstrap the Demo Org.");
-        await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
-        
         try
         {
+            _logger.LogInformation("Preparing to bootstrap the Demo Org -- waiting for Keycloak to be ready.");
+            await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
+
+            var phase2AdminClient = _serviceProvider.GetRequiredService<IPhase2AdminClient>();
+            
             var orgCount =
-                await _phase2AdminClient.GetOrganizationsCountAsync(KeycloakConst.RealmId, search: "demo",
+                await phase2AdminClient.GetOrganizationsCountAsync(KeycloakConst.RealmId, search: "demo",
                     cancellationToken: stoppingToken);
 
             if (orgCount > 0)
@@ -35,27 +37,32 @@ public class DataBootstrap : BackgroundService
                 Realm = KeycloakConst.RealmId
             };
 
-            await _phase2AdminClient.CreateOrganizationAsync(orgData, KeycloakConst.RealmId, stoppingToken);
+            await phase2AdminClient.CreateOrganizationAsync(orgData, KeycloakConst.RealmId, stoppingToken);
             var org =
-                await _phase2AdminClient.GetOrganizationsAsync(KeycloakConst.RealmId, search: "demo",
+                await phase2AdminClient.GetOrganizationsAsync(KeycloakConst.RealmId, search: "demo",
                     cancellationToken: stoppingToken);
 
             _logger.LogInformation("Demo Organization created: {DemoOrgId}", org.First().Id);
 
             // Tony Stark
-            await _phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
-                , "30400edb-a083-4efc-a823-86b6599e8811", stoppingToken);
+            await phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
+                , "6a7c7d5a-e560-4172-adcf-4028c0807c2e", stoppingToken);
             _logger.LogInformation("Tony Stark added as Member to Demo Organization: {DemoOrgId}", org.First().Id);
 
             // James Rhodes
-            await _phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
-                , "896b1095-a603-4f3d-8ed4-76b46d1be0a6", stoppingToken);
+            await phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
+                , "a024b775-13b8-4d2a-9170-dc1ea01c4d60", stoppingToken);
             _logger.LogInformation("James Rhodes added as Member to Demo Organization: {DemoOrgId}", org.First().Id);
 
             // Pepper Potts
-            await _phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
-                , "fa455caf-fd17-4c97-be45-64b856783e88", stoppingToken);
+            await phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
+                , "0ccdf7be-c987-4f3f-b7fe-5c661028e500", stoppingToken);
             _logger.LogInformation("Pepper Potts added as Member to Demo Organization: {DemoOrgId}", org.First().Id);
+            
+            // Happy Hogan
+            await phase2AdminClient.AddOrganizationMemberAsync(KeycloakConst.RealmId, org.First().Id
+                , "7bddef79-1709-4db2-acd4-b47c8c8f4403", stoppingToken);
+            _logger.LogInformation("Happy Hogan added as Member to Demo Organization: {DemoOrgId}", org.First().Id);
         }
         catch (Exception ex)
         {

@@ -60,6 +60,21 @@ export const useUsersStore = defineStore('users', () => {
           selectedUser.value = res.data.users.items[0];
         }
       });
+    } else if (broadcast.eventName === 'UserStatusChanged' && payload.userId) {
+      const updatedUsers = users.value.map((user) =>
+        user.id === payload.userId
+          ? {
+              ...user,
+              status: {
+                ...user.status,
+                status: payload.status,
+                message: payload.message,
+                changedAt: payload.changedAt,
+              },
+            }
+          : user
+      );
+      users.value = [...updatedUsers];
     }
   });
 

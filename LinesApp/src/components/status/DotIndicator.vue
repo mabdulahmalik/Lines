@@ -18,9 +18,9 @@ withDefaults(
     class="rounded-full"
     :class="{
       'bg-green-400': status === UserAvailability.Free,
-      'bg-yellow-400': status === UserAvailability.Busy,
-      'bg-gray-400': status === UserAvailability.Away,
-      'bg-red-400': status === UserAvailability.Offline,
+      'bg-radical-red-600': status === UserAvailability.Busy,
+      'bg-yellow-400': status === UserAvailability.Away,
+      'bg-slate-500': status === UserAvailability.Offline,
       'h-3 w-3': size === 'sm',
       'h-3.5 w-3.5': size === 'md',
       'h-4 w-4': size === 'lg',

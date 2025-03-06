@@ -6,10 +6,10 @@ public record CreateFacilityRoom : IMessage
 {
     public string Name { get; init; }
     public Guid FacilityId { get; init; }
-    public List<FacilityRoomProperty> Properties { get; init; } = new();
+    public List<FacilityRoomPropertyValue> Properties { get; init; } = new();
 }
 
-public record FacilityRoomProperty
+public record FacilityRoomPropertyValue
 {
     public Guid PropertyId { get; init; }
     public Guid OptionId { get; init; }

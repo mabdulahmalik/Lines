@@ -28,6 +28,7 @@ import SkeletonItem from '@/components/skeletons/SkeletonItem.vue';
 import { useLoaders } from '@/hooks/useLoaders';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import DateTimeFormatter from '@/utils/dateTimeFormatter';
+import { useFacilityTypesStore } from '@/stores/data/settings/facilityTypes';
 
 const props = defineProps<{
   job: Job;
@@ -54,6 +55,7 @@ const medicalRecordsStore = useMedicalRecordsStore();
 const usersStore = useUsersStore();
 const linesStore = useLinesStore();
 const proceduresStore = useProceduresStore();
+const facilityTypesStore = useFacilityTypesStore();
 
 const notesCount = computed(() => props.job.notes?.length);
 const photosCount = computed(() => props.encounter?.photos?.length);
@@ -290,7 +292,12 @@ function handleCancleEditLocation() {
   
   toggleSaveSubmit();
 }
-
+// Get Facility Type 
+const getFacilityTypeById = (id: string) => {
+  const facility = facilitiesStore.facilities.find(fac => fac.id === id);
+  if (!facility) return null; 
+  return facilityTypesStore.facilityTypes.find(t => t.id === facility.typeId) || null;
+};
 //
 // Patient info/ Medical Record Panel
 //
@@ -845,6 +852,7 @@ defineExpose({
           </div>
         </div>
       </AccordionDefault>
+
       <!-- Location -->
       <AccordionDefault id="2" active class="p-4 border-b border-slate-300">
         <template #header>
@@ -869,6 +877,62 @@ defineExpose({
               {{ getRoomNameById(room) || room }}
             </div>
           </div>
+          <!-- Show more -->
+          <div v-if="getFacilityTypeById(facility)?.properties?.length">
+          <AccordionDefault id="show-more" custom_header>
+           <template #customHeader="{ open }">
+              <div class="flex gap-2  w-full items-center text-brand-600 font-medium text-sm text-nowrap">
+              <div>
+              <span v-if="!open">See more</span> 
+              <span v-else>See less</span> 
+              </div>
+              <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              class="shrink-0"
+              >
+              <path
+              :class="`transform origin-center transition duration-200 ease-out ${open ? 'rotate-0' : 'rotate-180'}`"
+              d="M18 15L12 9L6 15"
+              stroke="#6A5ACD"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              />
+              </svg>
+              <hr class="w-full h-[1px] border-slate-300">
+              </div>
+            </template>
+            <div class="flex flex-col gap-4 pt-2">
+              <div class="flex items-center gap-2">
+              <label class="w-2/5 text-xs font-medium text-slate-500">Type</label>
+              <div class="text-sm font-semibold text-slate-900">
+              <span
+              class="text-xs bg-[#DEF7EC] text-[#057A55] px-[10px] py-[2px] leading-[18px] font-medium rounded-full text-nowrap"
+              >
+              {{ getFacilityTypeById(facility)?.name }}
+              </span>
+              </div>
+              </div>
+              <!-- properties -->
+              <div class="flex items-center gap-2">
+              <label class="w-2/5 text-sm font-semibold text-slate-900">Properties</label>
+              <div class="text-sm font-semibold text-slate-900">
+              Values
+              </div>
+              </div>
+              <div v-for="property in getFacilityTypeById(facility)?.properties" :key="property?.id" class="flex items-center gap-2">
+              <label class="w-2/5 text-xs font-medium text-slate-500">{{ property?.name }}</label>
+              <div class="text-sm font-semibold text-slate-900">
+              {{ property?.options?.length }}
+              </div>
+              </div>
+            </div>
+          </AccordionDefault>
+         </div>
         </div>
         <div v-else class="flex flex-col gap-4 pt-2">
           <AutoComplete
@@ -897,6 +961,7 @@ defineExpose({
           </div>
         </div>
       </AccordionDefault>
+
       <!-- Medical Record -->
       <AccordionDefault id="3" active class="p-4 border-b border-slate-300">
         <template #header>

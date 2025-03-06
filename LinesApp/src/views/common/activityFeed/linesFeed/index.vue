@@ -13,6 +13,8 @@ import NormalCard from './NormalCard.vue';
 import ProcedureCard from './ProcedureCard.vue';
 import MedicalRecordCard from './MedicalRecordCard.vue';
 import PhotosCard from './PhotosCard.vue';
+import { usePurposesStore } from '@/stores/data/settings/purposes';
+import { useLinesStore } from '@/stores/data/encounters/lines';
 
 const props = defineProps<{
   line?: Line;
@@ -23,15 +25,40 @@ const props = defineProps<{
 }>();
 
 const activitiesStore = useActivitiesStore();
-const jobs = useJobsStore();
 const encounters = useEncountersStore();
+const jobs = useJobsStore();
+const lines = useLinesStore();
 const proceduresStore = useProceduresStore();
 const medicalRecords = useMedicalRecordsStore();
+const purposesStore=usePurposesStore();
 
 const getProcedureName = (id: string) => proceduresStore.procedures.find(x => x.id === id)?.name;
+const getPurposeNameByJobId = (jobId: string) => {
+  const job = jobs.jobs.find(job => job.id === jobId);
+  if (!job) return ""; 
+  const purpose = purposesStore.purposes.find(purpose => purpose.id === job.purposeId);
+  return purpose?.name || "";
+};
+const getPurposeNameByEncounterId = (encounterId: string) => {
+  const encounter = encounters.encounters.find(en => en.id === encounterId);
+  if (!encounter) return ""; 
+  const purpose = purposesStore.purposes.find(purpose => purpose.id === encounter.purposeId);
+  return purpose?.name || "";
+};
+const getPurposeName = (lineId: string) => {    
+  const encounter = props.line?.insertedWith 
+      ? encounters.encounters.find(x => x.id === props.line?.insertedWith?.encounterId)
+      : encounters.encounters.find(x=> x.lines?.includes(lineId));      
+
+  if (!encounter) return ""; 
+  const purpose = purposesStore.purposes.find(purpose => purpose.id === encounter.purposeId);
+  return purpose?.name || "";
+};
+const getMRN = (medicalRecordId: string) => {  
+  return medicalRecords.medicalRecords.find(x => x.id === medicalRecordId)?.number;
+}
 
 const activities = computed(() =>{
-
  // Extract start and end dates
  let startDate: Date | null = null;
  let endDate: Date | null = null;
@@ -56,12 +83,14 @@ const activities = computed(() =>{
         activity.aggregateId === medicalRecord?.id
     }
 
+    const lineIds = lines.lines.filter(x=> x.medicalRecordId === props.record?.id).map(x=> x.id);
     const jobIds = jobs.jobs.filter(x => x.medicalRecordId === props.record?.id).map(x => x.id);
     const encounterIds = encounters.encounters.filter(x => x.medicalRecordId === props.record?.id).map(x => x.id);
 
     return activity.aggregateId === props.record?.id ||
       jobIds.includes(activity.aggregateId) ||
-      encounterIds.includes(activity.aggregateId)
+      encounterIds.includes(activity.aggregateId) ||
+      lineIds.includes(activity.aggregateId)
   }).map((x) => ({ ...x, metadata: JSON.parse(x.metadata!) }))
     // filter by date
   .filter(activity => {
@@ -83,6 +112,7 @@ const activities = computed(() =>{
     }
   })
 });
+
 </script>
 
 <template>
@@ -91,8 +121,9 @@ const activities = computed(() =>{
     <FeedItem v-if="activity.activityType === 'EncounterPriorityChanged' && activity.metadata.Priority === 2"  
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">modified the priority of the</span>
-        <span>Encounter</span>
+        <span>
+          Descalated {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }} 
+        </span>
       </template>
       <template #details>
         <NormalCard :reason="activity.metadata.Args"/>
@@ -103,8 +134,9 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'EncounterPriorityChanged' && activity.metadata.Priority === 1"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">escalated the</span>
-        <span>Encounter</span>
+        <span>
+          Escalated {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }} 
+        </span>
       </template>
       <template #details>
         <EscalateCard :reason="activity.metadata.Args" />
@@ -148,8 +180,11 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'JobNotesAdded'"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">added notes to the</span>
-        <span>Job</span>
+         <span> 
+          Note
+          <span class="text-slate-500"> Added </span>
+          to  {{ getPurposeNameByJobId(activity.metadata.JobId) }} 
+        </span>
       </template>
       <template #details>
         <div class="font-medium text-sm p-4 rounded-lg bg-slate-50 text-gray-900 leading-[21px]">
@@ -171,14 +206,13 @@ const activities = computed(() =>{
         <MedicalRecordCard :medical-record-id="activity.metadata.MedicalRecordId" />
       </template>
     </FeedItem>
-
+    <!-- Modified -->
     <FeedItem v-else-if="(activity.activityType === 'AggregateModified' || activity.activityType === 'AggregateCreated') && activity.aggregateType == 'MedicalRecord'"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">modified the</span>
-        <span>Medical Record</span>
-        <span class="text-slate-500">for the</span>
-        <span>Job</span>
+         <span>
+          Record details were updated
+         </span>
       </template>
       <template #details>
         <MedicalRecordCard :medical-record-id="activity.metadata.Id" />
@@ -189,16 +223,14 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'AggregateCreated' && activity.aggregateType == 'Encounter'"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">created the</span>
-        <span>Encounter</span>
+        <span>created the Encounter</span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'AggregateCreated' && activity.aggregateType == 'Job'"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">created the</span>
-        <span>Job</span>
+        <span>created the Job</span>
       </template>
     </FeedItem>
 
@@ -224,35 +256,38 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'EncounterProgressed' && activity.metadata.Stage == 2"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">moved Encounter to the</span>
-        <span>Assigned</span>
-        <span class="text-slate-500">Stage</span>
+        <span>
+          Clinician
+          <span class="text-slate-500">Assigned</span> 
+           as Primary to {{ getPurposeNameByJobId(activity.metadata.JobId) }}
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'EncounterProgressed' && activity.metadata.Stage == 3"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">moved Encounter to the</span>
-        <span>Attending</span>
-        <span class="text-slate-500">Stage</span>
+        <span>
+          Attending to {{ getPurposeNameByJobId(activity.metadata.JobId) }}
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'EncounterProgressed' && activity.metadata.Stage == 4"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">moved Encounter to the</span>
-        <span>Charting</span>
-        <span class="text-slate-500">Stage</span>
+        <span>Charting 
+          <span class="text-slate-500">Procedures</span>
+          for {{ getPurposeNameByJobId(activity.metadata.JobId) }}
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'EncounterProgressed' && activity.metadata.Stage == 5"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">completed the</span>
-        <span>Encounter</span>
+        <span>Completed {{ getPurposeNameByJobId(activity.metadata.JobId) }}
+        </span>
       </template>
     </FeedItem>
 
@@ -260,24 +295,31 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'EncounterAlertedAdded' && activity.metadata.Alert.Type === 3"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">requested for</span>
-        <span>Assistance</span>
+        <span>Assistance was
+          <span class="text-slate-500">requested</span>
+          for {{ getPurposeNameByJobId(activity.metadata.JobId) }}
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'EncounterAlertedRemoved' && activity.metadata.Type === 3"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">cancelled the</span>
-        <span>Assistance Request</span>
+        <span>Assistance was
+          <span class="text-slate-500">cancelled</span>
+          for {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }}
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem v-else-if="activity.activityType === 'EncounterAlertedAdded' && activity.metadata.Alert.Type === 1"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">placed the Encounter on</span>
-        <span>Hold</span>
+        <span>
+          Hold
+          <span class="text-slate-500"> Placed </span>
+          on  {{ getPurposeNameByJobId(activity.metadata.JobId) }} 
+        </span>
       </template>
       <template #details>
         <OnHoldCard :reason="activity.metadata.Alert.Text" />
@@ -287,20 +329,115 @@ const activities = computed(() =>{
     <FeedItem v-else-if="activity.activityType === 'EncounterAlertedRemoved' && activity.metadata.Type === 1"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">removed Encounter from the</span>
-        <span>Hold</span>
+        <span>
+          Hold
+          <span class="text-slate-500"> Released </span>
+          for  {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }} 
+        </span>
       </template>
     </FeedItem>
 
     <FeedItem  v-else-if="activity.activityType === 'EncounterPhotosAttached'"
       :activity="activity">
       <template #action>
-        <span class="text-slate-500">added</span>
-        <span>{{activity.metadata.Photos.length}} Photos</span>
+        <span> 
+          {{activity.metadata.Photos.length}} Photos were
+          <span class="text-slate-500"> added </span>
+          for a  {{ getPurposeNameByJobId(activity.metadata.JobId) }} 
+        </span>
       </template>
       <template #details>
         <PhotosCard :photos="activity.metadata.Photos" />
       </template>
     </FeedItem>
+    
+    <FeedItem  v-else-if="activity.activityType === 'CliniciansWithdrawn'"
+      :activity="activity">
+      <template #action>
+        <span>
+          Clinician
+          <span class="text-slate-500"> Withdrew </span>
+          from  {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }} 
+        </span>
+      </template>
+    </FeedItem>
+
+    <template v-else-if="activity.activityType === 'LineMedicalRecordModified'">
+      <FeedItem
+        :activity="activity">
+        <template #action>
+          <span>
+            Added to
+            <span class="text-slate-500"> Medical Record: </span>
+            {{ getMRN(activity.metadata.MedicalRecordId) }} 
+          </span>
+        </template>
+      </FeedItem>
+      <FeedItem v-if="activity.metadata.OldMedicalRecordId != null"
+        :activity="activity">
+        <template #action>
+          <span>
+            Removed from
+            <span class="text-slate-500"> Medical Record: </span>
+            {{ getMRN(activity.metadata.OldMedicalRecordId) }} 
+          </span>
+        </template>
+      </FeedItem>
+    </template>
+
+    <FeedItem   v-else-if="activity.activityType === 'LineFacilityRoomChanged'"
+        :activity="activity">
+        <template #action>
+          <span>
+            Room  
+            <span class="text-slate-500"> Changed </span>
+            for  {{ getPurposeName(activity.metadata.LineId) }} 
+          </span>
+        </template>
+    </FeedItem>
+
+    <template v-else-if="activity.activityType === 'LineInfectionStatusChanged'">
+      <FeedItem v-if="activity.metadata.HasInfection"
+          :activity="activity">
+          <template #action>
+            <span>
+              Infected  
+              <span class="text-slate-500"> on </span>
+              {{ activity.metadata.InfectedOn }} 
+            </span>
+          </template>
+      </FeedItem>      
+      <FeedItem v-else
+          :activity="activity">
+          <template #action>
+            <span>
+              Infected  
+              <span class="text-slate-500"> Cleared </span>
+            </span>
+          </template>
+      </FeedItem>      
+    </template>
+    
+    <FeedItem  v-else-if="activity.activityType === 'LineRenamed'"
+      :activity="activity">
+      <template #action>
+        <span>
+          Line
+          <span class="text-slate-500"> Renamed </span>
+        </span>
+      </template>
+    </FeedItem>
+
+    <!-- <FeedItem  v-else
+        :activity="activity">
+        <template #action>
+          <span>
+            Room  
+            <span class="text-slate-500"> Changed </span>
+            for  {{ getPurposeNameByEncounterId(activity.metadata.EncounterId) }} 
+          </span>
+        </template>
+    </FeedItem> -->
+
   </div>
 </template>

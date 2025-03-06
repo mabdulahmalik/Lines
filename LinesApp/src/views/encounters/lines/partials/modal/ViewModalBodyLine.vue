@@ -41,6 +41,7 @@ import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { useUsersStore } from '@/stores/data/settings/users';
 import { useActivitiesStore } from '@/stores/data/common/activities';
 import DateTimeFormatter, { DateTimeFormatMode } from '@/utils/dateTimeFormatter';
+import { useFacilityTypesStore } from '@/stores/data/settings/facilityTypes';
 
 const props = defineProps<{
   line: Line;
@@ -64,6 +65,7 @@ const purposesStore = usePurposesStore();
 const linesStore = useLinesStore();
 const usersStore = useUsersStore();
 const activitiesStore = useActivitiesStore();
+const facilityTypesStore = useFacilityTypesStore();
 const inputErrorClasses = ref('bg-radical-red-50 border-radical-red-500');
 
 const facility = ref('');
@@ -316,7 +318,12 @@ function handleCancleEditLocation() {
   setRoomOptions(facility.value);
   isEditLocation.value = false;
 }
-
+// Get Facility Type 
+const getFacilityTypeById = (id: string) => {
+  const facility = facilitiesStore.facilities.find(fac => fac.id === id);
+  if (!facility) return null; 
+  return facilityTypesStore.facilityTypes.find(t => t.id === facility.typeId) || null;
+};
 // Medical Record
 
 const schemaMedicalRecord = yup.object({
@@ -792,6 +799,62 @@ defineExpose({
               {{ getRoomNameById(room) || room }}
             </div>
           </div>
+            <!-- Show more -->
+            <div v-if="getFacilityTypeById(facility)?.properties?.length">
+            <AccordionDefault id="show-more" custom_header>
+            <template #customHeader="{ open }">
+                <div class="flex gap-2  w-full items-center text-brand-600 font-medium text-sm text-nowrap">
+                <div>
+                <span v-if="!open">See more</span> 
+                <span v-else>See less</span> 
+                </div>
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                class="shrink-0"
+                >
+                <path
+                :class="`transform origin-center transition duration-200 ease-out ${open ? 'rotate-0' : 'rotate-180'}`"
+                d="M18 15L12 9L6 15"
+                stroke="#6A5ACD"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                />
+                </svg>
+                <hr class="w-full h-[1px] border-slate-300">
+                </div>
+              </template>
+              <div class="flex flex-col gap-4 pt-2">
+                <div class="flex items-center gap-2">
+                <label class="w-2/5 text-xs font-medium text-slate-500">Type</label>
+                <div class="text-sm font-semibold text-slate-900">
+                <span
+                class="text-xs bg-[#DEF7EC] text-[#057A55] px-[10px] py-[2px] leading-[18px] font-medium rounded-full text-nowrap"
+                >
+                {{ getFacilityTypeById(facility)?.name }}
+                </span>
+                </div>
+                </div>
+                <!-- properties -->
+                <div class="flex items-center gap-2">
+                <label class="w-2/5 text-sm font-semibold text-slate-900">Properties</label>
+                <div class="text-sm font-semibold text-slate-900">
+                Values
+                </div>
+                </div>
+                <div v-for="property in getFacilityTypeById(facility)?.properties" :key="property?.id" class="flex items-center gap-2">
+                <label class="w-2/5 text-xs font-medium text-slate-500">{{ property?.name }}</label>
+                <div class="text-sm font-semibold text-slate-900">
+                {{ property?.options?.length }}
+                </div>
+                </div>
+              </div>
+            </AccordionDefault>
+           </div>
         </div>
         <div v-else class="flex flex-col gap-4 pt-2">
           <AutoComplete
