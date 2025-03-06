@@ -17,6 +17,7 @@ ENV KC_HTTP_MANAGEMENT_PORT=9000
 ENV KC_HOSTNAME=salubrity.app
 ENV KC_HOSTNAME_STRICT=true
 ENV KC_HTTP_ENABLED=true
+ENV KC_HOSTNAME_STRICT_HTTPS=false
 
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
