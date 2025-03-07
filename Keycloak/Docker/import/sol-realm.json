@@ -1979,29 +1979,6 @@
   "adminEventsEnabled" : false,
   "adminEventsDetailsEnabled" : false,
   "identityProviders" : [ {
-    "alias" : "apple",
-    "displayName" : "Sign in with Apple",
-    "internalId" : "744866ff-4abc-49b9-9730-5c8f887d0bc5",
-    "providerId" : "apple",
-    "enabled" : true,
-    "updateProfileFirstLoginMode" : "on",
-    "trustEmail" : false,
-    "storeToken" : false,
-    "addReadTokenRoleOnCreate" : false,
-    "authenticateByDefault" : false,
-    "linkOnly" : false,
-    "hideOnLogin" : false,
-    "config" : {
-      "acceptsPromptNoneForwardFromClient" : "false",
-      "clientId" : "admin",
-      "disableUserInfo" : "false",
-      "filteredByClaim" : "false",
-      "syncMode" : "LEGACY",
-      "clientSecret" : "admin",
-      "caseSensitiveOriginalUsername" : "false",
-      "guiOrder" : "0"
-    }
-  }, {
     "alias" : "google",
     "displayName" : "Sign in with Google",
     "internalId" : "f40e8ff0-03aa-44cf-84f7-022084b4e449",
